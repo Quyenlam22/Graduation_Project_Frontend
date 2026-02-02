@@ -1,0 +1,103 @@
+.layout-client{
+    color: #fff;
+}
+
+.header-client {
+    display: flex;
+    align-items: center;
+    background: #170F23;
+    position: sticky;
+
+    &__logo {
+        width: 200px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        transition: all 0.3s;
+
+        &__image {
+            aspect-ratio: 1/1;
+            width: 60px;
+            border-radius: 50%;
+            overflow: hidden;
+            margin: 8px 8px 8px 0;
+
+            img {
+                width: 100%;
+                object-fit: cover;
+            }
+        }
+        
+    }
+
+    &__logo--collapse {
+        width: 80px!important;
+        transition: all 0.3s;
+    }
+
+    &__nav {
+        flex: 1;
+        padding: 10px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+    }
+
+    &__nav-left {
+        display: flex;
+        align-items: center;
+        font-size: 20px;
+    }
+
+    &__nav-right {
+        display: inline-flex;
+        align-items: center;
+        font-size: 20px;
+
+        &__auth {
+            margin-right: 10px;
+        }
+
+        // &__avatar{
+        //     width: 30px;
+        //     aspect-ratio: 1/1;
+        //     margin: 0 20px;
+
+        //     img {
+        //         height: 100%;
+        //         width: 100%;
+        //         object-fit: cover;
+        //         border-radius: 50%;
+        //     }
+        // }
+
+    }
+
+    &__collapse {
+        margin-right: 20px;
+        cursor: pointer;
+    }
+}
+
+.content-client {
+    padding: 40px;
+    background-color: #231B2E;
+    margin: 0 auto;
+    color: #fff;
+}
+
+input::placeholder {
+  color: #fff !important;
+}
+
+.ant-menu-dark {
+  // Khi item được chọn
+  &.ant-menu-inline .ant-menu-item-selected,
+  &.ant-menu-vertical .ant-menu-item-selected {
+    background-color: #eb2f96 !important; // Màu hồng Muzia
+    color: #fff !important;
+    border-radius: 8px;
+    width: calc(100% - 16px);
+    margin-left: 8px;
+  }
+}

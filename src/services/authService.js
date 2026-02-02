@@ -1,4 +1,4 @@
-import { get, post } from "../utils/request";
+import { get, patch, post } from "../utils/request";
 
 export const login = async (options) => {
     const result = await post(options, `users/login`);
@@ -17,5 +17,10 @@ export const infoUser = async (id) => {
 
 export const changeStatus = async (options) => {
     const result = await post(options, `users/status`);
+    return result;
+}
+
+export const updateProfile = async (options) => {
+    const result = await patch(options, `users/update-profile`);
     return result;
 }

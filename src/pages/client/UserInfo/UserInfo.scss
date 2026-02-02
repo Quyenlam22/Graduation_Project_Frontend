@@ -1,0 +1,201 @@
+/* UserInfo.scss */
+
+.user-info-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 20px;
+
+  .page-title {
+    color: #fff;
+    font-size: 32px;
+    font-weight: 700;
+  }
+
+  .info-card {
+    background: #2f2739 !important; // Nền tối của Muzia
+    border-radius: 12px;
+    border: none !important;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+    
+    .ant-card-head {
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+      
+      .ant-card-head-title {
+        color: #eb2f96 !important; // Màu hồng Muzia
+        font-size: 18px;
+        font-weight: 600;
+      }
+    }
+
+    .ant-card-body {
+      padding: 24px;
+    }
+
+    // Định dạng nhãn (label) của Form
+    label {
+      color: rgba(255, 255, 255, 0.8) !important;
+      font-size: 14px;
+      margin-bottom: 8px;
+
+      &.ant-form-item-required::before {
+        color: #eb2f96 !important; // Màu hồng cho dấu sao bắt buộc
+      }
+    }
+
+    // TARGET CẤU TRÚC INPUT CỦA ANTD V5
+    .ant-input-affix-wrapper, 
+    .ant-input-password,
+    .ant-input {
+      background-color: #393243 !important; // Màu xám tím input
+      border: 1px solid transparent !important;
+      color: #fff !important;
+      border-radius: 8px !important;
+      transition: all 0.3s ease;
+
+      // Icon phía trước (Lock, User, Mail)
+      .ant-input-prefix {
+        color: rgba(255, 255, 255, 0.45);
+        margin-right: 10px;
+        font-size: 16px;
+      }
+
+      // Ô input thật nằm bên trong wrapper
+      input {
+        background-color: transparent !important;
+        color: #fff !important;
+        font-size: 14px;
+        border: none !important;
+
+        &::placeholder {
+          color: rgba(255, 255, 255, 0.3) !important;
+        }
+
+        // Khử màu nền tự động của trình duyệt khi lưu pass
+        &:-webkit-autofill {
+          -webkit-box-shadow: 0 0 0 1000px #393243 inset !important;
+          -webkit-text-fill-color: #fff !important;
+        }
+      }
+
+      // Trạng thái hover và focus
+      &:hover, 
+      &-focused, 
+      &:focus {
+        border-color: #eb2f96 !important;
+        background-color: #393243 !important;
+        box-shadow: 0 0 0 2px rgba(235, 47, 150, 0.1) !important;
+      }
+
+      // Icon mắt (hiện/ẩn mật khẩu)
+      .ant-input-password-icon {
+        color: rgba(255, 255, 255, 0.45) !important;
+        &:hover {
+          color: #eb2f96 !important;
+        }
+      }
+
+      // Trạng thái bị khóa (Email disabled)
+      &.ant-input-affix-wrapper-disabled,
+      &.ant-input-disabled {
+        background-color: rgba(57, 50, 67, 0.5) !important;
+        cursor: not-allowed;
+        opacity: 0.7;
+        
+        input {
+          cursor: not-allowed;
+        }
+      }
+    }
+
+    // Thông báo lỗi của Form
+    .ant-form-item-explain-error {
+      color: #ff4d4f;
+      font-size: 12px;
+      margin-top: 4px;
+    }
+  }
+
+  // PHẦN AVATAR
+  .avatar-section {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 15px;
+    margin-bottom: 30px;
+
+    .ant-avatar {
+      border: 2px solid #eb2f96;
+      background-color: #393243;
+    }
+
+    .change-avatar-btn {
+      background: transparent !important;
+      border: 1px solid #eb2f96 !important;
+      color: #eb2f96 !important;
+      border-radius: 20px;
+      height: 32px;
+      font-size: 13px;
+      
+      &:hover {
+        background: #eb2f96 !important;
+        color: #fff !important;
+      }
+    }
+  }
+
+  // CÁC LOẠI NÚT BẤM (BUTTON)
+  .muzia-btn {
+    background-color: #eb2f96 !important;
+    border: none !important;
+    color: #fff !important;
+    width: 160px;
+    height: 42px;
+    border-radius: 21px;
+    font-weight: 600;
+    margin-top: 10px;
+
+    &:hover {
+      background-color: #ff4d9f !important;
+      transform: translateY(-1px);
+      box-shadow: 0 4px 10px rgba(235, 47, 150, 0.3);
+    }
+  }
+
+  .muzia-btn-outline {
+    background: transparent !important;
+    width: 160px;
+    height: 42px;
+    border-radius: 21px;
+    border: 1.5px solid #eb2f96 !important;
+    color: #eb2f96 !important;
+    font-weight: 600;
+    margin-top: 10px;
+    transition: all 0.3s ease;
+
+    &:hover {
+      color: #fff !important;
+      background: #eb2f96 !important;
+      box-shadow: 0 4px 10px rgba(235, 47, 150, 0.3);
+    }
+  }
+
+  .form-divider {
+    border-color: rgba(255, 255, 255, 0.1) !important;
+    margin: 40px 0;
+  }
+}
+
+// Media Query cho Mobile
+@media (max-width: 576px) {
+  .user-info-container {
+    padding: 20px 10px;
+    
+    .page-title {
+      font-size: 24px;
+    }
+    
+    .muzia-btn, .muzia-btn-outline {
+      width: 100%; // Nút bấm full rộng trên mobile
+    }
+  }
+}

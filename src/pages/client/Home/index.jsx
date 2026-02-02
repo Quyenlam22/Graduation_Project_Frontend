@@ -1,26 +1,20 @@
 import { useState, useContext } from "react";
 import { Button, Input, Card, Avatar, Typography, Flex, Divider, Spin } from "antd";
-import { signOut } from "firebase/auth";
 import { useNavigate, Link } from "react-router-dom";
-import { LogoutOutlined } from "@ant-design/icons";
-import { auth } from "../../../firebase/config";
 import { AuthContext } from "../../../Context/AuthProvider";
 import useTitle from "../../../hooks/useTitle";
-import { AppContext } from "../../../Context/AppProvider";
 import { getSongs, getSongsBySource } from "../../../services/songService";
 import { getArtist } from "../../../services/artistService";
 import { getAlbum } from "../../../services/albumService";
-import { changeStatus } from "../../../services/authService";
 
 const { Meta } = Card;
-const { Title, Text } = Typography;
+const { Text } = Typography;
 
 function Home() {
     const user = useContext(AuthContext);
     // const { messageApi } = useContext(AppContext);
-    const navigate = useNavigate();
 
-    useTitle("Home");
+    useTitle("Muzia");
 
     // States cho 4 phần
     const [songKey, setSongKey] = useState("");
@@ -76,30 +70,15 @@ function Home() {
         setLoadings(p => ({ ...p, t: false }));
     };
 
-    const handleLogout = async () => {
-        if (user?.uid) {
-            try {
-                // const token = await auth.currentUser.getIdToken();
-                await changeStatus({ uid: user.uid, state: "offline" });
-            } catch (e) { console.error(e); }
-        }
-        localStorage.removeItem("accessToken");
-        await signOut(auth);
-        navigate("/auth");
-    };
-
     if (!user) return <Card style={{ textAlign: "center", margin: 50 }}><Link to="/auth"><Button type="primary">Login</Button></Link></Card>;
 
     return (
-        <div style={{ padding: 40, maxWidth: 1200, margin: "0 auto" }}>
-            <Flex justify="space-between" align="center" style={{ marginBottom: 40 }}>
-                <Title level={2}>Music Flow Web</Title>
-                <Button icon={<LogoutOutlined />} danger onClick={handleLogout}>Logout</Button>
-            </Flex>
+        <div>
+            <h2 level={2}>Music Flow Web</h2>
 
             {/* PHẦN 1: BÀI HÁT */}
             <section style={{ marginBottom: 40 }}>
-                <Title level={4}>1. Tìm bài hát</Title>
+                <h2 level={4}>1. Tìm bài hát</h2>
                 <Flex gap={10} style={{ marginBottom: 20 }}>
                     <Input placeholder="Tên bài hát..." value={songKey} onChange={e => setSongKey(e.target.value)} />
                     <Button type="primary" onClick={handleSearchSongs} loading={loadings.s}>Tìm</Button>
@@ -118,7 +97,7 @@ function Home() {
 
             {/* PHẦN 2: NGHỆ SĨ */}
             <section style={{ marginBottom: 40 }}>
-                <Title level={4}>2. Tìm nghệ sĩ (Click để xem nhạc tiêu biểu)</Title>
+                <h2 level={4}>2. Tìm nghệ sĩ (Click để xem nhạc tiêu biểu)</h2>
                 <Flex gap={10} style={{ marginBottom: 20 }}>
                     <Input placeholder="Tên nghệ sĩ..." value={artistKey} onChange={e => setArtistKey(e.target.value)} />
                     <Button type="primary" onClick={handleSearchArtists} loading={loadings.a}>Tìm</Button>
@@ -137,7 +116,7 @@ function Home() {
 
             {/* PHẦN 3: ALBUM */}
             <section style={{ marginBottom: 40 }}>
-                <Title level={4}>3. Tìm Album (Click để xem danh sách bài hát)</Title>
+                <h2 level={4}>3. Tìm Album (Click để xem danh sách bài hát)</h2>
                 <Flex gap={10} style={{ marginBottom: 20 }}>
                     <Input placeholder="Tên album..." value={albumKey} onChange={e => setAlbumKey(e.target.value)} />
                     <Button type="primary" onClick={handleSearchAlbums} loading={loadings.al}>Tìm</Button>
@@ -155,7 +134,7 @@ function Home() {
 
             {/* PHẦN 4: HIỂN THỊ DANH SÁCH NHẠC (Từ Album hoặc Nghệ sĩ) */}
             <section>
-                <Title level={4}>4. Danh sách bài hát: {trackSourceTitle}</Title>
+                <h2 level={4}>4. Danh sách bài hát: {trackSourceTitle}</h2>
                 {loadings.t ? <Spin /> : (
                     <Flex vertical gap="small">
                         {displayTracks.map(t => (

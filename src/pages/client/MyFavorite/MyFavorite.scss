@@ -1,0 +1,117 @@
+.favorite {
+  padding: 20px 0;
+  color: #fff;
+
+  &__header {
+    margin-bottom: 20px;
+  }
+
+  &__title {
+    color: #fff;
+    font-size: 48px;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    margin: 0;
+  }
+
+  &__play-icon {
+    font-size: 40px;
+    cursor: pointer;
+    &:hover {
+      color: #eb2f96;
+    }
+  }
+
+  // Override Ant Design Tabs
+  .ant-tabs {
+    .ant-tabs-nav {
+      margin-bottom: 30px;
+      &::before {
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+      }
+    }
+
+    .ant-tabs-tab {
+      color: rgba(255, 255, 255, 0.6);
+      font-weight: 500;
+      padding: 12px 0;
+      margin-right: 40px;
+
+      &:hover {
+        color: #fff;
+      }
+
+      &-active .ant-tabs-tab-btn {
+        color: #fff !important;
+      }
+    }
+
+    .ant-tabs-ink-bar {
+      background: #eb2f96; // Màu tím hồng của Muzia
+    }
+  }
+
+  &__actions {
+    display: flex;
+    gap: 15px;
+    margin-bottom: 50px;
+  }
+
+  &__btn {
+    background: transparent;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    color: #fff;
+    font-size: 12px;
+    height: 24px;
+    padding: 0 15px;
+
+    &.active {
+      background: #eb2f96;
+      border-color: #eb2f96;
+    }
+
+    &:hover {
+      color: #fff !important;
+      border-color: #eb2f96 !important;
+    }
+  }
+
+  // Empty State Styling
+  &__empty {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 300px;
+
+    &-icon {
+      width: 80px;
+      margin-bottom: 20px;
+      opacity: 0.5;
+      img {
+        width: 100%;
+      }
+    }
+
+    &-text {
+      color: rgba(255, 255, 255, 0.5);
+      font-size: 16px;
+      margin-bottom: 25px;
+    }
+
+    &-btn {
+      background-color: #eb2f96;
+      border-color: #eb2f96;
+      height: 40px;
+      padding: 0 35px;
+      font-weight: 600;
+
+      &:hover {
+        background-color: #ff4d9f !important;
+        border-color: #ff4d9f !important;
+      }
+    }
+  }
+}

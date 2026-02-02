@@ -6,6 +6,8 @@ import LayoutClient from "../../layouts/LayoutClient";
 import Dashboard from "../../pages/admin/Dashboard";
 import Error404 from "../../pages/Error404";
 import PrivateRouteAdmin from "../../components/PrivateRoute/admin";
+import MyFavorite from "../../pages/client/MyFavorite";
+import UserInfo from "../../pages/client/UserInfo";
 
 const Home = lazy(() => import("../../pages/client/Home"));
 
@@ -17,6 +19,14 @@ export const privateRoutes = [
             {
                 index: true,
                 element: withSuspense(Home),
+            },
+            {
+                path: "/my-library",
+                element: <MyFavorite/>,
+            },
+            {
+                path: "/user-info",
+                element: <UserInfo/>,
             },
             {
                 path: "*",
