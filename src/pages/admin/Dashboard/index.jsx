@@ -11,7 +11,7 @@ import { changeStatus } from "../../../services/authService";
 const { Title } = Typography;
 
 function Dashboard() {
-  const user = useContext(AuthContext);
+  const { user } = useContext(AuthContext);
   const navigate = useNavigate();
 
   const { messageApi } = useContext(AppContext);

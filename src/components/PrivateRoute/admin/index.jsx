@@ -4,7 +4,7 @@ import { Navigate, Outlet } from "react-router-dom";
 import { AuthContext } from "../../../Context/AuthProvider";
 
 const PrivateRouteAdmin = () => {
-  const user = useContext(AuthContext);
+  const { user } = useContext(AuthContext);
 
   // 1. Kiểm tra nếu chưa đăng nhập hoặc không phải admin
   if (!user || user.role !== 'admin') {

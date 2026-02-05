@@ -6,7 +6,7 @@ import { message } from "antd";
 export const AppContext = createContext();
 
 function AppProvider ({ children }) {
-  // const user = useContext(AuthContext);
+  // const { user } = useContext(AuthContext);
   const [messageApi, contextHolder] = message.useMessage();
 
   // const savedRoomId = sessionStorage.getItem("selectedRoomId");

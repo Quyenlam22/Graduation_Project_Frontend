@@ -24,6 +24,7 @@ export const authWithEmail = async (email, password, mode = "login", displayName
         email: updatedUser.email,
         displayName: displayName || updatedUser.displayName,
         photoURL: updatedUser.photoURL,
+        provider: "email",
         role: "user", // Thêm quyền mặc định
       });
 

@@ -1,4 +1,4 @@
-.layout-client{
+.layout-client {
     color: #fff;
 }
 
@@ -27,11 +27,11 @@
                 object-fit: cover;
             }
         }
-        
+
     }
 
     &__logo--collapse {
-        width: 80px!important;
+        width: 80px !important;
         transition: all 0.3s;
     }
 
@@ -55,7 +55,13 @@
         font-size: 20px;
 
         &__auth {
-            margin-right: 10px;
+            .user-info {
+                border-radius: 50%;
+                margin-right: 10px;
+                width: 32px;
+                height: 32px;
+                cursor: pointer;
+            }
         }
 
         // &__avatar{
@@ -87,17 +93,18 @@
 }
 
 input::placeholder {
-  color: #fff !important;
+    color: #fff !important;
 }
 
 .ant-menu-dark {
-  // Khi item được chọn
-  &.ant-menu-inline .ant-menu-item-selected,
-  &.ant-menu-vertical .ant-menu-item-selected {
-    background-color: #eb2f96 !important; // Màu hồng Muzia
-    color: #fff !important;
-    border-radius: 8px;
-    width: calc(100% - 16px);
-    margin-left: 8px;
-  }
+
+    // Khi item được chọn
+    &.ant-menu-inline .ant-menu-item-selected,
+    &.ant-menu-vertical .ant-menu-item-selected {
+        background-color: #eb2f96 !important; // Màu hồng Muzia
+        color: #fff !important;
+        border-radius: 8px;
+        width: calc(100% - 16px);
+        margin-left: 8px;
+    }
 }

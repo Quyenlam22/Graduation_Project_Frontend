@@ -1,19 +1,24 @@
 const API_DOMAIN = import.meta.env.VITE_APP_API;
 
-// Hàm hỗ trợ lấy Header
-const getHeaders = () => {
+const getHeaders = (isFormData = false) => {
   const token = localStorage.getItem("accessToken");
-  return {
+  const headers = {
     "Accept": "application/json",
-    "Content-Type": "application/json",
     ...(token ? { "Authorization": `Bearer ${token}` } : {}),
   };
+
+  // Nếu KHÔNG PHẢI FormData thì mới thêm Content-Type JSON
+  // Nếu LÀ FormData, để trình duyệt tự định nghĩa boundary
+  if (!isFormData) {
+    headers["Content-Type"] = "application/json";
+  }
+
+  return headers;
 };
 
-// Hàm xử lý Response chung (Bắt lỗi 401, 403)
+// 2. Hàm xử lý Response chung
 const handleResponse = async (response) => {
   if (response.status === 401) {
-    // Token hết hạn hoặc không hợp lệ
     localStorage.removeItem("accessToken");
     // window.location.href = "/auth"; 
     return null;
@@ -21,6 +26,7 @@ const handleResponse = async (response) => {
   return await response.json();
 };
 
+// 3. Các hàm Method chính
 export const get = async (path) => {
   const response = await fetch(`${API_DOMAIN}/${path}`, {
     method: "GET",
@@ -30,10 +36,23 @@ export const get = async (path) => {
 };
 
 export const post = async (options, path) => {
+  const isFormData = options instanceof FormData;
+  
   const response = await fetch(`${API_DOMAIN}/${path}`, {
     method: "POST",
-    headers: getHeaders(),
-    body: JSON.stringify(options),
+    headers: getHeaders(isFormData),
+    body: isFormData ? options : JSON.stringify(options),
+  });
+  return handleResponse(response);
+};
+
+export const patch = async (options, path) => {
+  const isFormData = options instanceof FormData;
+
+  const response = await fetch(`${API_DOMAIN}/${path}`, {
+    method: "PATCH",
+    headers: getHeaders(isFormData),
+    body: isFormData ? options : JSON.stringify(options),
   });
   return handleResponse(response);
 };
@@ -42,15 +61,6 @@ export const del = async (path) => {
   const response = await fetch(`${API_DOMAIN}/${path}`, {
     method: "DELETE",
     headers: getHeaders(),
-  });
-  return handleResponse(response);
-};
-
-export const patch = async (options, path) => {
-  const response = await fetch(`${API_DOMAIN}/${path}`, {
-    method: "PATCH",
-    headers: getHeaders(),
-    body: JSON.stringify(options),
   });
   return handleResponse(response);
 };

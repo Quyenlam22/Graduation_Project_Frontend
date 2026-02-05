@@ -25,7 +25,7 @@ const Auth = () => {
   });
   const [loading, setLoading] = useState(false);
 
-  const user = useContext(AuthContext);
+  const { user } = useContext(AuthContext);
   const navigate = useNavigate();
   
   useTitle(isLoginMode ? 'Login' : 'Register');
@@ -76,13 +76,21 @@ const Auth = () => {
   const handleSocialLogin = async (provider) => {
     try {
       const result = await signInWithPopup(auth, provider);
-      // const idToken = await result.user.getIdToken();
+      
+      const idToken = await result.user.getIdToken(true);
+      localStorage.setItem("accessToken", idToken);
+
+      console.log(result);
+      
+
+      const loginMethod = result.user.providerData[0]?.providerId === "google.com" ? "google" : "social";
 
       await register({
         uid: result.user.uid,
         email: result.user.email,
         displayName: result.user.displayName,
         photoURL: result.user.photoURL,
+        provider: loginMethod,
         role: "user" // Mặc định cho social login
       })
 

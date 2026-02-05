@@ -11,7 +11,7 @@ const { Meta } = Card;
 const { Text } = Typography;
 
 function Home() {
-    const user = useContext(AuthContext);
+    const { user } = useContext(AuthContext);
     // const { messageApi } = useContext(AppContext);
 
     useTitle("Muzia");
@@ -54,6 +54,8 @@ function Home() {
         try {
             const res = await getAlbum(albumKey);
             setAlbums(res);
+            console.log(res);
+            
         } catch (e) { console.error(e); }
         setLoadings(p => ({ ...p, al: false }));
     };
@@ -71,7 +73,7 @@ function Home() {
     };
 
     if (!user) return <Card style={{ textAlign: "center", margin: 50 }}><Link to="/auth"><Button type="primary">Login</Button></Link></Card>;
-
+    
     return (
         <div>
             <h2 level={2}>Music Flow Web</h2>
@@ -87,7 +89,7 @@ function Home() {
                     {songs.map(s => (
                         <Card key={s.id} hoverable style={{ width: 220 }}>
                             <Meta avatar={<Avatar src={s.cover} shape="square" />} title={s.title} description={s.artist} />
-                            <audio src={s.preview} controls style={{ width: '100%', marginTop: 10 }} />
+                            <audio src={s.audio} controls style={{ width: '100%', marginTop: 10 }} />
                         </Card>
                     ))}
                 </Flex>
@@ -104,8 +106,8 @@ function Home() {
                 </Flex>
                 <Flex wrap="wrap" gap="middle">
                     {artists.map(a => (
-                        <Card key={a.id} hoverable style={{ width: 180, textAlign: 'center' }} onClick={() => fetchTracks(a.id, 'artist', a.name)}>
-                            <Avatar src={a.picture} size={80} />
+                        <Card key={a._id} hoverable style={{ width: 180, textAlign: 'center' }} onClick={() => fetchTracks(a.deezerId, 'artist', a.name)}>
+                            <Avatar src={a.avatar} size={80} />
                             <div style={{ marginTop: 10 }}><Text strong>{a.name}</Text></div>
                         </Card>
                     ))}
@@ -123,8 +125,8 @@ function Home() {
                 </Flex>
                 <Flex wrap="wrap" gap="middle">
                     {albums.map(al => (
-                        <Card key={al.id} hoverable style={{ width: 200 }} cover={<img src={al.cover} alt="cover" />} onClick={() => fetchTracks(al.id, 'album', al.title)}>
-                            <Meta title={al.title} description={`${al.artist} (${al.nb_tracks} bài)`} />
+                        <Card key={al._id} hoverable style={{ width: 200 }} cover={<img src={al.avatar} alt="cover" />} onClick={() => fetchTracks(al.deezerId, 'album', al.title)}>
+                            <Meta title={al.title} description={`${al.artistName} (${al.nb_tracks} bài)`} />
                         </Card>
                     ))}
                 </Flex>
@@ -138,10 +140,10 @@ function Home() {
                 {loadings.t ? <Spin /> : (
                     <Flex vertical gap="small">
                         {displayTracks.map(t => (
-                            <Card size="small" key={t.id}>
+                            <Card size="small" key={t._id}>
                                 <Flex justify="space-between" align="center">
                                     <Text strong>{t.title}</Text>
-                                    <audio src={t.preview} controls />
+                                    <audio src={t.audio} controls />
                                 </Flex>
                             </Card>
                         ))}

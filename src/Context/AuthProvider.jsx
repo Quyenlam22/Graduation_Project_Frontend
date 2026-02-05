@@ -71,7 +71,7 @@ function AuthProvider({ children }) {
   }, [navigate, location.pathname]);
 
   return (
-    <AuthContext.Provider value={user}>
+    <AuthContext.Provider value={{ user, setUser }}>
       {loading ? (
         <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
           Đang tải...

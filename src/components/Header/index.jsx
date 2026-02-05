@@ -11,7 +11,7 @@ import { auth } from "../../firebase/config";
 
 function HeaderClient (props) {
   const { setCollapse, collapse } = props;
-  const user = useContext(AuthContext);
+  const { user } = useContext(AuthContext);
   const navigate = useNavigate();
 
   const handleLogout = async () => {
@@ -60,11 +60,20 @@ function HeaderClient (props) {
                       <Notice />
                   </div>
                   <div className="header-client__nav-right__auth">
-                    <Button 
-                        icon={<UserOutlined />} 
-                        style={{borderRadius: "50%", marginRight: "10px"}}
-                        onClick={() => {navigate("/user-info")}}
-                    />
+                    {
+                        user && user.photoURL ?
+                        <Image
+                            preview={false} 
+                            src={user.photoURL}
+                            className="user-info"
+                            onClick={() => {navigate("/user-info")}}
+                        /> :
+                        <Button 
+                            icon={<UserOutlined />} 
+                            className="user-info"
+                            onClick={() => {navigate("/user-info")}}
+                        />
+                    }
                     <Button icon={<LogoutOutlined />} danger onClick={handleLogout}>Logout</Button>
                   </div>
               </div>
