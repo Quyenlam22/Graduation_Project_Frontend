@@ -1,0 +1,84 @@
+.album-detail-container {
+  padding: 20px;
+  max-width: 1400px;
+  margin: 0 auto;
+
+  .album-hero {
+    display: flex;
+    gap: 50px;
+    margin-bottom: 40px;
+    padding: 20px;
+    background: rgba(255, 255, 255, 0.02);
+    border-radius: 20px;
+
+    .album-left {
+      width: 320px;
+      flex-shrink: 0;
+      .album-cover {
+        width: 100%;
+        aspect-ratio: 1/1;
+        border-radius: 16px;
+        box-shadow: 0 12px 40px rgba(0,0,0,0.6);
+        object-fit: cover;
+      }
+      .btn-play-all {
+        background-color: #FE2851;
+        border: none;
+        height: 45px;
+        padding: 0 25px;
+      }
+      .btn-action {
+        border-color: rgba(255,255,255,0.2);
+        &:hover { color: #FE2851; border-color: #FE2851; }
+      }
+    }
+
+    .album-right {
+      flex: 1;
+      .tracklist-header {
+        padding: 10px 15px;
+        border-bottom: 1px solid rgba(255,255,255,0.1);
+        margin-bottom: 10px;
+      }
+      .track-item {
+        padding: 12px 15px;
+        border-radius: 12px;
+        transition: all 0.3s;
+        cursor: pointer;
+
+        &:hover {
+          background: rgba(255, 255, 255, 0.05);
+          .track-index { color: #FE2851; }
+        }
+
+        .track-index { width: 30px; color: rgba(255,255,255,0.3); }
+        .song-name { color: #fff; display: block; font-size: 15px; }
+        .artist-name { color: #9CA3A1; font-size: 12px; }
+        .favorite-icon { 
+            color: rgba(255,255,255,0.3); 
+            font-size: 18px;
+            &:hover { color: #FE2851; }
+        }
+        .track-duration { color: #9CA3A1; font-size: 13px; }
+      }
+    }
+  }
+
+  // Tái sử dụng style từ Home.scss
+  .glass-card {
+    background: rgba(255, 255, 255, 0.05) !important;
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.1) !important;
+    border-radius: 12px;
+    .album-img-container {
+      padding: 12px;
+      img { border-radius: 8px; width: 100%; aspect-ratio: 1/1; object-fit: cover; }
+    }
+  }
+
+  .section-title-container {
+    margin-bottom: 20px;
+    .section-title { color: #fff !important; margin: 0; }
+    .see-all { color: #9CA3A1; font-size: 12px; &:hover { color: #1890ff; } }
+  }
+}

@@ -8,6 +8,7 @@ import Error404 from "../../pages/Error404";
 import PrivateRouteAdmin from "../../components/PrivateRoute/admin";
 import MyFavorite from "../../pages/client/MyFavorite";
 import UserInfo from "../../pages/client/UserInfo";
+import Album from "../../pages/client/Album";
 
 const Home = lazy(() => import("../../pages/client/Home"));
 
@@ -19,6 +20,10 @@ export const privateRoutes = [
             {
                 index: true,
                 element: withSuspense(Home),
+            },
+            {
+                path: "/albums",
+                element: <Album/>,
             },
             {
                 path: "/my-library",

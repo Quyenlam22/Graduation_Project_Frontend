@@ -5,6 +5,7 @@ import { Link } from "react-router-dom";
 import { AuthContext } from "../../../Context/AuthProvider";
 import useTitle from "../../../hooks/useTitle";
 import "./Home.scss"; // Đừng quên import file scss nhé
+import AlbumSection from "../../../components/Album/AlbumSection";
 
 const { Title, Text } = Typography;
 
@@ -47,29 +48,9 @@ function Home() {
             <section style={{ marginBottom: 50 }}>
                 <Flex justify="space-between" align="baseline" className="section-title-container">
                     <Title level={4} className="section-title">Suggested for you</Title>
-                    <Text type="secondary" className="see-all">See all</Text>
+                    <Link to={"/albums"} className="see-all">See all</Link>
                 </Flex>
-                <Row gutter={[24, 24]}>
-                    {[1, 2, 3, 4, 5, 6].map((i) => (
-                        <Col xs={12} sm={8} md={6} lg={4} key={i}>
-                            <Card
-                                hoverable
-                                className="glass-card"
-                                cover={
-                                    <div className="album-img-container">
-                                        <img alt="album" src={`https://picsum.photos/300/300?random=${i}`} />
-                                    </div>
-                                }
-                                bodyStyle={{ padding: '0 12px 12px 12px' }}
-                            >
-                                <Card.Meta 
-                                    title={<Text style={{ color: '#fff' }}>Album Title {i}</Text>} 
-                                    description={<Text type="secondary" style={{ fontSize: '12px', color: '#9CA3A1'}}>Artist Name</Text>} 
-                                />
-                            </Card>
-                        </Col>
-                    ))}
-                </Row>
+                <AlbumSection/>
             </section>
 
             <section style={{ marginBottom: 50 }}>
