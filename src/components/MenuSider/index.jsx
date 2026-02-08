@@ -5,6 +5,7 @@ import { BiSolidAlbum } from "react-icons/bi";
 import { TbMoodSing } from "react-icons/tb";
 import { IoLibrary } from "react-icons/io5";
 import { IoMdHome } from "react-icons/io";
+import { PiPlaylistFill } from "react-icons/pi";
 
 function MenuSider () {
     const location = useLocation();
@@ -26,10 +27,15 @@ function MenuSider () {
             icon: <IoLibrary />,
             label: <Link to={"/my-library"}>My Library</Link>,
         },
+        // {
+        //     key: '/songs',
+        //     icon: <GiLoveSong />,
+        //     label: <Link to={"/songs"}>Songs</Link>,
+        // },
         {
-            key: '/songs',
-            icon: <GiLoveSong />,
-            label: <Link to={"/songs"}>Songs</Link>,
+            key: '/playlists',
+            icon: <PiPlaylistFill />,
+            label: <Link to={"/playlists"}>Playlists</Link>,
         },
         {
             key: '/artist',

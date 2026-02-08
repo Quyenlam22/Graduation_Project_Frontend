@@ -1,0 +1,80 @@
+.playlist-detail-container {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding-bottom: 120px;
+
+  .playlist-hero {
+    margin-bottom: 40px;
+    padding: 40px;
+    background: linear-gradient(180deg, rgba(254, 40, 81, 0.1) 0%, rgba(23, 15, 35, 0) 100%);
+    border-radius: 20px;
+
+    .playlist-left {
+      display: flex;
+      align-items: flex-end;
+      gap: 30px;
+
+      .playlist-avatar {
+        width: 250px;
+        height: 250px;
+        border-radius: 50%; // Playlist dùng ảnh tròn
+        box-shadow: 0 15px 50px rgba(0,0,0,0.5);
+        object-fit: cover;
+      }
+
+      .playlist-info-text {
+        .label-playlist {
+          font-size: 12px;
+          font-weight: bold;
+          color: #fff;
+        }
+        .btn-play-all {
+          background-color: #FE2851;
+          border: none;
+          height: 45px;
+          padding: 0 30px;
+        }
+      }
+    }
+  }
+
+  .playlist-tracks {
+    .tracklist-header {
+      padding: 10px 15px;
+      border-bottom: 1px solid rgba(255,255,255,0.1);
+      margin-bottom: 15px;
+      span { color: #9CA3A1 !important; font-size: 12px; }
+    }
+
+    .track-item {
+      padding: 12px 15px;
+      border-radius: 12px;
+      transition: all 0.3s;
+      cursor: pointer;
+
+      &:hover {
+        background: rgba(255, 255, 255, 0.05);
+        .track-index { color: #FE2851; }
+        .delete-icon { opacity: 1; }
+      }
+
+      .track-index { width: 30px; color: rgba(255,255,255,0.3); }
+      .song-name { color: #fff; display: block; }
+      .artist-name { color: #9CA3A1; font-size: 12px; }
+      
+      .favorite-icon { 
+        color: rgba(255,255,255,0.3); 
+        &:hover { color: #FE2851; }
+      }
+
+      .delete-icon {
+        color: #9CA3A1;
+        opacity: 0; // Chỉ hiện khi hover bài hát
+        transition: opacity 0.2s;
+        &:hover { color: #ff4d4f; }
+      }
+
+      .track-duration { color: #9CA3A1; font-size: 13px; min-width: 40px; }
+    }
+  }
+}

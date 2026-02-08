@@ -1,7 +1,5 @@
-import React from 'react';
-import { Typography, Row, Col, Card, Avatar, Flex, Button, Space, Divider } from 'antd';
-import { PlayCircleFilled, HeartOutlined, MoreOutlined, ClockCircleOutlined } from '@ant-design/icons';
-import { Link } from 'react-router-dom';
+import { Typography, Row, Col, Avatar, Flex, Button, Space, Divider } from 'antd';
+import { PlayCircleFilled, HeartOutlined, ClockCircleOutlined } from '@ant-design/icons';
 import './Album.scss';
 import AlbumSection from '../../../components/Album/AlbumSection';
 
@@ -40,8 +38,8 @@ function Album() {
           <div className="tracklist-header">
             <Row align="middle">
               <Col span={1}><Text type="secondary" style={{ color: '#9CA3A1' }}>#</Text></Col>
-              <Col span={16}><Text type="secondary" style={{ color: '#9CA3A1' }}>Bài hát</Text></Col>
-              <Col span={4}><Text type="secondary" style={{ color: '#9CA3A1' }}>Yêu thích</Text></Col>
+              <Col span={16}><Text type="secondary" style={{ color: '#9CA3A1' }}>Songs</Text></Col>
+              <Col span={4}><Text type="secondary" style={{ color: '#9CA3A1' }}>Like</Text></Col>
               <Col span={3} style={{ textAlign: 'right' }}><ClockCircleOutlined style={{ color: '#9CA3A1' }} /></Col>
             </Row>
           </div>

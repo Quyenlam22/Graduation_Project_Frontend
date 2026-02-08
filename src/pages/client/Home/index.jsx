@@ -6,6 +6,7 @@ import { AuthContext } from "../../../Context/AuthProvider";
 import useTitle from "../../../hooks/useTitle";
 import "./Home.scss"; // Đừng quên import file scss nhé
 import AlbumSection from "../../../components/Album/AlbumSection";
+import PlaylistSection from "../../../components/Playlist/PlaylistSection";
 
 const { Title, Text } = Typography;
 
@@ -56,29 +57,9 @@ function Home() {
             <section style={{ marginBottom: 50 }}>
                 <Flex justify="space-between" align="baseline" className="section-title-container">
                     <Title level={4} className="section-title">Your Playlists</Title>
-                    <Text type="secondary" className="see-all">View all</Text>
+                    <Link to={"/playlists"} className="see-all">View all</Link>
                 </Flex>
-                <Row gutter={[24, 24]}>
-                    {[1, 2, 3, 4].map((i) => (
-                        <Col xs={12} sm={8} md={6} key={i}>
-                            <Card
-                                hoverable
-                                className="playlist-card"
-                                cover={
-                                    <div className="playlist-img-container">
-                                        <img alt="playlist" src={`https://picsum.photos/300/300?grayscale&random=${i+20}`} />
-                                        <PlayCircleFilled className="play-hover-btn" />
-                                    </div>
-                                }
-                            >
-                                <Card.Meta 
-                                    title={<Text style={{ color: '#fff' }}>Workout Mix #{i}</Text>} 
-                                    description={<Text type="secondary" style={{ fontSize: '12px', color: '#9CA3A1'}}>Playlist • Muzia Flow</Text>} 
-                                />
-                            </Card>
-                        </Col>
-                    ))}
-                </Row>
+                <PlaylistSection/>
             </section>
 
             <Row gutter={40}>
