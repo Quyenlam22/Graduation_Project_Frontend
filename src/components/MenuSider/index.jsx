@@ -38,9 +38,9 @@ function MenuSider () {
             label: <Link to={"/playlists"}>Playlists</Link>,
         },
         {
-            key: '/artist',
+            key: '/artists',
             icon: <TbMoodSing />,
-            label: <Link to={"/artist"}>Artists</Link>,
+            label: <Link to={"/artists"}>Artists</Link>,
         },
         {
             key: '/albums',

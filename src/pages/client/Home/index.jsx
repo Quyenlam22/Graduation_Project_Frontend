@@ -87,7 +87,10 @@ function Home() {
 
                 {/* SIDEBAR ARTISTS */}
                 <Col span={8}>
-                    <Title level={4} className="section-title" style={{ marginBottom: 20, color: "#fff" }}>Top Artists</Title>
+                    <Flex justify="space-between" align="baseline" className="section-title-container">
+                        <Title level={4} style={{ color: "#fff" }} className="section-title">Top Artists</Title>
+                        <Link to={"/artists"} className="see-all">See all</Link>
+                    </Flex>
                     <Flex vertical gap={20}>
                         {[1, 2, 3].map((i) => (
                             <Flex align="center" gap={15} key={i} className="artist-item">

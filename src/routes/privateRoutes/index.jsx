@@ -10,6 +10,7 @@ import MyFavorite from "../../pages/client/MyFavorite";
 import UserInfo from "../../pages/client/UserInfo";
 import Album from "../../pages/client/Album";
 import Playlist from "../../pages/client/Playlist";
+import Artist from "../../pages/client/Artist";
 
 const Home = lazy(() => import("../../pages/client/Home"));
 
@@ -29,6 +30,10 @@ export const privateRoutes = [
             {
                 path: "/playlists",
                 element: <Playlist/>,
+            },
+            {
+                path: "/artists",
+                element: <Artist/>,
             },
             {
                 path: "/my-library",
