@@ -7,6 +7,7 @@ import { useEffect, useState } from "react";
 import MenuSider from "../../components/MenuSider";
 import { Outlet } from "react-router-dom";
 import HeaderClient from "../../components/Header";
+import MusicPlayer from "../../components/MusicPlayer";
 
 function LayoutClient () {
     const [collapse, setCollapse] = useState(false);
@@ -40,7 +41,7 @@ function LayoutClient () {
                         <Outlet/>
                     </Content>
                 </Layout>
-                {/* <Footer>Footer</Footer> */}
+                <MusicPlayer/>
             </Layout>
         </>
     )

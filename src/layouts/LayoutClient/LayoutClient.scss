@@ -1,5 +1,7 @@
 .layout-client {
     color: #fff;
+    background-color: #170F23; // Màu nền chủ đạo của app
+    min-height: 100vh;
 }
 
 .header-client {
@@ -38,6 +40,7 @@
     &__nav {
         flex: 1;
         padding: 10px;
+        margin-right: 15px;
         display: flex;
         align-items: center;
         justify-content: space-between;
@@ -90,6 +93,7 @@
     background-color: #231B2E;
     margin: 0 auto;
     color: #fff;
+    overflow-y: auto;
 }
 
 input::placeholder {
@@ -101,10 +105,78 @@ input::placeholder {
     // Khi item được chọn
     &.ant-menu-inline .ant-menu-item-selected,
     &.ant-menu-vertical .ant-menu-item-selected {
-        background-color: #eb2f96 !important; // Màu hồng Muzia
+        background-color: #393243 !important; // Màu hồng Muzia
         color: #fff !important;
         border-radius: 8px;
         width: calc(100% - 16px);
         margin-left: 8px;
+    }
+}
+
+.music-footer {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 90px;
+    background: rgba(23, 15, 35, 0.95); // Màu tối trùng với app
+    backdrop-filter: blur(15px);
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 20px;
+    z-index: 9999; // Đảm bảo luôn nằm trên cùng
+    color: #fff;
+
+    .song-info {
+        width: 30%;
+        margin-right: 64px;
+
+        .song-detail {
+            margin-left: 12px;
+
+            .song-name {
+                font-size: 16px;
+                margin: 0;
+            }
+
+            .artist-name {
+                font-size: 14px;
+                margin: 0;
+            }
+        }
+    }
+
+    .player-controls {
+        width: 40%;
+        flex-direction: column;
+
+        .control-buttons {
+            color: #fff;
+            font-size: 20px;
+
+            .play-btn {
+                font-size: 32px;
+            }
+        }
+
+        .progress-bar-container {
+            width: 100%;
+            color: #fff;
+
+            .ant-slider {
+                flex: 1;
+            }
+        }
+    }
+
+    .extra-controls {
+        width: 30%;
+        color: #fff;
+
+        .volume-slider {
+            width: 100px;
+        }
     }
 }

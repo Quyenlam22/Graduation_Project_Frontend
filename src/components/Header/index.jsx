@@ -40,7 +40,9 @@ function HeaderClient (props) {
                   <div className="header-client__collapse" onClick={() => setCollapse(!collapse)}>
                       {collapse ? <MenuUnfoldOutlined /> : <MenuFoldOutlined />}
                   </div>
-                  <div className="header-client__search">
+              </div>
+              <div className="header-client__nav-between">
+                <div className="header-client__search">
                       <Input 
                         placeholder="Search for songs, artists, albums..." 
                         prefix={<SearchOutlined style={{ color: '#fff' }} />} 
@@ -50,7 +52,8 @@ function HeaderClient (props) {
                           width: '400px',
                           backgroundColor: '#2F2739',
                           border: 'none',
-                          color: "#fff"
+                          color: "#fff",
+                          padding: "8px 12px"
                         }} 
                       />
                   </div>

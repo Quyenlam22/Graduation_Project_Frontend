@@ -55,7 +55,7 @@ function MyFavorite() {
     },
     {
       key: '3',
-      label: 'ARTIST',
+      label: 'PLAYLIST',
       children: (
         <div className="favorite__content">
            <div className="favorite__actions">

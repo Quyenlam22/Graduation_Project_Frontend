@@ -80,9 +80,6 @@ const Auth = () => {
       const idToken = await result.user.getIdToken(true);
       localStorage.setItem("accessToken", idToken);
 
-      console.log(result);
-      
-
       const loginMethod = result.user.providerData[0]?.providerId === "google.com" ? "google" : "social";
 
       await register({

@@ -1,0 +1,186 @@
+// Home.scss
+.home-container {
+  color: #fff;
+  margin: 0 auto;
+
+  // .discover-header {
+  //   margin-bottom: 30px;
+  //   h2 {
+  //     margin: 0;
+  //     color: #fff;
+  //   }
+  // }
+
+  .hero-section {
+    background: linear-gradient(to right, rgba(0, 0, 0, 0.8), rgba(64, 0, 128, 0.4)),
+      url('https://images.unsplash.com/photo-1493225255756-d9584f8606e9?auto=format&fit=crop&w=1500&q=80');
+    background-size: cover;
+    background-position: center;
+    border-radius: 16px;
+    padding: 40px;
+    margin-bottom: 40px;
+    min-height: 400px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+
+    .featured-badge {
+      background-color: #722ed1;
+      margin-bottom: 15px;
+      width: fit-content;
+      padding: 4px 12px;
+      border-radius: 4px;
+      font-size: 12px;
+    }
+
+    .hero-title {
+      color: #fff;
+      font-size: 48px;
+      margin: 0;
+    }
+
+    .hero-subtitle {
+      color: rgba(255, 255, 255, 0.8);
+      font-size: 18px;
+    }
+
+    .hero-buttons {
+      margin-top: 25px;
+
+      .btn-play {
+        height: 45px;
+        padding: 0 30px;
+        background-color: #FE2851;
+      }
+
+      .btn-profile {
+        height: 45px;
+        padding: 0 30px;
+      }
+    }
+  }
+
+  .glass-card {
+    background: rgba(255, 255, 255, 0.05) !important;
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.1) !important;
+    border-radius: 12px;
+    overflow: hidden;
+
+    .ant-card-meta-title {
+      color: #fff !important;
+    }
+
+    .album-img-container {
+      padding: 12px;
+
+      img {
+        border-radius: 8px;
+        width: 100%;
+        aspect-ratio: 1/1;
+        object-fit: cover;
+      }
+    }
+  }
+
+  .playlist-card {
+    @extend .glass-card; // Kế thừa style glass-card đã có
+
+    .playlist-img-container {
+      padding: 12px;
+      position: relative;
+
+      .play-hover-btn {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        font-size: 40px;
+        color: #FE2851;
+        opacity: 0;
+        transition: opacity 0.3s;
+      }
+
+      &:hover .play-hover-btn {
+        opacity: 1;
+      }
+
+      img {
+        border-radius: 50%; // Playlist có thể để ảnh tròn hoặc bo góc khác biệt
+        width: 100%;
+        aspect-ratio: 1/1;
+        object-fit: cover;
+      }
+    }
+  }
+
+  .section-title-container {
+    margin-bottom: 20px;
+
+    .section-title {
+      color: #fff !important;
+      margin: 0;
+    }
+
+    .see-all {
+      cursor: pointer;
+      font-size: 12px;
+      transition: color 0.3s;
+      color: #9CA3A1;
+
+      &:hover {
+        color: #1890ff;
+      }
+    }
+  }
+
+  .new-release-item {
+    padding: 12px 20px;
+    border-radius: 12px;
+    background: rgba(255, 255, 255, 0.03);
+    display: flex;
+    align-items: center;
+    transition: all 0.3s;
+    margin-bottom: 12px;
+
+    &:hover {
+      background: rgba(255, 255, 255, 0.08);
+      transform: translateX(5px);
+    }
+
+    .track-number {
+      width: 30px;
+      color: rgba(255, 255, 255, 0.3);
+    }
+
+    .track-info {
+      margin-left: 20px;
+      flex: 1;
+
+      .song-name {
+        color: #fff;
+        display: block;
+      }
+    }
+
+    .play-icon {
+      font-size: 24px;
+      color: #FE2851;
+      margin-left: 30px;
+      cursor: pointer;
+    }
+  }
+
+  .artist-item {
+    margin-bottom: 20px;
+
+    .artist-name {
+      color: #fff;
+      display: block;
+    }
+  }
+
+  .custom-divider {
+    border-color: rgba(255, 255, 255, 0.1);
+  }
+}

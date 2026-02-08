@@ -1,155 +1,146 @@
-import { useState, useContext } from "react";
-import { Button, Input, Card, Avatar, Typography, Flex, Divider, Spin } from "antd";
-import { useNavigate, Link } from "react-router-dom";
+import { useContext } from "react";
+import { Button, Card, Avatar, Typography, Flex, Divider, Row, Col } from "antd";
+import { PlayCircleFilled, CustomerServiceOutlined } from "@ant-design/icons";
+import { Link } from "react-router-dom";
 import { AuthContext } from "../../../Context/AuthProvider";
 import useTitle from "../../../hooks/useTitle";
-import { getSongs, getSongsBySource } from "../../../services/songService";
-import { getArtist } from "../../../services/artistService";
-import { getAlbum } from "../../../services/albumService";
+import "./Home.scss"; // Đừng quên import file scss nhé
 
-const { Meta } = Card;
-const { Text } = Typography;
+const { Title, Text } = Typography;
 
 function Home() {
     const { user } = useContext(AuthContext);
-    // const { messageApi } = useContext(AppContext);
-
     useTitle("Muzia");
 
-    // States cho 4 phần
-    const [songKey, setSongKey] = useState("");
-    const [songs, setSongs] = useState([]);
-    const [artistKey, setArtistKey] = useState("");
-    const [artists, setArtists] = useState([]);
-    const [albumKey, setAlbumKey] = useState("");
-    const [albums, setAlbums] = useState([]);
-    const [displayTracks, setDisplayTracks] = useState([]);
-    const [trackSourceTitle, setTrackSourceTitle] = useState("");
+    if (!user) return (
+        <Flex justify="center" align="center" style={{ minHeight: '80vh' }}>
+            <Card className="glass-card" style={{ textAlign: "center", width: 400 }}>
+                <CustomerServiceOutlined style={{ fontSize: 48, color: '#1890ff', marginBottom: 20 }} />
+                <Title level={3} style={{ color: '#fff' }}>Welcome to Muzia</Title>
+                <Text type="secondary" style={{ display: 'block', marginBottom: 20 }}>
+                    Log in to discover and stream your favorite music flow.
+                </Text>
+                <Link to="/auth"><Button type="primary" size="large" block shape="round">Login Now</Button></Link>
+            </Card>
+        </Flex>
+    );
 
-    const [loadings, setLoadings] = useState({ s: false, a: false, al: false, t: false });
-
-    // 1. Tìm Bài Hát
-    const handleSearchSongs = async () => {
-        setLoadings(p => ({ ...p, s: true }));
-        try {
-            const res = await getSongs(songKey);
-            setSongs(res);
-        } catch (e) { console.error(e); }
-        setLoadings(p => ({ ...p, s: false }));
-    };
-
-    // 2. Tìm Nghệ Sĩ
-    const handleSearchArtists = async () => {
-        setLoadings(p => ({ ...p, a: true }));
-        try {
-            const res = await getArtist(artistKey);
-            setArtists(res);
-        } catch (e) { console.error(e); }
-        setLoadings(p => ({ ...p, a: false }));
-    };
-
-    // 3. Tìm Album
-    const handleSearchAlbums = async () => {
-        setLoadings(p => ({ ...p, al: true }));
-        try {
-            const res = await getAlbum(albumKey);
-            setAlbums(res);
-            console.log(res);
-            
-        } catch (e) { console.error(e); }
-        setLoadings(p => ({ ...p, al: false }));
-    };
-
-    // 4. Lấy nhạc theo Nguồn (Nghệ sĩ hoặc Album)
-    const fetchTracks = async (id, type, title) => {
-        setLoadings(p => ({ ...p, t: true }));
-        setTrackSourceTitle(title);
-        const endpoint = type === 'artist' ? `artists/${id}/top` : `albums/${id}/tracks`;
-        try {
-            const res = await getSongsBySource(endpoint);
-            setDisplayTracks(res);
-        } catch (e) { console.error(e); }
-        setLoadings(p => ({ ...p, t: false }));
-    };
-
-    if (!user) return <Card style={{ textAlign: "center", margin: 50 }}><Link to="/auth"><Button type="primary">Login</Button></Link></Card>;
-    
     return (
-        <div>
-            <h2 level={2}>Music Flow Web</h2>
+        <div className="home-container">
 
-            {/* PHẦN 1: BÀI HÁT */}
-            <section style={{ marginBottom: 40 }}>
-                <h2 level={4}>1. Tìm bài hát</h2>
-                <Flex gap={10} style={{ marginBottom: 20 }}>
-                    <Input placeholder="Tên bài hát..." value={songKey} onChange={e => setSongKey(e.target.value)} />
-                    <Button type="primary" onClick={handleSearchSongs} loading={loadings.s}>Tìm</Button>
+            {/* HERO SECTION */}
+            <div className="hero-section">
+                <div className="featured-badge">Featured Artist</div>
+                <h1 className="hero-title">Luna Eclipse</h1>
+                <Text className="hero-subtitle">Pop  •  2.4M followers</Text>
+                <Flex gap={15} className="hero-buttons">
+                    <Button type="primary" size="large" icon={<PlayCircleFilled />} shape="round" className="btn-play">
+                        Play Now
+                    </Button>
+                    <Button ghost size="large" shape="round" className="btn-profile">
+                        View Profile
+                    </Button>
                 </Flex>
-                <Flex wrap="wrap" gap="middle">
-                    {songs.map(s => (
-                        <Card key={s.id} hoverable style={{ width: 220 }}>
-                            <Meta avatar={<Avatar src={s.cover} shape="square" />} title={s.title} description={s.artist} />
-                            <audio src={s.audio} controls style={{ width: '100%', marginTop: 10 }} />
-                        </Card>
-                    ))}
+            </div>
+
+            {/* SUGGESTED SECTION */}
+            <section style={{ marginBottom: 50 }}>
+                <Flex justify="space-between" align="baseline" className="section-title-container">
+                    <Title level={4} className="section-title">Suggested for you</Title>
+                    <Text type="secondary" className="see-all">See all</Text>
                 </Flex>
-            </section>
-
-            <Divider />
-
-            {/* PHẦN 2: NGHỆ SĨ */}
-            <section style={{ marginBottom: 40 }}>
-                <h2 level={4}>2. Tìm nghệ sĩ (Click để xem nhạc tiêu biểu)</h2>
-                <Flex gap={10} style={{ marginBottom: 20 }}>
-                    <Input placeholder="Tên nghệ sĩ..." value={artistKey} onChange={e => setArtistKey(e.target.value)} />
-                    <Button type="primary" onClick={handleSearchArtists} loading={loadings.a}>Tìm</Button>
-                </Flex>
-                <Flex wrap="wrap" gap="middle">
-                    {artists.map(a => (
-                        <Card key={a._id} hoverable style={{ width: 180, textAlign: 'center' }} onClick={() => fetchTracks(a.deezerId, 'artist', a.name)}>
-                            <Avatar src={a.avatar} size={80} />
-                            <div style={{ marginTop: 10 }}><Text strong>{a.name}</Text></div>
-                        </Card>
-                    ))}
-                </Flex>
-            </section>
-
-            <Divider />
-
-            {/* PHẦN 3: ALBUM */}
-            <section style={{ marginBottom: 40 }}>
-                <h2 level={4}>3. Tìm Album (Click để xem danh sách bài hát)</h2>
-                <Flex gap={10} style={{ marginBottom: 20 }}>
-                    <Input placeholder="Tên album..." value={albumKey} onChange={e => setAlbumKey(e.target.value)} />
-                    <Button type="primary" onClick={handleSearchAlbums} loading={loadings.al}>Tìm</Button>
-                </Flex>
-                <Flex wrap="wrap" gap="middle">
-                    {albums.map(al => (
-                        <Card key={al._id} hoverable style={{ width: 200 }} cover={<img src={al.avatar} alt="cover" />} onClick={() => fetchTracks(al.deezerId, 'album', al.title)}>
-                            <Meta title={al.title} description={`${al.artistName} (${al.nb_tracks} bài)`} />
-                        </Card>
-                    ))}
-                </Flex>
-            </section>
-
-            <Divider />
-
-            {/* PHẦN 4: HIỂN THỊ DANH SÁCH NHẠC (Từ Album hoặc Nghệ sĩ) */}
-            <section>
-                <h2 level={4}>4. Danh sách bài hát: {trackSourceTitle}</h2>
-                {loadings.t ? <Spin /> : (
-                    <Flex vertical gap="small">
-                        {displayTracks.map(t => (
-                            <Card size="small" key={t._id}>
-                                <Flex justify="space-between" align="center">
-                                    <Text strong>{t.title}</Text>
-                                    <audio src={t.audio} controls />
-                                </Flex>
+                <Row gutter={[24, 24]}>
+                    {[1, 2, 3, 4, 5, 6].map((i) => (
+                        <Col xs={12} sm={8} md={6} lg={4} key={i}>
+                            <Card
+                                hoverable
+                                className="glass-card"
+                                cover={
+                                    <div className="album-img-container">
+                                        <img alt="album" src={`https://picsum.photos/300/300?random=${i}`} />
+                                    </div>
+                                }
+                                bodyStyle={{ padding: '0 12px 12px 12px' }}
+                            >
+                                <Card.Meta 
+                                    title={<Text style={{ color: '#fff' }}>Album Title {i}</Text>} 
+                                    description={<Text type="secondary" style={{ fontSize: '12px', color: '#9CA3A1'}}>Artist Name</Text>} 
+                                />
                             </Card>
+                        </Col>
+                    ))}
+                </Row>
+            </section>
+
+            <section style={{ marginBottom: 50 }}>
+                <Flex justify="space-between" align="baseline" className="section-title-container">
+                    <Title level={4} className="section-title">Your Playlists</Title>
+                    <Text type="secondary" className="see-all">View all</Text>
+                </Flex>
+                <Row gutter={[24, 24]}>
+                    {[1, 2, 3, 4].map((i) => (
+                        <Col xs={12} sm={8} md={6} key={i}>
+                            <Card
+                                hoverable
+                                className="playlist-card"
+                                cover={
+                                    <div className="playlist-img-container">
+                                        <img alt="playlist" src={`https://picsum.photos/300/300?grayscale&random=${i+20}`} />
+                                        <PlayCircleFilled className="play-hover-btn" />
+                                    </div>
+                                }
+                            >
+                                <Card.Meta 
+                                    title={<Text style={{ color: '#fff' }}>Workout Mix #{i}</Text>} 
+                                    description={<Text type="secondary" style={{ fontSize: '12px', color: '#9CA3A1'}}>Playlist • Muzia Flow</Text>} 
+                                />
+                            </Card>
+                        </Col>
+                    ))}
+                </Row>
+            </section>
+
+            <Row gutter={40}>
+                {/* NEW RELEASES */}
+                <Col span={16}>
+                    <Flex justify="space-between" align="baseline" className="section-title-container">
+                        <Title level={4} className="section-title">New Releases</Title>
+                        {/* <Text type="secondary" className="see-all">See all</Text> */}
+                    </Flex>
+                    <div className="new-release-list">
+                        {[1, 2, 3, 4].map((i) => (
+                            <div key={i} className="new-release-item">
+                                <Text className="track-number">{i}</Text>
+                                <Avatar shape="square" size={48} src={`https://picsum.photos/100/100?random=${i+10}`} />
+                                <div className="track-info">
+                                    <Text strong className="song-name">Song Title {i}</Text>
+                                    <Text type="secondary" style={{ fontSize: '12px', color: '#9CA3A1' }}>Artist Name</Text>
+                                </div>
+                                <Text type="secondary" style={{ fontSize: '12px', color: '#95a9e4'}}>3:45</Text>
+                                <PlayCircleFilled className="play-icon" />
+                            </div>
+                        ))}
+                    </div>
+                </Col>
+
+                {/* SIDEBAR ARTISTS */}
+                <Col span={8}>
+                    <Title level={4} className="section-title" style={{ marginBottom: 20, color: "#fff" }}>Top Artists</Title>
+                    <Flex vertical gap={20}>
+                        {[1, 2, 3].map((i) => (
+                            <Flex align="center" gap={15} key={i} className="artist-item">
+                                <Avatar size={54} src={`https://i.pravatar.cc/150?img=${i+10}`} />
+                                <div>
+                                    <Text strong className="artist-name">Artist Name {i}</Text>
+                                    <Text type="secondary" style={{ fontSize: '12px', color: '#9CA3A1' }}>1.2M Monthly Listeners</Text>
+                                </div>
+                            </Flex>
                         ))}
                     </Flex>
-                )}
-            </section>
+                </Col>
+            </Row>
+
+            <Divider className="custom-divider" />
         </div>
     );
 }
