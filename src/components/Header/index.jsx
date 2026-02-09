@@ -1,6 +1,6 @@
 import { Button, Image, Input } from "antd";
 import Notice from "../../components/Notice";
-import { LogoutOutlined, MenuFoldOutlined, MenuUnfoldOutlined, SearchOutlined, UserOutlined } from '@ant-design/icons'
+import { LogoutOutlined, MenuFoldOutlined, MenuUnfoldOutlined, UserOutlined } from '@ant-design/icons'
 import logo from "../../assets/images/logo.png";
 import { useContext } from "react";
 import { AuthContext } from "../../Context/AuthProvider";
@@ -8,6 +8,7 @@ import { changeStatus } from "../../services/authService";
 import { signOut } from "firebase/auth";
 import { useNavigate } from "react-router";
 import { auth } from "../../firebase/config";
+import Search from "../Search";
 
 function HeaderClient (props) {
   const { setCollapse, collapse } = props;
@@ -43,19 +44,7 @@ function HeaderClient (props) {
               </div>
               <div className="header-client__nav-between">
                 <div className="header-client__search">
-                      <Input 
-                        placeholder="Search for songs, artists, albums..." 
-                        prefix={<SearchOutlined style={{ color: '#fff' }} />} 
-                        variant="filled" // Kiểu đổ nền xám nhẹ giống ZingMP3
-                        style={{ 
-                          borderRadius: '20px', 
-                          width: '400px',
-                          backgroundColor: '#2F2739',
-                          border: 'none',
-                          color: "#fff",
-                          padding: "8px 12px"
-                        }} 
-                      />
+                      <Search/>
                   </div>
               </div>
               <div className="header-client__nav-right">

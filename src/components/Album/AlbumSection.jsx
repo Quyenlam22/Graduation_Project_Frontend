@@ -16,7 +16,7 @@ function AlbumSection () {
                               <img alt="album" src={`https://picsum.photos/300/300?random=${i}`} />
                           </div>
                       }
-                      bodyStyle={{ padding: '0 12px 12px 12px' }}
+                      styles={{ body: {padding: '0 12px 12px 12px'} }}
                   >
                       <Card.Meta 
                           title={<Text style={{ color: '#fff' }}>Album Title {i}</Text>} 

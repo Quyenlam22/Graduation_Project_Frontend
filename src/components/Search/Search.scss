@@ -1,0 +1,109 @@
+.search-wrapper {
+  position: relative; // Tạo mỏ neo cho Preview tuyệt đối
+  z-index: 10001; // Cao hơn Content và các nút Play bên dưới
+
+  .custom-search-input {
+    input {
+      background-color: transparent !important;
+      color: #fff !important;
+
+      &::placeholder {
+        color: rgba(255, 255, 255, 0.4);
+      }
+    }
+  }
+}
+
+.search-preview-wrapper {
+  position: absolute;
+  top: calc(100% + 10px); // Xuất hiện ngay bên dưới ô Input
+  left: 0;
+  width: 100%;
+  background: #2f2739; // Cùng tone với input để tạo sự liền mạch
+  backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 12px;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.7);
+  padding: 10px;
+  overflow: hidden;
+
+  .preview-header {
+    padding: 5px 10px 10px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    margin-bottom: 8px;
+
+    .label {
+      font-size: 11px;
+      color: #9CA3A1;
+      letter-spacing: 0.5px;
+    }
+  }
+
+  .preview-item {
+    display: flex;
+    align-items: center;
+    padding: 8px 10px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background 0.3s;
+
+    &:hover {
+      background: rgba(255, 255, 255, 0.05);
+
+      .play-icon-hover {
+        opacity: 1;
+      }
+    }
+
+    .preview-img {
+      width: 40px;
+      height: 40px;
+      border-radius: 4px;
+      object-fit: cover;
+
+      &.circle {
+        border-radius: 50%;
+      }
+    }
+
+    .preview-info {
+      margin-left: 12px;
+      flex: 1;
+      overflow: hidden;
+
+      .title {
+        color: #fff;
+        display: block;
+        font-size: 14px;
+        font-weight: 500;
+      }
+
+      .sub-title {
+        color: #9CA3A1;
+        font-size: 12px;
+      }
+    }
+
+    .play-icon-hover {
+      color: #FE2851;
+      font-size: 20px;
+      opacity: 0;
+      transition: opacity 0.3s;
+    }
+  }
+
+  .preview-footer {
+    text-align: center;
+    padding-top: 10px;
+
+    .view-all-text {
+      color: #FE2851;
+      font-size: 12px;
+      cursor: pointer;
+
+      &:hover {
+        text-decoration: underline;
+      }
+    }
+  }
+}
