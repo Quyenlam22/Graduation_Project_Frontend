@@ -1,7 +1,7 @@
 import { useContext, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { authWithEmail } from "../../../utils/authWithEmail";
-import { infoUser } from '../../../services/authService';
+import { changeStatus, infoUser } from '../../../services/authService';
 import { AppContext } from '../../../Context/AppProvider';
 
 const LoginAdmin = () => {
@@ -18,23 +18,37 @@ const LoginAdmin = () => {
     e.preventDefault();
     setLoading(true);
     try {
-      // 1. Đăng nhập Firebase thông qua hàm bạn đã viết
+      // 1. Đăng nhập Firebase
       const firebaseUser = await authWithEmail(loginData.email, loginData.password, "login");
-      // const idToken = await firebaseUser.getIdToken();
 
-      // 2. Gọi API lấy thông tin đầy đủ từ MongoDB để check Role
+      // 2. LẤY TOKEN MỚI NHẤT NGAY LẬP TỨC
+      const token = await firebaseUser.getIdToken();
+      
+      // Lưu vào localStorage ngay để các request sau (như /status) có thể dùng
+      localStorage.setItem("accessToken", token);
+
+      // 3. Gọi API lấy thông tin User 
+      // Nếu hàm infoUser của bạn cho phép nhận token làm tham số thứ 2, hãy truyền nó vào
+      // Ví dụ: const dbUser = await infoUser(firebaseUser.uid, token);
       const dbUser = await infoUser(firebaseUser.uid);
 
-      // 3. Kiểm tra quyền Admin
-      if (dbUser.role === 'admin') {
+      // 4. Kiểm tra quyền Admin
+      if (dbUser && dbUser.role === 'admin') {
         messageApi.success("Welcome Admin!");
-        navigate("/admin/dashboard"); // Chuyển vào trang quản trị
+        
+        // 5. Cập nhật trạng thái Online (Bây giờ đã có Token nên sẽ không lỗi 401)
+        await changeStatus({ uid: firebaseUser.uid, state: "online" });
+
+        setTimeout(() => {
+          navigate("/admin/dashboard");
+        }, 500);
       } else {
-        // Nếu không phải admin, đăng xuất ngay lập tức
         await auth.signOut();
+        localStorage.removeItem("accessToken");
         messageApi.error("You don't have access!");
       }
     } catch (error) {
+      console.error("Login detail error:", error);
       messageApi.error("Incorrect account or password!");
     } finally {
       setLoading(false);

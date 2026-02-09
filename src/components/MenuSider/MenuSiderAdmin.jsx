@@ -5,46 +5,47 @@ import { TbMoodSing } from "react-icons/tb";
 import { IoLibrary } from "react-icons/io5";
 import { IoMdHome } from "react-icons/io";
 import { PiPlaylistFill } from "react-icons/pi";
+import { GiLoveSong } from "react-icons/gi";
 
-function MenuSider () {
+function MenuSiderAdmin () {
     const location = useLocation();
     const path = location.pathname;
     const getSelectedKey = () => {
-        if (path === '/') return '/';
+        if (path === '/admin') return '/admin';
         if (path.includes('favorite') || path.includes('library')) return '/my-favorite';
         return path;
     };
     
     const items = [
         {
-            key: '/',
+            key: '/admin/',
             icon: <IoMdHome />,
-            label: <Link to={"/"}>Home</Link>,
+            label: <Link to={"/admin/"}>Dashboard</Link>,
         },
         {
-            key: '/my-favorite',
+            key: '/admin/users',
             icon: <IoLibrary />,
-            label: <Link to={"/my-library"}>My Library</Link>,
+            label: <Link to={"/admin/users"}>User Management</Link>,
         },
-        // {
-        //     key: '/songs',
-        //     icon: <GiLoveSong />,
-        //     label: <Link to={"/songs"}>Songs</Link>,
-        // },
         {
-            key: '/playlists',
+            key: '/admin/songs',
+            icon: <GiLoveSong />,
+            label: <Link to={"/admin/songs"}>Songs</Link>,
+        },
+        {
+            key: '/admin/playlists',
             icon: <PiPlaylistFill />,
-            label: <Link to={"/playlists"}>Playlists</Link>,
+            label: <Link to={"/admin/playlists"}>Playlist Management</Link>,
         },
         {
-            key: '/artists',
+            key: '/admin/artists',
             icon: <TbMoodSing />,
-            label: <Link to={"/artists"}>Artists</Link>,
+            label: <Link to={"/admin/artists"}>Artist Management</Link>,
         },
         {
-            key: '/albums',
+            key: '/admin/albums',
             icon: <BiSolidAlbum />,
-            label: <Link to={"/albums"}>Albums</Link>,
+            label: <Link to={"/admin/albums"}>Album Management</Link>,
         },
     ];
 
@@ -55,11 +56,9 @@ function MenuSider () {
                 selectedKeys={[getSelectedKey()]}
                 mode="inline"
                 items={items}
-                theme="dark"
-                style={{ backgroundColor: "transparent" }}
             />
         </>
     )
 }
 
-export default MenuSider;
+export default MenuSiderAdmin;

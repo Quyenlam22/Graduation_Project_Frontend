@@ -11,6 +11,12 @@ import UserInfo from "../../pages/client/UserInfo";
 import Album from "../../pages/client/Album";
 import Playlist from "../../pages/client/Playlist";
 import Artist from "../../pages/client/Artist";
+// import UserInfo from "../../pages/client/UserInfo";
+import AlbumManagement from "../../pages/admin/Album";
+import PlaylistManagement from "../../pages/admin/Playlist";
+import ArtistManagement from "../../pages/admin/Artist";
+import SongManagement from "../../pages/admin/Song";
+import UserManagement from "../../pages/admin/User";
 
 const Home = lazy(() => import("../../pages/client/Home"));
 
@@ -64,10 +70,30 @@ export const privateRoutes = [
                         path: "dashboard",
                         element: <Dashboard/>,
                     },
-                    // {
-                    //     path: "*",
-                    //     element: <Error404/>,
-                    // },
+                    {
+                        path: "albums",
+                        element: <AlbumManagement/>,
+                    },
+                    {
+                        path: "playlists",
+                        element: <PlaylistManagement/>,
+                    },
+                    {
+                        path: "artists",
+                        element: <ArtistManagement/>,
+                    },
+                    {
+                        path: "songs",
+                        element: <SongManagement/>,
+                    },
+                    {
+                        path: "users",
+                        element: <UserManagement/>,
+                    },
+                    {
+                        path: "*",
+                        element: <Error404/>,
+                    },
                 ],
             }
         ]

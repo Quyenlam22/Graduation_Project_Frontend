@@ -2,8 +2,12 @@ import { Button, Dropdown } from "antd";
 import { BellOutlined } from '@ant-design/icons';
 import Link from "antd/es/typography/Link";
 import './Notice.scss';
+import { useLocation } from "react-router";
 
 function Notice() {
+    const location = useLocation();
+    const path = location.pathname;
+
     const items = [
         {
             label: (
@@ -113,7 +117,7 @@ function Notice() {
                     </>
                 )}
             >
-                <Button size="large" icon={<BellOutlined style={{color: "#fff"}} />} type="text"/>
+                <Button size="large" icon={<BellOutlined style={path.includes("admin") ? {color: "#000"} : {color: "#fff"}} />} type="text"/>
             </Dropdown>
         </>
     )

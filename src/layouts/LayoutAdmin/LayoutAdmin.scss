@@ -1,0 +1,89 @@
+.header-admin {
+    display: flex;
+    align-items: center;
+    border-bottom: 1px solid #ddd;
+    background: #fff;
+    position: sticky;
+
+    &__logo {
+        width: 200px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        transition: all 0.3s;
+
+        &__image {
+            aspect-ratio: 1/1;
+            width: 60px;
+            border-radius: 50%;
+            overflow: hidden;
+            margin: 8px 8px 8px 0;
+
+            img {
+                width: 100%;
+                object-fit: cover;
+            }
+        }
+    }
+
+    &__logo--collapse {
+        width: 80px!important;
+        transition: all 0.3s;
+    }
+
+    &__nav {
+        flex: 1;
+        padding: 10px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+    }
+
+    &__nav-left {
+        display: flex;
+        align-items: center;
+        font-size: 20px;
+    }
+
+    &__nav-right {
+        display: flex;
+        align-items: center;
+        font-size: 20px;
+
+        &__notify {
+            margin: 0 10px;
+        }
+
+        &__auth {
+            margin: 0 10px;
+            padding: 0 10px;
+        }
+
+        // &__avatar{
+        //     width: 30px;
+        //     aspect-ratio: 1/1;
+        //     margin: 0 20px;
+
+        //     img {
+        //         height: 100%;
+        //         width: 100%;
+        //         object-fit: cover;
+        //         border-radius: 50%;
+        //     }
+        // }
+
+    }
+
+    &__collapse {
+        margin-right: 20px;
+        cursor: pointer;
+    }
+}
+
+.content-admin {
+    padding: 20px;
+}
+
+.ant-form-item-row {
+    flex-direction: row!important;
+}
