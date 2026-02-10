@@ -24,3 +24,13 @@ export const updateProfile = async (options) => {
     const result = await patch(options, `users/update-profile`);
     return result;
 }
+
+export const getAllUsers = async () => {
+    const result = await get(`users/all-users`);
+    return result;
+}
+
+export const createAdminAccount = async (options) => {
+    const result = await post(options, `users/create-admin`);
+    return result;
+}
