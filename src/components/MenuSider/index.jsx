@@ -5,17 +5,22 @@ import { TbMoodSing } from "react-icons/tb";
 import { IoLibrary } from "react-icons/io5";
 import { IoMdHome } from "react-icons/io";
 import { PiPlaylistFill } from "react-icons/pi";
+import { useContext } from "react";
+import { AuthContext } from "../../Context/AuthProvider";
 
 function MenuSider () {
+    const { user } = useContext(AuthContext);
     const location = useLocation();
     const path = location.pathname;
+
     const getSelectedKey = () => {
         if (path === '/') return '/';
         if (path.includes('favorite') || path.includes('library')) return '/my-favorite';
         return path;
     };
-    
-    const items = [
+
+    // Định nghĩa tất cả các item
+    const allItems = [
         {
             key: '/',
             icon: <IoMdHome />,
@@ -25,12 +30,8 @@ function MenuSider () {
             key: '/my-favorite',
             icon: <IoLibrary />,
             label: <Link to={"/my-library"}>My Library</Link>,
+            requiredAuth: true, 
         },
-        // {
-        //     key: '/songs',
-        //     icon: <GiLoveSong />,
-        //     label: <Link to={"/songs"}>Songs</Link>,
-        // },
         {
             key: '/playlists',
             icon: <PiPlaylistFill />,
@@ -48,18 +49,17 @@ function MenuSider () {
         },
     ];
 
+    const filteredItems = allItems.filter(item => !item.requiredAuth || (item.requiredAuth && user));
+
     return (
-        <>
-            <Menu
-                defaultSelectedKeys={[path]}
-                selectedKeys={[getSelectedKey()]}
-                mode="inline"
-                items={items}
-                theme="dark"
-                style={{ backgroundColor: "transparent" }}
-            />
-        </>
-    )
+        <Menu
+            selectedKeys={[getSelectedKey()]}
+            mode="inline"
+            items={filteredItems}
+            theme="dark"
+            style={{ backgroundColor: "transparent" }}
+        />
+    );
 }
 
 export default MenuSider;

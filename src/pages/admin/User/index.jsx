@@ -1,6 +1,7 @@
-import { useEffect, useState } from 'react'; // Sử dụng useState để quản lý ẩn hiện Modal
+import { useContext, useEffect, useState } from 'react'; // Sử dụng useState để quản lý ẩn hiện Modal
 import { 
-  Table, Tag, Avatar, Space, Button, Tooltip, Typography, Badge
+  Table, Tag, Avatar, Space, Button, Tooltip, Typography, Badge,
+  Popconfirm
 } from 'antd';
 import { 
   EditOutlined, DeleteOutlined, UserOutlined, 
@@ -9,16 +10,35 @@ import {
 import avatar from "../../../assets/images/avatar.jpg";
 import moment from 'moment';
 import CreateUser from '../../../components/User/CreateUser';
-import { getAllUsers } from '../../../services/authService';
+import { deleteUser, getAllUsers } from '../../../services/authService';
+import { AppContext } from '../../../Context/AppProvider';
 
 const { Text, Title } = Typography;
 
 function UserManagement() {
   const [isModalOpen, setIsModalOpen] = useState(false); // Quản lý trạng thái Modal
   // const [form] = Form.useForm(); // Quản lý dữ liệu từ Form
+  const [editingUser, setEditingUser] = useState(null);
 
   const [users, setUsers] = useState([]);
   const [loading, setLoading] = useState(true);
+
+  const { messageApi } = useContext(AppContext);
+
+  const handleEdit = (record) => {
+    setEditingUser(record); // Gán dữ liệu user vào state
+    setIsModalOpen(true);    // Mở Modal
+  };
+
+  const handleAddNew = () => {
+    setEditingUser(null); // QUAN TRỌNG: Xóa dữ liệu cũ để isEdit thành false
+    setIsModalOpen(true);
+  };
+
+  const handleCancelModal = () => {
+    setIsModalOpen(false);
+    setEditingUser(null); // Reset dữ liệu khi đóng để lần sau mở lại không bị lẫn
+  };
 
   const fetchUsers = async () => {
     try {
@@ -33,6 +53,25 @@ function UserManagement() {
       }
     } catch (error) {
       console.error("Lỗi fetch users:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleDelete = async (uid) => {
+    try {
+      setLoading(true);
+      const response = await deleteUser(uid);
+      
+      if (response && response.success) {
+        messageApi.success(response.message);
+        fetchUsers();
+      } else {
+        messageApi.error(response.message || "Failed to delete user.");
+      }
+    } catch (error) {
+      console.error("Delete Error:", error);
+      messageApi.error(error.response?.data?.message || "An error occurred while deleting.");
     } finally {
       setLoading(false);
     }
@@ -113,10 +152,23 @@ function UserManagement() {
       render: (_, record) => (
         <Space size="middle">
           <Tooltip title="Edit User">
-            <Button type="text" icon={<EditOutlined />} />
+            <Button 
+              type="text" 
+              icon={<EditOutlined />} 
+              onClick={() => handleEdit(record)} // Gọi hàm handleEdit
+            />
           </Tooltip>
           <Tooltip title="Delete User">
-            <Button type="text" danger icon={<DeleteOutlined />} />
+            <Popconfirm
+              title="Delete the user"
+              description={`Are you sure to delete ${record.displayName}?`}
+              onConfirm={() => handleDelete(record.uid)}
+              okText="Yes"
+              cancelText="No"
+              okButtonProps={{ danger: true }}
+            >
+              <Button type="text" danger icon={<DeleteOutlined />} />
+            </Popconfirm>
           </Tooltip>
         </Space>
       ),
@@ -130,7 +182,7 @@ function UserManagement() {
         <Button 
           type="primary" 
           icon={<PlusOutlined />} 
-          onClick={() => setIsModalOpen(true)} // Mở Modal
+          onClick={handleAddNew}
         >
           Add New Admin
         </Button>
@@ -138,6 +190,8 @@ function UserManagement() {
           isModalOpen={isModalOpen} 
           setIsModalOpen={setIsModalOpen}
           onSuccess={fetchUsers}
+          data={editingUser} // Truyền dữ liệu cũ sang Modal
+          onCancel={handleCancelModal}
         />
       </div>
       

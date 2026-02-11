@@ -9,7 +9,8 @@
     align-items: center;
     background: #170F23;
     position: sticky;
-    z-index: 9999;
+    z-index: 100;
+    top: 0;
 
     &__logo {
         width: 200px;
@@ -68,18 +69,30 @@
             }
         }
 
-        // &__avatar{
-        //     width: 30px;
-        //     aspect-ratio: 1/1;
-        //     margin: 0 20px;
+        /* Màu mặc định của nút */
+        .btn-signin {
+            color: #FE2851 !important;
+            border-color: #FE2851 !important;
+            background: transparent;
+            transition: all 0.3s;
+            /* Hiệu ứng mượt mà */
+        }
 
-        //     img {
-        //         height: 100%;
-        //         width: 100%;
-        //         object-fit: cover;
-        //         border-radius: 50%;
-        //     }
-        // }
+        /* Hiệu ứng khi di chuột vào (Hover) */
+        .btn-signin:hover {
+            color: #fff !important;
+            /* Chuyển chữ sang trắng */
+            background-color: #FE2851 !important;
+            /* Đổ nền màu hồng */
+            border-color: #FE2851 !important;
+        }
+
+        /* Hiệu ứng khi nhấn giữ (Active) */
+        .btn-signin:active {
+            background-color: #d62244 !important;
+            /* Hồng đậm hơn một chút khi nhấn */
+            border-color: #d62244 !important;
+        }
 
     }
 

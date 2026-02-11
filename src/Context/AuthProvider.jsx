@@ -52,17 +52,6 @@ function AuthProvider({ children }) {
         // TRƯỜNG HỢP CHƯA ĐĂNG NHẬP (firebaseUser === null)
         setUser(null);
         localStorage.removeItem("accessToken");
-
-        // CHỈ ĐẨY VỀ /auth NẾU:
-        // 1. Không phải route admin
-        // 2. Không phải trang auth hiện tại
-        if (!isAdminRoute && !isAuthRoute) {
-          navigate("/auth");
-        }
-        
-        // NẾU LÀ ROUTE ADMIN: 
-        // Hãy để PrivateRouteAdmin trong file routes của bạn tự xử lý 
-        // Nó sẽ đẩy về /admin/login thay vì /auth
       }
       setLoading(false);
     });
@@ -72,11 +61,7 @@ function AuthProvider({ children }) {
 
   return (
     <AuthContext.Provider value={{ user, setUser }}>
-      {loading ? (
-        <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
-          Đang tải...
-        </div>
-      ) : (
+      {loading ? null : (
         children
       )}
     </AuthContext.Provider>

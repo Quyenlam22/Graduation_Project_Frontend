@@ -1,4 +1,4 @@
-import { get, patch, post } from "../utils/request";
+import { del, get, patch, post } from "../utils/request";
 
 export const login = async (options) => {
     const result = await post(options, `users/login`);
@@ -30,7 +30,17 @@ export const getAllUsers = async () => {
     return result;
 }
 
-export const createAdminAccount = async (options) => {
+export const createAdmin = async (options) => {
     const result = await post(options, `users/create-admin`);
+    return result;
+}
+
+export const updateUser = async (id, options) => {
+    const result = await patch(options, `users/update/${id}`);
+    return result;
+}
+
+export const deleteUser = async (id) => {
+    const result = await del(`users/delete/${id}`);
     return result;
 }

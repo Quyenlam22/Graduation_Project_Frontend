@@ -1,8 +1,6 @@
-import { useContext } from "react";
 import { Button, Card, Avatar, Typography, Flex, Divider, Row, Col } from "antd";
-import { PlayCircleFilled, CustomerServiceOutlined } from "@ant-design/icons";
+import { PlayCircleFilled } from "@ant-design/icons";
 import { Link } from "react-router-dom";
-import { AuthContext } from "../../../Context/AuthProvider";
 import useTitle from "../../../hooks/useTitle";
 import "./Home.scss"; // Đừng quên import file scss nhé
 import AlbumSection from "../../../components/Album/AlbumSection";
@@ -11,25 +9,10 @@ import PlaylistSection from "../../../components/Playlist/PlaylistSection";
 const { Title, Text } = Typography;
 
 function Home() {
-    const { user } = useContext(AuthContext);
     useTitle("Muzia");
-
-    if (!user) return (
-        <Flex justify="center" align="center" style={{ minHeight: '80vh' }}>
-            <Card className="glass-card" style={{ textAlign: "center", width: 400 }}>
-                <CustomerServiceOutlined style={{ fontSize: 48, color: '#1890ff', marginBottom: 20 }} />
-                <Title level={3} style={{ color: '#fff' }}>Welcome to Muzia</Title>
-                <Text type="secondary" style={{ display: 'block', marginBottom: 20 }}>
-                    Log in to discover and stream your favorite music flow.
-                </Text>
-                <Link to="/auth"><Button type="primary" size="large" block shape="round">Login Now</Button></Link>
-            </Card>
-        </Flex>
-    );
 
     return (
         <div className="home-container">
-
             {/* HERO SECTION */}
             <div className="hero-section">
                 <div className="featured-badge">Featured Artist</div>

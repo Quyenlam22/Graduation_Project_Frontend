@@ -30,7 +30,7 @@ function MenuSiderAdmin () {
         {
             key: '/admin/songs',
             icon: <GiLoveSong />,
-            label: <Link to={"/admin/songs"}>Songs</Link>,
+            label: <Link to={"/admin/songs"}>Song Management</Link>,
         },
         {
             key: '/admin/playlists',

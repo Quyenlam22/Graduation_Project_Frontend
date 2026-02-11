@@ -17,6 +17,7 @@ import PlaylistManagement from "../../pages/admin/Playlist";
 import ArtistManagement from "../../pages/admin/Artist";
 import SongManagement from "../../pages/admin/Song";
 import UserManagement from "../../pages/admin/User";
+import PrivateRouteClient from "../../components/PrivateRoute/client";
 
 const Home = lazy(() => import("../../pages/client/Home"));
 
@@ -42,13 +43,19 @@ export const privateRoutes = [
                 element: <Artist/>,
             },
             {
-                path: "/my-library",
-                element: <MyFavorite/>,
+                element: <PrivateRouteClient/>,
+                children:[
+                    {
+                        path: "/my-library",
+                        element: <MyFavorite/>,
+                    },
+                    {
+                        path: "/user-info",
+                        element: <UserInfo/>,
+                    },
+                ]
             },
-            {
-                path: "/user-info",
-                element: <UserInfo/>,
-            },
+            
             {
                 path: "*",
                 element: <Error404/>,

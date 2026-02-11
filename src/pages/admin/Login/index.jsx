@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { authWithEmail } from "../../../utils/authWithEmail";
 import { changeStatus, infoUser } from '../../../services/authService';
 import { AppContext } from '../../../Context/AppProvider';
+import { auth } from '../../../firebase/config';
 
 const LoginAdmin = () => {
   const [loginData, setLoginData] = useState({ email: '', password: '' });
@@ -38,10 +39,8 @@ const LoginAdmin = () => {
         
         // 5. Cập nhật trạng thái Online (Bây giờ đã có Token nên sẽ không lỗi 401)
         await changeStatus({ uid: firebaseUser.uid, state: "online" });
-
-        setTimeout(() => {
-          navigate("/admin/dashboard");
-        }, 500);
+        
+        navigate("/admin/dashboard"); 
       } else {
         await auth.signOut();
         localStorage.removeItem("accessToken");

@@ -48,26 +48,41 @@ function HeaderClient (props) {
                   </div>
               </div>
               <div className="header-client__nav-right">
-                  <div className="header-client__nav-right__notify">
-                      <Notice />
-                  </div>
-                  <div className="header-client__nav-right__auth">
-                    {
-                        user && user.photoURL ?
-                        <Image
-                            preview={false} 
-                            src={user.photoURL}
-                            className="user-info"
-                            onClick={() => {navigate("/user-info")}}
-                        /> :
-                        <Button 
-                            icon={<UserOutlined />} 
-                            className="user-info"
-                            onClick={() => {navigate("/user-info")}}
-                        />
-                    }
-                    <Button icon={<LogoutOutlined />} danger onClick={handleLogout}>Logout</Button>
-                  </div>
+                { user ? (
+                    <>
+                        <div className="header-client__nav-right__notify">
+                            <Notice />
+                        </div>
+                        <div className="header-client__nav-right__auth">
+                            {
+                                user && user.photoURL ?
+                                <Image
+                                    preview={false} 
+                                    src={user.photoURL}
+                                    className="user-info"
+                                    onClick={() => {navigate("/user-info")}}
+                                /> :
+                                <Button 
+                                    icon={<UserOutlined />} 
+                                    className="user-info"
+                                    onClick={() => {navigate("/user-info")}}
+                                />
+                            }
+                            <Button icon={<LogoutOutlined />} danger onClick={handleLogout}>Logout</Button>
+                        </div>
+                    </>
+                    ) : (
+                        <div className="header-client__nav-right__guest">
+                            <Button 
+                                className="btn-signin"
+                                icon={<UserOutlined />} 
+                                onClick={() => navigate("/auth")}
+                            >
+                                Sign In
+                            </Button>
+                        </div>
+                    )
+                }
               </div>
           </div>
         </header>
