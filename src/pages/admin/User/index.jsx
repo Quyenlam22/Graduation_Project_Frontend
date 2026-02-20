@@ -8,10 +8,10 @@ import {
   GoogleOutlined, LockOutlined, PlusOutlined 
 } from '@ant-design/icons';
 import avatar from "../../../assets/images/avatar.jpg";
-import moment from 'moment';
 import CreateUser from '../../../components/User/CreateUser';
 import { deleteUser, getAllUsers } from '../../../services/authService';
 import { AppContext } from '../../../Context/AppProvider';
+import { formatDate } from '../../../utils/formatTime';
 
 const { Text, Title } = Typography;
 
@@ -52,7 +52,7 @@ function UserManagement() {
         setUsers(dataWithKey);
       }
     } catch (error) {
-      console.error("Lỗi fetch users:", error);
+      console.error("Error fetching users: ", error);
     } finally {
       setLoading(false);
     }
@@ -142,7 +142,7 @@ function UserManagement() {
       dataIndex: 'createdAt',
       key: 'createdAt',
       responsive: ['lg'],
-      render: (date) => moment(date).format('DD/MM/YYYY'),
+      render: (date) => formatDate(date, 'DD/MM/YYYY'),
     },
     {
       title: 'Action',
@@ -151,14 +151,14 @@ function UserManagement() {
       width: 120,
       render: (_, record) => (
         <Space size="middle">
-          <Tooltip title="Edit User">
+          <Tooltip title="Edit">
             <Button 
               type="text" 
               icon={<EditOutlined />} 
               onClick={() => handleEdit(record)} // Gọi hàm handleEdit
             />
           </Tooltip>
-          <Tooltip title="Delete User">
+          <Tooltip title="Delete">
             <Popconfirm
               title="Delete the user"
               description={`Are you sure to delete ${record.displayName}?`}
