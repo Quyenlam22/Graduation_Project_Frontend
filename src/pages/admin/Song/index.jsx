@@ -19,6 +19,7 @@ function SongManagement() {
   const [editingSong, setEditingSong] = useState(null); // State quản lý bài hát đang sửa
   const [songs, setSongs] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [pageSize, setPageSize] = useState(6); // Mặc định là 6 như ảnh của bạn
 
   const { messageApi } = useContext(AppContext);
 
@@ -201,7 +202,18 @@ function SongManagement() {
         columns={columns} 
         dataSource={songs} 
         scroll={{ x: 1000 }} 
-        pagination={{ pageSize: 6 }}
+        pagination={{ 
+          current: 1, // Trang hiện tại
+          pageSize: pageSize, // Số dòng trên mỗi trang
+          pageSizeOptions: ['6', '8', '10', '15', '20'], // Các lựa chọn cho người dùng
+          showSizeChanger: true, // Hiển thị cái dropdown "6 / page"
+          onShowSizeChange: (current, size) => {
+            setPageSize(size); // Cập nhật lại state khi người dùng chọn số khác
+          },
+          onChange: (page) => {
+            console.log("Switch to page: ", page);
+          }
+        }}
         bordered
       />
 

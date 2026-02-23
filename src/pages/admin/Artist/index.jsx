@@ -19,6 +19,7 @@ function ArtistManagement() {
   const [editingArtist, setEditingArtist] = useState(null);
   const [artists, setArtists] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [pageSize, setPageSize] = useState(6); // Mặc định là 6 như ảnh của bạn
 
   const { messageApi } = useContext(AppContext);
 
@@ -164,8 +165,18 @@ function ArtistManagement() {
         columns={columns} 
         dataSource={artists} 
         bordered
-        pagination={{ pageSize: 6 }}
-        // Thêm scroll để table linh hoạt hơn trên màn hình nhỏ
+        pagination={{ 
+          current: 1, // Trang hiện tại
+          pageSize: pageSize, // Số dòng trên mỗi trang
+          pageSizeOptions: ['6', '8', '10', '15', '20'], // Các lựa chọn cho người dùng
+          showSizeChanger: true, // Hiển thị cái dropdown "6 / page"
+          onShowSizeChange: (current, size) => {
+            setPageSize(size); // Cập nhật lại state khi người dùng chọn số khác
+          },
+          onChange: (page) => {
+            console.log("Switch to page: ", page);
+          }
+        }}
         scroll={{ x: 800 }} 
       />
 
