@@ -115,3 +115,154 @@
     }
   }
 }
+
+/* ================= RESPONSIVE - MY LIBRARY ================= */
+
+/* Tablet <= 992px */
+@media (max-width: 992px) {
+  .favorite {
+
+    &__title {
+      font-size: 36px;
+    }
+
+    .playlist-hero {
+      .playlist-left {
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+      }
+
+      .playlist-avatar {
+        width: 220px;
+        height: 220px;
+      }
+
+      .playlist-info-text {
+        margin-top: 20px;
+        align-items: center !important;
+      }
+    }
+
+    .playlist-tracks {
+
+      .tracklist-header {
+        display: none; /* Ẩn header bảng cho gọn */
+      }
+
+      .track-item {
+        padding: 12px 0;
+
+        .ant-row {
+          flex-wrap: nowrap;
+        }
+
+        .ant-col:nth-child(1),
+        .ant-col:nth-child(3) {
+          display: none; /* Ẩn index + time add */
+        }
+
+        .ant-col:nth-child(2) {
+          flex: 1 1 auto;
+          max-width: 100%;
+        }
+
+        .ant-col:nth-child(4) {
+          gap: 12px !important;
+        }
+      }
+    }
+  }
+}
+
+
+/* Mobile <= 768px */
+@media (max-width: 768px) {
+  .favorite {
+    padding: 10px 0;
+
+    &__title {
+      font-size: 28px;
+      gap: 10px;
+    }
+
+    &__play-icon {
+      font-size: 28px;
+    }
+
+    &__actions {
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-bottom: 30px;
+    }
+
+    .ant-tabs {
+      .ant-tabs-tab {
+        margin-right: 20px;
+        font-size: 12px;
+      }
+    }
+
+    .playlist-hero {
+      .playlist-avatar {
+        width: 180px;
+        height: 180px;
+      }
+
+      .btn-play-all {
+        width: 100%;
+      }
+
+      .btn-action {
+        display: none; /* Ẩn nút more trên mobile cho gọn */
+      }
+    }
+
+    .track-item {
+
+      .track-meta {
+        .song-name {
+          font-size: 14px;
+        }
+
+        .artist-name {
+          font-size: 12px;
+          color: #9CA3A1;
+        }
+      }
+
+      .track-duration {
+        display: none; /* Ẩn duration cho đỡ chật */
+      }
+    }
+  }
+}
+
+
+/* Small Mobile <= 480px */
+@media (max-width: 480px) {
+  .favorite {
+
+    &__title {
+      font-size: 22px;
+    }
+
+    .favorite__empty {
+      min-height: 220px;
+      text-align: center;
+
+      &-text {
+        font-size: 14px;
+        text-align: center;
+        padding: 0 10px;
+      }
+    }
+
+    .playlist-hero {
+      .playlist-avatar {
+        width: 150px;
+        height: 150px;
+      }
+    }
+  }
+}

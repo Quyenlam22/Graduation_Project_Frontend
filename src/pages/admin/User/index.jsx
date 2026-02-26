@@ -12,6 +12,7 @@ import CreateUser from '../../../components/User/CreateUser';
 import { deleteUser, getAllUsers } from '../../../services/authService';
 import { AppContext } from '../../../Context/AppProvider';
 import { formatDate } from '../../../utils/formatTime';
+import { paginate } from '../../../utils/paginate';
 
 const { Text, Title } = Typography;
 
@@ -19,10 +20,14 @@ function UserManagement() {
   const [isModalOpen, setIsModalOpen] = useState(false); // Quản lý trạng thái Modal
   // const [form] = Form.useForm(); // Quản lý dữ liệu từ Form
   const [editingUser, setEditingUser] = useState(null);
-  const [pageSize, setPageSize] = useState(6); // Mặc định là 6 như ảnh của bạn
+  const [pageSize, setPageSize] = useState(6);
+  const [currentPage, setCurrentPage] = useState(1);
 
   const [users, setUsers] = useState([]);
   const [loading, setLoading] = useState(true);
+
+  const paginationData = paginate(users, currentPage, pageSize);
+  const currentDisplayData = paginationData.currentItems;
 
   const { messageApi } = useContext(AppContext);
 
@@ -200,20 +205,22 @@ function UserManagement() {
         loading={loading}
         columns={columns} 
         dataSource={users} 
-        scroll={{ x: 800 }} 
+        bordered
+        scroll={{ x: 1000 }}
         pagination={{ 
-          current: 1, // Trang hiện tại
-          pageSize: pageSize, // Số dòng trên mỗi trang
-          pageSizeOptions: ['6', '8', '10', '15', '20'], // Các lựa chọn cho người dùng
-          showSizeChanger: true, // Hiển thị cái dropdown "6 / page"
+          current: currentPage,
+          pageSize: pageSize,
+          total: users.length, 
+          pageSizeOptions: ['6', '8', '10', '15', '20'], 
+          showSizeChanger: true, 
           onShowSizeChange: (current, size) => {
-            setPageSize(size); // Cập nhật lại state khi người dùng chọn số khác
+            setPageSize(size);
+            setCurrentPage(1);
           },
           onChange: (page) => {
-            console.log("Switch to page: ", page);
+            setCurrentPage(page);
           }
         }}
-        bordered
       />
     </div>
   );

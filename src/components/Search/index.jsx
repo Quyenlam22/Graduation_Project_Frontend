@@ -31,8 +31,7 @@ function Search() {
         onFocus={() => setIsFocus(true)}
         className="custom-search-input"
         style={{ 
-          borderRadius: '20px', 
-          width: '400px',
+          borderRadius: '20px',
           backgroundColor: '#2F2739',
           border: 'none',
           color: "#fff",

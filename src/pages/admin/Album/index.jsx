@@ -11,6 +11,7 @@ import { formatDate } from '../../../utils/formatTime';
 import CreateAlbum from '../../../components/Album/CreateAlbum';
 // --- IMPORT SERVICE THẬT ---
 import { deleteAlbums, getAllAlbums } from '../../../services/albumService';
+import { paginate } from '../../../utils/paginate';
 
 const { Text, Title } = Typography;
 
@@ -19,7 +20,11 @@ function AlbumManagement() {
   const [editingAlbum, setEditingAlbum] = useState(null);
   const [albums, setAlbums] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [pageSize, setPageSize] = useState(6); // Mặc định là 6 như ảnh của bạn
+  const [pageSize, setPageSize] = useState(6);
+  const [currentPage, setCurrentPage] = useState(1);
+  
+  const paginationData = paginate(albums, currentPage, pageSize);
+  const currentDisplayData = paginationData.currentItems;
 
   const { messageApi } = useContext(AppContext);
 
@@ -168,17 +173,19 @@ function AlbumManagement() {
         columns={columns} 
         dataSource={albums} 
         bordered
-        scroll={{ x: 900 }}
+        scroll={{ x: 1000 }}
         pagination={{ 
-          current: 1, // Trang hiện tại
-          pageSize: pageSize, // Số dòng trên mỗi trang
-          pageSizeOptions: ['6', '8', '10', '15', '20'], // Các lựa chọn cho người dùng
-          showSizeChanger: true, // Hiển thị cái dropdown "6 / page"
+          current: currentPage,
+          pageSize: pageSize,
+          total: albums.length, 
+          pageSizeOptions: ['6', '8', '10', '15', '20'], 
+          showSizeChanger: true, 
           onShowSizeChange: (current, size) => {
-            setPageSize(size); // Cập nhật lại state khi người dùng chọn số khác
+            setPageSize(size);
+            setCurrentPage(1);
           },
           onChange: (page) => {
-            console.log("Switch to page: ", page);
+            setCurrentPage(page);
           }
         }}
       />

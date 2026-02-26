@@ -46,6 +46,7 @@
         display: flex;
         align-items: center;
         justify-content: space-between;
+        flex-wrap: nowrap;
     }
 
     &__nav-left {
@@ -58,6 +59,7 @@
         display: inline-flex;
         align-items: center;
         font-size: 20px;
+        flex-shrink: 0;
 
         &__auth {
             .user-info {

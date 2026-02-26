@@ -1,8 +1,11 @@
 .search-wrapper {
   position: relative; // Tạo mỏ neo cho Preview tuyệt đối
   z-index: 10001; // Cao hơn Content và các nút Play bên dưới
+  width: clamp(80px, 40vw, 400px);
 
   .custom-search-input {
+    width: 100%;
+
     input {
       background-color: transparent !important;
       color: #fff !important;

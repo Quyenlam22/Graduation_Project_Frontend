@@ -1,9 +1,10 @@
-import { Button, Image, Input } from "antd";
+import { Button, Image } from "antd";
+import { useEffect, useState, useContext } from 'react';
 import Notice from "../../components/Notice";
 import { LogoutOutlined, MenuFoldOutlined, MenuUnfoldOutlined, UserOutlined } from '@ant-design/icons'
 import logo from "../../assets/images/logo.png";
-import { useContext } from "react";
 import { AuthContext } from "../../Context/AuthProvider";
+import { AppContext } from "../../Context/AppProvider";
 import { changeStatus } from "../../services/authService";
 import { signOut } from "firebase/auth";
 import { useNavigate } from "react-router";
@@ -14,6 +15,17 @@ function HeaderClient (props) {
   const { setCollapse, collapse } = props;
   const { user } = useContext(AuthContext);
   const navigate = useNavigate();
+  const { messageApi } = useContext(AppContext);
+  const [isMobile, setIsMobile] = useState(window.innerWidth < 560);
+
+  useEffect(() => {
+    const handleResize = () => {
+      setIsMobile(window.innerWidth < 560);
+    };
+
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
 
   const handleLogout = async () => {
         if (user?.uid) {
@@ -24,7 +36,8 @@ function HeaderClient (props) {
         }
         localStorage.removeItem("accessToken");
         await signOut(auth);
-        navigate("/auth");
+        messageApi.success("Logout successfully!")
+        navigate("/");
     };
     
   return (
@@ -68,7 +81,7 @@ function HeaderClient (props) {
                                     onClick={() => {navigate("/user-info")}}
                                 />
                             }
-                            <Button icon={<LogoutOutlined />} danger onClick={handleLogout}>Logout</Button>
+                            <Button icon={<LogoutOutlined />} danger onClick={handleLogout}>{!isMobile && "Logout"}</Button>
                         </div>
                     </>
                     ) : (
