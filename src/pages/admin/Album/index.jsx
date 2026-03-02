@@ -1,7 +1,7 @@
-import { useContext, useEffect, useState } from 'react';
+import { useContext, useEffect, useState, useMemo } from 'react';
 import { 
   Table, Space, Button, Tooltip, Typography, Badge,
-  Popconfirm, Image
+  Popconfirm, Image, Empty 
 } from 'antd';
 import { 
   EditOutlined, DeleteOutlined, PlusOutlined, HeartOutlined, AudioOutlined, UserOutlined 
@@ -9,9 +9,9 @@ import {
 import { AppContext } from '../../../Context/AppProvider';
 import { formatDate } from '../../../utils/formatTime';
 import CreateAlbum from '../../../components/Album/CreateAlbum';
-// --- IMPORT SERVICE THẬT ---
 import { deleteAlbums, getAllAlbums } from '../../../services/albumService';
 import { paginate } from '../../../utils/paginate';
+import FilterBar from '../../../components/Search/FilterBar';
 
 const { Text, Title } = Typography;
 
@@ -23,18 +23,16 @@ function AlbumManagement() {
   const [pageSize, setPageSize] = useState(6);
   const [currentPage, setCurrentPage] = useState(1);
   
-  const paginationData = paginate(albums, currentPage, pageSize);
-  const currentDisplayData = paginationData.currentItems;
+  // --- STATE DÀNH CHO BỘ LỌC ---
+  const [filters, setFilters] = useState({ keyword: '', status: undefined });
 
   const { messageApi } = useContext(AppContext);
 
-  // --- LẤY DATA THẬT TỪ BACKEND ---
   const fetchAlbums = async () => {
     setLoading(true);
     try {
       const response = await getAllAlbums();
       if (response.success) {
-        // Thêm key cho Ant Design Table từ _id của MongoDB
         const dataWithKey = response.data.map(item => ({
           ...item,
           key: item._id
@@ -53,24 +51,45 @@ function AlbumManagement() {
     fetchAlbums();
   }, []);
 
+  // --- LOGIC FILTER DÀNH CHO ALBUM ---
+  const filteredData = useMemo(() => {
+    return albums.filter(album => {
+      const kw = filters.keyword.toLowerCase();
+      // Khớp theo tiêu đề album, tên nghệ sĩ hoặc deezerId (nếu có)
+      const matchKeyword = !kw || 
+        album.title?.toLowerCase().includes(kw) ||
+        album.artistName?.toLowerCase().includes(kw);
+
+      const matchStatus = !filters.status || album.status === filters.status;
+
+      return matchKeyword && matchStatus;
+    });
+  }, [albums, filters]);
+
+  // --- PHÂN TRANG DỰA TRÊN DATA ĐÃ FILTER ---
+  const paginationData = paginate(filteredData, currentPage, pageSize);
+  const currentDisplayData = paginationData.currentItems;
+
+  const handleFilterChange = (newFilters) => {
+    setFilters(newFilters);
+    setCurrentPage(1); // Reset về trang 1 khi lọc
+  };
+
   const handleEdit = (record) => {
     setEditingAlbum(record);
     setIsModalOpen(true);
   };
 
-  // --- XÓA DATA THẬT ---
   const handleDelete = async (id) => {
     try {
       setLoading(true);
       const response = await deleteAlbums(id);
       if (response.success) {
         messageApi.success(response.message || "Album successfully deleted.");
-        fetchAlbums(); // Load lại danh sách mới nhất
-      } else {
-        messageApi.error(response.message || "Erase failure");
+        fetchAlbums();
       }
     } catch (error) {
-      messageApi.error(error.response?.data?.message || "Error when deleting album");
+      messageApi.error("Error when deleting album");
     } finally {
       setLoading(false);
     }
@@ -79,7 +98,6 @@ function AlbumManagement() {
   const columns = [
     {
       title: 'Album Details',
-      dataIndex: 'title',
       key: 'album',
       fixed: 'left',
       render: (_, record) => (
@@ -102,6 +120,7 @@ function AlbumManagement() {
     {
       title: 'Stats',
       key: 'stats',
+      sorter: (a, b) => (a.nb_tracks || 0) - (b.nb_tracks || 0),
       render: (_, record) => (
         <div style={{ fontSize: '12px' }}>
           <div><AudioOutlined /> {record.nb_tracks || 0} Tracks</div>
@@ -125,6 +144,7 @@ function AlbumManagement() {
       dataIndex: 'createdAt',
       key: 'createdAt',
       responsive: ['lg'],
+      sorter: (a, b) => new Date(a.createdAt) - new Date(b.createdAt),
       render: (date) => formatDate(date, 'DD/MM/YYYY'),
     },
     {
@@ -139,10 +159,7 @@ function AlbumManagement() {
           </Tooltip>
           <Popconfirm
             title="Delete album?"
-            description={`Are you sure you want to delete the album ${record.title}?`}
             onConfirm={() => handleDelete(record._id)}
-            okText="Delete"
-            cancelText="Cancel"
             okButtonProps={{ danger: true }}
           >
             <Button type="text" danger icon={<DeleteOutlined />} />
@@ -167,20 +184,25 @@ function AlbumManagement() {
           Add New Album
         </Button>
       </div>
+
+      <FilterBar 
+        onFilterChange={handleFilterChange} 
+      />
       
       <Table 
         loading={loading}
         columns={columns} 
-        dataSource={albums} 
+        dataSource={currentDisplayData} 
         bordered
         scroll={{ x: 1000 }}
+        locale={{ emptyText: <Empty description="No albums found." /> }}
         pagination={{ 
           current: currentPage,
           pageSize: pageSize,
-          total: albums.length, 
+          total: filteredData.length, // Cập nhật dựa trên data đã lọc
           pageSizeOptions: ['6', '8', '10', '15', '20'], 
           showSizeChanger: true, 
-          onShowSizeChange: (current, size) => {
+          onShowSizeChange: (_, size) => {
             setPageSize(size);
             setCurrentPage(1);
           },

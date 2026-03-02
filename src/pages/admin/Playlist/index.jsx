@@ -1,8 +1,7 @@
-import { useContext, useEffect, useState } from 'react';
+import { useContext, useEffect, useState, useMemo } from 'react';
 import { 
   Table, Space, Button, Tooltip, Typography, Badge,
-  Popconfirm, Image, 
-  Tag
+  Popconfirm, Image, Tag, Empty
 } from 'antd';
 import { 
   EditOutlined, DeleteOutlined, PlusOutlined, 
@@ -13,6 +12,7 @@ import { formatDate } from '../../../utils/formatTime';
 import CreatePlaylist from '../../../components/Playlist/CreatePlaylist';
 import { deletePlaylists, getAllPlaylists } from '../../../services/playlistService';
 import { paginate } from '../../../utils/paginate';
+import FilterBar from '../../../components/Search/FilterBar';
 
 const { Text, Title } = Typography;
 
@@ -23,9 +23,9 @@ function PlaylistManagement() {
   const [loading, setLoading] = useState(true);
   const [pageSize, setPageSize] = useState(6);
   const [currentPage, setCurrentPage] = useState(1);
-
-  const paginationData = paginate(playlists, currentPage, pageSize);
-  const currentDisplayData = paginationData.currentItems;
+  
+  // --- STATE DÀNH CHO BỘ LỌC ---
+  const [filters, setFilters] = useState({ keyword: '', status: undefined });
 
   const { messageApi } = useContext(AppContext);
 
@@ -47,6 +47,31 @@ function PlaylistManagement() {
     fetchPlaylists();
   }, []);
 
+  // --- LOGIC FILTER ĐA TRƯỜNG CHO PLAYLIST ---
+  const filteredData = useMemo(() => {
+    return playlists.filter(playlist => {
+      const kw = filters.keyword.toLowerCase();
+      // Tìm theo tiêu đề hoặc mô tả của playlist
+      const matchKeyword = !kw || 
+        playlist.title?.toLowerCase().includes(kw) ||
+        playlist.description?.toLowerCase().includes(kw);
+
+      // Lọc theo trạng thái (active/inactive)
+      const matchStatus = !filters.status || playlist.status === filters.status;
+
+      return matchKeyword && matchStatus;
+    });
+  }, [playlists, filters]);
+
+  // --- KẾT HỢP PHÂN TRANG ---
+  const paginationData = paginate(filteredData, currentPage, pageSize);
+  const currentDisplayData = paginationData.currentItems;
+
+  const handleFilterChange = (newFilters) => {
+    setFilters(newFilters);
+    setCurrentPage(1); // Reset về trang 1 khi thực hiện tìm kiếm
+  };
+
   const handleEdit = (record) => {
     setEditingPlaylist(record);
     setIsModalOpen(true);
@@ -54,6 +79,7 @@ function PlaylistManagement() {
 
   const handleDelete = async (id) => {
     try {
+      setLoading(true);
       const response = await deletePlaylists(id);
       if (response.success) {
         messageApi.success(response.message);
@@ -62,7 +88,7 @@ function PlaylistManagement() {
         messageApi.error(response.message || "Erase failure!");
       }
     } catch (error) {
-      messageApi.error(error.response?.data?.message || "Error when deleting artist!");
+      messageApi.error("Error when deleting playlist!");
     } finally {
       setLoading(false);
     }
@@ -71,7 +97,6 @@ function PlaylistManagement() {
   const columns = [
     {
       title: 'Playlist Details',
-      dataIndex: 'title',
       key: 'playlist',
       fixed: 'left',
       width: 300,
@@ -109,6 +134,7 @@ function PlaylistManagement() {
     {
       title: 'Songs',
       key: 'songs',
+      sorter: (a, b) => (a.songs?.length || 0) - (b.songs?.length || 0),
       render: (_, record) => (
         <Space>
           <CustomerServiceOutlined />
@@ -123,7 +149,7 @@ function PlaylistManagement() {
       render: (status) => (
         <Badge 
           status={status === 'active' ? 'success' : 'error'} 
-          text={status.toUpperCase()} 
+          text={status ? status.toUpperCase() : 'N/A'} 
         />
       ),
     },
@@ -132,6 +158,7 @@ function PlaylistManagement() {
       dataIndex: 'createdAt',
       key: 'createdAt',
       responsive: ['lg'],
+      sorter: (a, b) => new Date(a.createdAt) - new Date(b.createdAt),
       render: (date) => formatDate(date, 'DD/MM/YYYY'),
     },
     {
@@ -144,18 +171,16 @@ function PlaylistManagement() {
           <Tooltip title="Edit">
             <Button type="text" icon={<EditOutlined />} onClick={() => handleEdit(record)} />
           </Tooltip>
-          <Tooltip title="Delete">
-            <Popconfirm
-              title="Delete Playlist?"
-              description={`The song data inside will not be deleted.`}
-              onConfirm={() => handleDelete(record._id)}
-              okText="Delete"
-              cancelText="Cancel"
-              okButtonProps={{ danger: true }}
-            >
-              <Button type="text" danger icon={<DeleteOutlined />} />
-            </Popconfirm>
-          </Tooltip>
+          <Popconfirm
+            title="Delete Playlist?"
+            description="The song data inside will not be deleted."
+            onConfirm={() => handleDelete(record._id)}
+            okText="Delete"
+            cancelText="Cancel"
+            okButtonProps={{ danger: true }}
+          >
+            <Button type="text" danger icon={<DeleteOutlined />} />
+          </Popconfirm>
         </Space>
       ),
     },
@@ -176,6 +201,11 @@ function PlaylistManagement() {
           Add New Playlist
         </Button>
       </div>
+
+      {/* TÁI SỬ DỤNG FILTERBAR GERIC */}
+      <FilterBar 
+        onFilterChange={handleFilterChange} 
+      />
       
       <Table 
         loading={loading}
@@ -183,13 +213,14 @@ function PlaylistManagement() {
         dataSource={currentDisplayData} 
         bordered
         scroll={{ x: 1000 }}
+        locale={{ emptyText: <Empty description="No playlists found." /> }}
         pagination={{ 
           current: currentPage,
           pageSize: pageSize,
-          total: playlists.length, 
+          total: filteredData.length, 
           pageSizeOptions: ['6', '8', '10', '15', '20'], 
           showSizeChanger: true, 
-          onShowSizeChange: (current, size) => {
+          onShowSizeChange: (_, size) => {
             setPageSize(size);
             setCurrentPage(1);
           },

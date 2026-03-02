@@ -1,7 +1,7 @@
-import { useContext, useEffect, useState } from 'react';
+import { useContext, useEffect, useState, useMemo } from 'react';
 import { 
   Table, Avatar, Space, Button, Tooltip, Typography, Badge,
-  Popconfirm
+  Popconfirm, Empty
 } from 'antd';
 import { 
   EditOutlined, DeleteOutlined, PlusOutlined, 
@@ -12,6 +12,7 @@ import { formatDate } from '../../../utils/formatTime';
 import CreateArtist from '../../../components/Artist/CreateArtist';
 import { deleteArtists, getAllArtists } from '../../../services/artistService';
 import { paginate } from '../../../utils/paginate';
+import FilterBar from '../../../components/Search/FilterBar';
 
 const { Text, Title } = Typography;
 
@@ -23,18 +24,17 @@ function ArtistManagement() {
   const [pageSize, setPageSize] = useState(6);
   const [currentPage, setCurrentPage] = useState(1);
 
-  const paginationData = paginate(artists, currentPage, pageSize);
-  const currentDisplayData = paginationData.currentItems;
+  // --- STATE CHO BỘ LỌC ---
+  const [filters, setFilters] = useState({ keyword: '', status: undefined });
 
   const { messageApi } = useContext(AppContext);
 
-  // --- LẤY DATA THẬT TỪ BACKEND ---
+  // --- LẤY DATA TỪ BACKEND ---
   const fetchArtists = async () => {
     setLoading(true);
     try {
       const response = await getAllArtists();
       if (response.success) {
-        // Map dữ liệu và thêm key cho Ant Design Table
         const dataWithKey = response.data.map(item => ({
           ...item,
           key: item._id
@@ -53,24 +53,44 @@ function ArtistManagement() {
     fetchArtists();
   }, []);
 
+  // --- LOGIC FILTER NGHỆ SĨ ---
+  const filteredData = useMemo(() => {
+    return artists.filter(artist => {
+      const kw = filters.keyword.toLowerCase();
+      // Tìm theo tên nghệ sĩ
+      const matchKeyword = !kw || 
+        artist.name?.toLowerCase().includes(kw);
+
+      const matchStatus = !filters.status || artist.status === filters.status;
+
+      return matchKeyword && matchStatus;
+    });
+  }, [artists, filters]);
+
+  // --- PHÂN TRANG DỰA TRÊN DATA ĐÃ LỌC ---
+  const paginationData = paginate(filteredData, currentPage, pageSize);
+  const currentDisplayData = paginationData.currentItems;
+
+  const handleFilterChange = (newFilters) => {
+    setFilters(newFilters);
+    setCurrentPage(1); // Reset về trang 1 khi tìm kiếm
+  };
+
   const handleEdit = (record) => {
     setEditingArtist(record);
     setIsModalOpen(true);
   };
 
-  // --- XÓA DATA THẬT ---
   const handleDelete = async (id) => {
     try {
       setLoading(true);
       const response = await deleteArtists(id);
       if (response.success) {
         messageApi.success(response.message || "Artist successfully removed!");
-        fetchArtists(); // Load lại danh sách sau khi xóa
-      } else {
-        messageApi.error(response.message || "Erase failure!");
+        fetchArtists();
       }
     } catch (error) {
-      messageApi.error(error.response?.data?.message || "Error when deleting artist!");
+      messageApi.error("Error when deleting artist!");
     } finally {
       setLoading(false);
     }
@@ -79,12 +99,10 @@ function ArtistManagement() {
   const columns = [
     {
       title: 'Artist',
-      dataIndex: 'name',
       key: 'artist',
       fixed: 'left',
       render: (_, record) => (
         <Space>
-          {/* Avatar ưu tiên lấy từ backend, nếu không có hiện icon mặc định */}
           <Avatar src={record.avatar} size={50} icon={<UserOutlined />} />
           <div style={{ display: 'flex', flexDirection: 'column' }}>
             <Text strong>{record.name}</Text>
@@ -98,9 +116,10 @@ function ArtistManagement() {
     {
       title: 'Fans & Likes',
       key: 'stats',
+      // Sắp xếp dựa trên số lượng Fan (nb_fan)
+      sorter: (a, b) => (a.nb_fan || 0) - (b.nb_fan || 0),
       render: (_, record) => (
         <div style={{ fontSize: '12px' }}>
-          {/* fix nb_fan dùng toLocaleString() để ngăn lỗi nếu data null */}
           <div><TeamOutlined /> {(record.nb_fan || 0).toLocaleString()} Fans</div>
           <div><HeartOutlined /> {(record.like?.length || 0)} Followers</div>
         </div>
@@ -122,6 +141,7 @@ function ArtistManagement() {
       dataIndex: 'createdAt',
       key: 'createdAt',
       responsive: ['lg'],
+      sorter: (a, b) => new Date(a.createdAt) - new Date(b.createdAt),
       render: (date) => formatDate(date, 'DD/MM/YYYY'),
     },
     {
@@ -136,10 +156,9 @@ function ArtistManagement() {
           </Tooltip>
           <Popconfirm
             title="Remove the artist?"
-            description={`Are you sure you want to delete ${record.name}?`}
             onConfirm={() => handleDelete(record._id)}
-            okText="Xóa"
-            cancelText="Hủy"
+            okText="Delete"
+            cancelText="Cancel"
             okButtonProps={{ danger: true }}
           >
             <Button type="text" danger icon={<DeleteOutlined />} />
@@ -164,20 +183,26 @@ function ArtistManagement() {
           Add New Artist
         </Button>
       </div>
+
+      {/* TÁI SỬ DỤNG FILTERBAR */}
+      <FilterBar 
+        onFilterChange={handleFilterChange} 
+      />
       
       <Table 
         loading={loading}
         columns={columns} 
-        dataSource={artists} 
+        dataSource={currentDisplayData} 
         bordered
         scroll={{ x: 1000 }}
+        locale={{ emptyText: <Empty description="No artists found." /> }}
         pagination={{ 
           current: currentPage,
           pageSize: pageSize,
-          total: artists.length, 
+          total: filteredData.length, 
           pageSizeOptions: ['6', '8', '10', '15', '20'], 
           showSizeChanger: true, 
-          onShowSizeChange: (current, size) => {
+          onShowSizeChange: (_, size) => {
             setPageSize(size);
             setCurrentPage(1);
           },

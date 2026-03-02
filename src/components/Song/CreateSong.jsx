@@ -1,14 +1,15 @@
-import { Select, Modal, Form, Input, Upload, Button, Image, InputNumber, Row, Col } from 'antd';
+import { Select, Modal, Form, Input, Upload, Button, Image, InputNumber, Row, Col, Avatar, Space, Typography } from 'antd';
 import { useContext, useEffect, useState } from 'react';
-import { PlusOutlined, LinkOutlined } from '@ant-design/icons';
+import { PlusOutlined, LinkOutlined, UserOutlined, BookOutlined } from '@ant-design/icons';
 import { AppContext } from '../../Context/AppProvider';
-import { IoMusicalNotesOutline } from "react-icons/io5";
 
-// --- IMPORT REACT QUILL ---
 import ReactQuill from 'react-quill-new'; 
-// Giữ nguyên dòng CSS này (nó dùng chung định dạng của Quill):
 import 'react-quill-new/dist/quill.snow.css';
 import { createSong, updateSongs } from '../../services/songService';
+import { getAllArtists } from '../../services/artistService';
+import { getAllAlbums } from '../../services/albumService';
+
+const { Text } = Typography;
 
 function CreateSong(props) {
   const { isModalOpen, setIsModalOpen, onSuccess, data, onCancel } = props;
@@ -17,27 +18,49 @@ function CreateSong(props) {
   const [fileList, setFileList] = useState([]);
   const [previewImage, setPreviewImage] = useState('');
   const [previewOpen, setPreviewOpen] = useState(false);
+
+  const [artists, setArtists] = useState([]);
+  const [albums, setAlbums] = useState([]);
   
   const { messageApi } = useContext(AppContext);
   const isEdit = !!data;
 
-  // Cấu hình các nút công cụ giống Word cho Editor
   const modules = {
     toolbar: [
       [{ 'header': [1, 2, false] }],
-      ['bold', 'italic', 'underline', 'strike'], // định dạng chữ
-      [{ 'color': [] }, { 'background': [] }],          // màu chữ, màu nền
+      ['bold', 'italic', 'underline', 'strike'],
+      [{ 'color': [] }, { 'background': [] }],
       [{ 'list': 'ordered' }, { 'list': 'bullet' }],
-      ['clean']                                  // nút xóa định dạng
+      ['clean']
     ],
   };
 
   useEffect(() => {
+    const fetchSelectData = async () => {
+      try {
+        const [resArtists, resAlbums] = await Promise.all([
+          getAllArtists(),
+          getAllAlbums()
+        ]);
+        if (resArtists.success) setArtists(resArtists.data);
+        if (resAlbums.success) setAlbums(resAlbums.data);
+      } catch (error) {
+        console.error("Error fetching select data:", error);
+      }
+    };
+
     if (isModalOpen) {
+      fetchSelectData();
       if (data) {
+        // --- LOGIC SỬA LỖI HIỂN THỊ ID ---
         form.setFieldsValue({
           ...data,
+          // Nếu Backend trả về object, lấy _id. 
+          // Nếu không, giữ nguyên (Select sẽ khớp dựa trên _id của nghệ sĩ trong list)
+          artistId: data.artistId?._id || data.artistId, 
+          albumId: data.albumId?._id || data.albumId,
         });
+
         if (data.cover) {
           setFileList([{ uid: '-1', name: 'cover.png', status: 'done', url: data.cover }]);
         }
@@ -67,40 +90,40 @@ function CreateSong(props) {
       const values = await form.validateFields();
       setLoading(true);
 
-      // 1. Khởi tạo FormData để gửi cả Text và File
       const formData = new FormData();
       
       formData.append('title', values.title);
-      formData.append('artistName', values.artistName || '');
-      formData.append('albumName', values.albumName || '');
+      formData.append('status', values.status);
       formData.append('audio', values.audio);
       formData.append('lyrics', values.lyrics || '');
       formData.append('duration', values.duration || 0);
-      formData.append('status', values.status);
+      formData.append('artistId', values.artistId);
+      if (values.albumId) formData.append('albumId', values.albumId);
 
-      // 2. Kiểm tra và append file ảnh
+      // Tìm tên tương ứng để lưu (Denormalization)
+      const selectedArtist = artists.find(a => a._id === values.artistId);
+      const selectedAlbum = albums.find(a => a._id === values.albumId);
+      if (selectedArtist) formData.append('artistName', selectedArtist.name);
+      if (selectedAlbum) formData.append('albumName', selectedAlbum.title);
+
       if (fileList.length > 0 && fileList[0].originFileObj) {
         formData.append('cover', fileList[0].originFileObj);
       }
 
-      let response;
-      if (isEdit) {
-        response = await updateSongs(data._id, formData); // Bạn sẽ viết hàm này sau
-      } else {
-        response = await createSong(formData); 
-      }
+      let response = isEdit 
+        ? await updateSongs(data._id, formData) 
+        : await createSong(formData);
 
       if (response && response.success) {
         messageApi.success(response.message);
         handleCancel();
         if (onSuccess) onSuccess();
-      }
-      else {
+      } else {
         messageApi.error(response.message);
       }
     } catch (error) {
-      console.error("System error while creating song: ", error);
-      messageApi.error(error.response?.data?.message || "Operation failed!");
+      console.error("Operation failed: ", error);
+      messageApi.error("Operation failed!");
     } finally {
       setLoading(false);
     }
@@ -143,13 +166,40 @@ function CreateSong(props) {
 
           <Row gutter={16}>
             <Col span={12}>
-              <Form.Item name="artistName" label="Artist">
-                <Input prefix={<IoMusicalNotesOutline />} placeholder="Artist Name" />
+              <Form.Item name="artistId" label="Artist" rules={[{ required: true, message: 'Please select artist' }]}>
+                <Select 
+                  showSearch
+                  placeholder="Select Artist"
+                  optionFilterProp="label" // Cho phép tìm kiếm theo label
+                >
+                  {artists.map(artist => (
+                    <Select.Option key={artist._id} value={artist._id} label={artist.name}>
+                      <Space>
+                        <Avatar size="small" src={artist.avatar} icon={<UserOutlined />} />
+                        {artist.name}
+                      </Space>
+                    </Select.Option>
+                  ))}
+                </Select>
               </Form.Item>
             </Col>
             <Col span={12}>
-              <Form.Item name="albumName" label="Album">
-                <Input placeholder="Album Name" />
+              <Form.Item name="albumId" label="Album">
+                <Select 
+                  showSearch
+                  allowClear
+                  placeholder="Select Album (Optional)"
+                  optionFilterProp="label"
+                >
+                  {albums.map(album => (
+                    <Select.Option key={album._id} value={album._id} label={album.title}>
+                      <Space>
+                        <BookOutlined />
+                        {album.title}
+                      </Space>
+                    </Select.Option>
+                  ))}
+                </Select>
               </Form.Item>
             </Col>
           </Row>
@@ -158,7 +208,6 @@ function CreateSong(props) {
             <Input prefix={<LinkOutlined />} placeholder="https://link-audio-stream.mp3" />
           </Form.Item>
 
-          {/* SỬ DỤNG REACT QUILL CHO LYRICS */}
           <Form.Item name="lyrics" label="Lyric Song">
             <ReactQuill 
               theme="snow" 

@@ -34,7 +34,7 @@ function LayoutAdmin () {
     const login = [
         {
             key: "userinfo",
-            label: <NavLink to="user-info">Thông tin tài khoản</NavLink>
+            label: <NavLink to="user-info">Info User</NavLink>
         },
         {
             key: "logout",
