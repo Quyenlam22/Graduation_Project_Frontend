@@ -1,4 +1,4 @@
-import { useContext, useEffect, useState, useMemo } from 'react';
+import { useContext, useState, useMemo } from 'react';
 import { 
   Table, Space, Button, Tooltip, Typography, Badge,
   Popconfirm, Image, Tag, Empty
@@ -8,68 +8,43 @@ import {
   CustomerServiceOutlined, 
 } from '@ant-design/icons';
 import { AppContext } from '../../../Context/AppProvider';
+import { PlaylistContext } from '../../../Context/PlaylistContext'; // IMPORT PLAYLIST CONTEXT
 import { formatDate } from '../../../utils/formatTime';
 import CreatePlaylist from '../../../components/Playlist/CreatePlaylist';
-import { deletePlaylists, getAllPlaylists } from '../../../services/playlistService';
+import { deletePlaylists } from '../../../services/playlistService';
 import { paginate } from '../../../utils/paginate';
 import FilterBar from '../../../components/Search/FilterBar';
 
 const { Text, Title } = Typography;
 
 function PlaylistManagement() {
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const [editingPlaylist, setEditingPlaylist] = useState(null);
-  const [playlists, setPlaylists] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [pageSize, setPageSize] = useState(6);
-  const [currentPage, setCurrentPage] = useState(1);
-  
-  // --- STATE DÀNH CHO BỘ LỌC ---
-  const [filters, setFilters] = useState({ keyword: '', status: undefined });
-
+  const { playlists, loading, refreshPlaylists } = useContext(PlaylistContext);
   const { messageApi } = useContext(AppContext);
 
-  const fetchPlaylists = async () => {
-    setLoading(true);
-    try {
-      const response = await getAllPlaylists();
-      if (response.success) {
-        setPlaylists(response.data.map(pl => ({ ...pl, key: pl._id })));
-      }
-    } catch (error) {
-      messageApi.error("Error loading playlist!");
-    } finally {
-      setLoading(false);
-    }
-  };
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [editingPlaylist, setEditingPlaylist] = useState(null);
+  const [pageSize, setPageSize] = useState(6);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [filters, setFilters] = useState({ keyword: '', status: undefined });
 
-  useEffect(() => {
-    fetchPlaylists();
-  }, []);
-
-  // --- LOGIC FILTER ĐA TRƯỜNG CHO PLAYLIST ---
+  // --- LOGIC FILTER ĐA TRƯỜNG ---
   const filteredData = useMemo(() => {
     return playlists.filter(playlist => {
       const kw = filters.keyword.toLowerCase();
-      // Tìm theo tiêu đề hoặc mô tả của playlist
       const matchKeyword = !kw || 
         playlist.title?.toLowerCase().includes(kw) ||
         playlist.description?.toLowerCase().includes(kw);
-
-      // Lọc theo trạng thái (active/inactive)
       const matchStatus = !filters.status || playlist.status === filters.status;
-
       return matchKeyword && matchStatus;
     });
   }, [playlists, filters]);
 
-  // --- KẾT HỢP PHÂN TRANG ---
   const paginationData = paginate(filteredData, currentPage, pageSize);
   const currentDisplayData = paginationData.currentItems;
 
   const handleFilterChange = (newFilters) => {
     setFilters(newFilters);
-    setCurrentPage(1); // Reset về trang 1 khi thực hiện tìm kiếm
+    setCurrentPage(1);
   };
 
   const handleEdit = (record) => {
@@ -79,18 +54,13 @@ function PlaylistManagement() {
 
   const handleDelete = async (id) => {
     try {
-      setLoading(true);
       const response = await deletePlaylists(id);
       if (response.success) {
         messageApi.success(response.message);
-        fetchPlaylists();
-      } else {
-        messageApi.error(response.message || "Erase failure!");
+        refreshPlaylists(); // GỌI REFRESH TỪ CONTEXT
       }
     } catch (error) {
       messageApi.error("Error when deleting playlist!");
-    } finally {
-      setLoading(false);
     }
   };
 
@@ -102,19 +72,10 @@ function PlaylistManagement() {
       width: 300,
       render: (_, record) => (
         <Space align="start">
-          <Image 
-            src={record.avatar} 
-            width={50} height={50}
-            style={{ borderRadius: 4, objectFit: 'cover' }} 
-            fallback="https://via.placeholder.com/50"
-          />
+          <Image src={record.avatar} width={50} height={50} style={{ borderRadius: 4, objectFit: 'cover' }} fallback="https://via.placeholder.com/50" />
           <div style={{ display: 'flex', flexDirection: 'column', maxWidth: 220 }}>
             <Text strong>{record.title}</Text>
-            <Text 
-              type="secondary" 
-              style={{ fontSize: '12px', whiteSpace: 'normal', wordBreak: 'break-word' }}
-              ellipsis={{ rows: 2, tooltip: record.description }}
-            >
+            <Text type="secondary" style={{ fontSize: '12px', whiteSpace: 'normal', wordBreak: 'break-word' }} ellipsis={{ rows: 2, tooltip: record.description }}>
               {record.description || 'No description'}
             </Text>
           </div>
@@ -147,10 +108,7 @@ function PlaylistManagement() {
       dataIndex: 'status',
       key: 'status',
       render: (status) => (
-        <Badge 
-          status={status === 'active' ? 'success' : 'error'} 
-          text={status ? status.toUpperCase() : 'N/A'} 
-        />
+        <Badge status={status === 'active' ? 'success' : 'error'} text={status ? status.toUpperCase() : 'N/A'} />
       ),
     },
     {
@@ -168,17 +126,8 @@ function PlaylistManagement() {
       width: 120,
       render: (_, record) => (
         <Space size="middle">
-          <Tooltip title="Edit">
-            <Button type="text" icon={<EditOutlined />} onClick={() => handleEdit(record)} />
-          </Tooltip>
-          <Popconfirm
-            title="Delete Playlist?"
-            description="The song data inside will not be deleted."
-            onConfirm={() => handleDelete(record._id)}
-            okText="Delete"
-            cancelText="Cancel"
-            okButtonProps={{ danger: true }}
-          >
+          <Tooltip title="Edit"><Button type="text" icon={<EditOutlined />} onClick={() => handleEdit(record)} /></Tooltip>
+          <Popconfirm title="Delete Playlist?" onConfirm={() => handleDelete(record._id)} okButtonProps={{ danger: true }}>
             <Button type="text" danger icon={<DeleteOutlined />} />
           </Popconfirm>
         </Space>
@@ -190,22 +139,12 @@ function PlaylistManagement() {
     <div className="playlist-management">
       <div style={{ marginBottom: 16, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
         <Title level={3} style={{ margin: 0 }}>Playlist Management</Title>
-        <Button 
-          type="primary" 
-          icon={<PlusOutlined />} 
-          onClick={() => {
-            setEditingPlaylist(null);
-            setIsModalOpen(true);
-          }}
-        >
+        <Button type="primary" icon={<PlusOutlined />} onClick={() => { setEditingPlaylist(null); setIsModalOpen(true); }}>
           Add New Playlist
         </Button>
       </div>
 
-      {/* TÁI SỬ DỤNG FILTERBAR GERIC */}
-      <FilterBar 
-        onFilterChange={handleFilterChange} 
-      />
+      <FilterBar onFilterChange={handleFilterChange} />
       
       <Table 
         loading={loading}
@@ -218,27 +157,16 @@ function PlaylistManagement() {
           current: currentPage,
           pageSize: pageSize,
           total: filteredData.length, 
-          pageSizeOptions: ['6', '8', '10', '15', '20'], 
-          showSizeChanger: true, 
-          onShowSizeChange: (_, size) => {
-            setPageSize(size);
-            setCurrentPage(1);
-          },
-          onChange: (page) => {
-            setCurrentPage(page);
-          }
+          onChange: (page, size) => { setCurrentPage(page); setPageSize(size); }
         }}
       />
 
       <CreatePlaylist 
         isModalOpen={isModalOpen} 
         setIsModalOpen={setIsModalOpen}
-        onSuccess={fetchPlaylists}
+        onSuccess={refreshPlaylists} // TRUYỀN HÀM REFRESH
         data={editingPlaylist}
-        onCancel={() => {
-          setIsModalOpen(false);
-          setEditingPlaylist(null);
-        }}
+        onCancel={() => { setIsModalOpen(false); setEditingPlaylist(null); }}
       />
     </div>
   );

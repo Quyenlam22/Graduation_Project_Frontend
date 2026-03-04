@@ -26,7 +26,7 @@ function CreateUser(props) {
         if (data.photoURL) {
           setFileList([{
             uid: '-1',
-            name: 'current_avatar.png',
+            name: 'avatar.png',
             status: 'done',
             url: data.photoURL,
           }]);
@@ -38,7 +38,6 @@ function CreateUser(props) {
     }
   }, [data, isModalOpen, form]);
 
-  // Hàm xử lý Preview ảnh
   const handlePreview = async (file) => {
     if (!file.url && !file.preview) {
       file.preview = await new Promise((resolve) => {
@@ -67,83 +66,91 @@ function CreateUser(props) {
         formData.append('password', values.password);
       }
 
-      // Chỉ append photoURL nếu là Edit và có file mới (originFileObj tồn tại)
       if (isEdit && fileList.length > 0 && fileList[0].originFileObj) {
         formData.append('photoURL', fileList[0].originFileObj);
       }
 
-      let response;
-      if (isEdit) {
-        response = await updateUser(data.uid, formData);
-      } else {
-        response = await createAdmin(values); // Create thường gửi JSON
-      }
+      let response = isEdit ? await updateUser(data.uid, formData) : await createAdmin(values);
 
       if (response && response.success) {
-        messageApi.success(response.message);
-        handleCancel();
-        if (onSuccess) onSuccess();
+        messageApi.success(response.message || "Operation successful");
+        handleClose();
+        if (onSuccess) onSuccess(); 
       }
     } catch (error) {
-       messageApi.error(error.response?.data?.message || "Operation failed!");
+      const errorMsg = error.response?.data?.message || "Operation failed!";
+      messageApi.error(errorMsg);
     } finally {
       setLoading(false);
     }
   };
 
-  const handleCancel = () => {
+  const handleClose = () => {
     form.resetFields();
     setFileList([]);
     setIsModalOpen(false);
+    if (onCancel) onCancel();
   };
 
   return (
     <>
       <Modal 
-        title={isEdit ? "Edit User Information" : "Add New Admin"} 
+        title={isEdit ? "Edit User Information" : "Create New Admin"} 
         open={isModalOpen} 
         onOk={handleOk} 
-        onCancel={onCancel}
+        onCancel={handleClose}
         confirmLoading={loading}
         okText={isEdit ? "Update" : "Create"}
+        cancelText="Cancel"
       >
         <Form form={form} layout="vertical">
-          <Form.Item name="displayName" label="Full Name" rules={[{ required: true }]}>
-            <Input />
+          <Form.Item 
+            name="displayName" 
+            label="Full Name" 
+            rules={[{ required: true, message: 'Please input full name!' }]}
+          >
+            <Input placeholder="John Doe" />
           </Form.Item>
 
-          <Form.Item name="email" label="Email" rules={[{ required: true, type: 'email' }]}>
-            <Input disabled={isEdit} />
+          <Form.Item 
+            name="email" 
+            label="Email Address" 
+            rules={[{ required: true, type: 'email', message: 'Please input a valid email!' }]}
+          >
+            <Input disabled={isEdit} placeholder="johndoe@example.com" />
           </Form.Item>
 
           {!isEdit && (
-            <Form.Item name="password" label="Password" rules={[{ required: true, min: 6 }]}>
-              <Input.Password />
+            <Form.Item 
+              name="password" 
+              label="Password" 
+              rules={[{ required: true, min: 6, message: 'Password must be at least 6 characters!' }]}
+            >
+              <Input.Password placeholder="******" />
             </Form.Item>
           )}
 
-          {/* CHỈ HIỂN THỊ UPLOAD KHI LÀ EDIT */}
           {isEdit && (
-            <Form.Item label="Profile Picture (Preview available)">
+            <Form.Item label="Profile Picture">
               <Upload
                 listType="picture-card"
                 fileList={fileList}
                 onPreview={handlePreview}
                 onChange={handleChange}
-                beforeUpload={() => false} // Chặn upload tự động
+                beforeUpload={() => false}
                 maxCount={1}
               >
                 {fileList.length >= 1 ? null : (
-                  <button style={{ border: 0, background: 'none', color: 'inherit' }} type="button">
+                  <div>
                     <PlusOutlined />
                     <div style={{ marginTop: 8 }}>Upload</div>
-                  </button>
+                  </div>
                 )}
               </Upload>
             </Form.Item>
           )}
 
-          <Form.Item name="role" label="Role" initialValue="admin">
+          <Form.Item name="role" label="Permission Role" initialValue="admin">
             <Select>
               <Select.Option value="admin">ADMIN</Select.Option>
               {isEdit && <Select.Option value="user">USER</Select.Option>}
@@ -152,7 +159,6 @@ function CreateUser(props) {
         </Form>
       </Modal>
 
-      {/* Modal để xem ảnh to khi click vào preview */}
       <Modal 
         open={previewOpen} 
         title="Image Preview" 

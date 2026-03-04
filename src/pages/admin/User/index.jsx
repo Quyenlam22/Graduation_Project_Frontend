@@ -1,4 +1,4 @@
-import { useContext, useEffect, useState, useMemo } from 'react';
+import { useContext, useState, useMemo } from 'react';
 import { 
   Table, Tag, Avatar, Space, Button, Tooltip, Typography, Badge,
   Popconfirm, Empty
@@ -7,10 +7,11 @@ import {
   EditOutlined, DeleteOutlined, UserOutlined, 
   GoogleOutlined, LockOutlined, PlusOutlined 
 } from '@ant-design/icons';
-import avatar from "../../../assets/images/avatar.jpg";
+import avatarDefault from "../../../assets/images/avatar.jpg";
 import CreateUser from '../../../components/User/CreateUser';
-import { deleteUser, getAllUsers } from '../../../services/authService';
+import { deleteUser } from '../../../services/authService';
 import { AppContext } from '../../../Context/AppProvider';
+import { UserContext } from '../../../Context/UserContext'; 
 import { formatDate } from '../../../utils/formatTime';
 import { paginate } from '../../../utils/paginate';
 import FilterBar from '../../../components/Search/FilterBar';
@@ -23,42 +24,16 @@ const userRoles = [
 ];
 
 function UserManagement() {
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const [editingUser, setEditingUser] = useState(null);
-  const [users, setUsers] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [pageSize, setPageSize] = useState(6);
-  const [currentPage, setCurrentPage] = useState(1);
-
-  // --- STATE DÀNH CHO BỘ LỌC ---
-  const [filters, setFilters] = useState({ keyword: '', status: undefined });
-
+  const { users, loading, refreshUsers } = useContext(UserContext);
   const { messageApi } = useContext(AppContext);
 
-  const fetchUsers = async () => {
-    setLoading(true);
-    try {
-      const response = await getAllUsers();
-      if (response.success) {
-        const dataWithKey = response.data.map(user => ({
-          ...user,
-          key: user._id
-        }));
-        setUsers(dataWithKey);
-      }
-    } catch (error) {
-      console.error("Error fetching users: ", error);
-      messageApi.error("Không thể tải danh sách người dùng.");
-    } finally {
-      setLoading(false);
-    }
-  };
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [editingUser, setEditingUser] = useState(null);
+  const [pageSize, setPageSize] = useState(6);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [filters, setFilters] = useState({ keyword: '', status: undefined });
 
-  useEffect(() => {
-    fetchUsers();
-  }, []);
-
-  // --- LOGIC SEARCH ĐA TRƯỜNG CHO USER ---
+  // LOGIC FILTERING
   const filteredData = useMemo(() => {
     return users.filter(user => {
       const kw = filters.keyword.toLowerCase();
@@ -66,20 +41,18 @@ function UserManagement() {
         user.displayName?.toLowerCase().includes(kw) ||
         user.email?.toLowerCase().includes(kw);
 
-      // Lọc theo Role (giá trị 'status' từ FilterBar trả về)
       const matchRole = !filters.status || user.role === filters.status;
-
       return matchKeyword && matchRole;
     });
   }, [users, filters]);
 
-  // --- KẾT HỢP PHÂN TRANG ---
+  // PAGINATION
   const paginationData = paginate(filteredData, currentPage, pageSize);
   const currentDisplayData = paginationData.currentItems;
 
   const handleFilterChange = (newFilters) => {
     setFilters(newFilters);
-    setCurrentPage(1); // Reset về trang 1 khi tìm kiếm
+    setCurrentPage(1);
   };
 
   const handleEdit = (record) => {
@@ -92,25 +65,15 @@ function UserManagement() {
     setIsModalOpen(true);
   };
 
-  const handleCancelModal = () => {
-    setIsModalOpen(false);
-    setEditingUser(null);
-  };
-
   const handleDelete = async (uid) => {
     try {
-      setLoading(true);
       const response = await deleteUser(uid);
       if (response && response.success) {
-        messageApi.success(response.message);
-        fetchUsers();
-      } else {
-        messageApi.error(response.message || "Xóa người dùng thất bại.");
+        messageApi.success(response.message || "User deleted successfully");
+        refreshUsers(); 
       }
     } catch (error) {
-      messageApi.error("Có lỗi xảy ra khi xóa.");
-    } finally {
-      setLoading(false);
+      messageApi.error("An error occurred while deleting the user.");
     }
   };
 
@@ -120,14 +83,15 @@ function UserManagement() {
       dataIndex: 'displayName',
       key: 'user',
       fixed: 'left',
+      sorter: (a, b) => (a.displayName || "").localeCompare(b.displayName || ""),
       render: (text, record) => (
         <Space>
-          <Avatar src={record.photoURL ? record.photoURL : avatar} icon={<UserOutlined />} />
+          <Avatar src={record.photoURL || avatarDefault} icon={<UserOutlined />} />
           <div style={{ display: 'flex', flexDirection: 'column' }}>
             <Text strong>{text || 'No Name'}</Text>
-            <Tooltip title={record.uid}>
-              <Text type="secondary" style={{ fontSize: '12px' }}>ID: {record.uid?.substring(0, 8)}...</Text>
-            </Tooltip>
+            <Text type="secondary" style={{ fontSize: '12px' }}>
+              ID: {record.uid?.substring(0, 8)}...
+            </Text>
           </div>
         </Space>
       ),
@@ -137,12 +101,13 @@ function UserManagement() {
       dataIndex: 'email',
       key: 'email',
       responsive: ['md'],
+      sorter: (a, b) => a.email.localeCompare(b.email),
     },
     {
       title: 'Provider',
       dataIndex: 'provider',
       key: 'provider',
-      width: 150,
+      width: 120,
       render: (provider) => (
         <Tag icon={provider === 'google' ? <GoogleOutlined /> : <LockOutlined />} color="default">
           {provider === 'google' ? 'Google' : 'Password'}
@@ -154,12 +119,8 @@ function UserManagement() {
       dataIndex: 'role',
       key: 'role',
       render: (role) => {
-        let color = role === 'admin' ? 'volcano' : role === 'mod' ? 'purple' : 'blue';
-        return (
-          <Tag color={color} key={role}>
-            {role?.toUpperCase()}
-          </Tag>
-        );
+        let color = role === 'admin' ? 'volcano' : 'blue';
+        return <Tag color={color}>{role?.toUpperCase()}</Tag>;
       },
     },
     {
@@ -167,7 +128,7 @@ function UserManagement() {
       dataIndex: 'state',
       key: 'state',
       render: (state) => (
-        <Badge status={state === 'online' ? 'success' : 'default'} text={state} />
+        <Badge status={state === 'online' ? 'success' : 'default'} text={state?.toUpperCase() || 'OFFLINE'} />
       ),
     },
     {
@@ -176,28 +137,28 @@ function UserManagement() {
       key: 'createdAt',
       responsive: ['lg'],
       sorter: (a, b) => new Date(a.createdAt) - new Date(b.createdAt),
-      render: (date) => formatDate(date, 'DD/MM/YYYY'),
+      render: (date) => formatDate(date, 'MM/DD/YYYY'),
     },
     {
       title: 'Action',
       key: 'action',
       fixed: 'right',
-      width: 120,
+      width: 100,
       render: (_, record) => (
         <Space size="middle">
           <Tooltip title="Edit">
             <Button type="text" icon={<EditOutlined />} onClick={() => handleEdit(record)} />
           </Tooltip>
-          <Tooltip title="Delete">
-            <Popconfirm
-              title="Delete the user"
-              description={`Are you sure to delete ${record.displayName}?`}
-              onConfirm={() => handleDelete(record.uid)}
-              okButtonProps={{ danger: true }}
-            >
-              <Button type="text" danger icon={<DeleteOutlined />} />
-            </Popconfirm>
-          </Tooltip>
+          <Popconfirm
+            title="Delete User"
+            description={`Are you sure you want to delete ${record.displayName}?`}
+            onConfirm={() => handleDelete(record.uid)}
+            okText="Yes"
+            cancelText="No"
+            okButtonProps={{ danger: true }}
+          >
+            <Button type="text" danger icon={<DeleteOutlined />} />
+          </Popconfirm>
         </Space>
       ),
     },
@@ -212,14 +173,10 @@ function UserManagement() {
         </Button>
       </div>
 
-      {/* SỬ DỤNG FILTERBAR DÙNG CHUNG */}
       <FilterBar 
         filterLabel="Role"
-        options={userRoles} // Truyền roles vào đây
-        onFilterChange={(val) => {
-          setFilters(val);
-          setCurrentPage(1);
-        }}
+        options={userRoles} 
+        onFilterChange={handleFilterChange}
       />
       
       <Table 
@@ -228,29 +185,23 @@ function UserManagement() {
         dataSource={currentDisplayData} 
         bordered
         scroll={{ x: 1000 }}
-        locale={{ emptyText: <Empty description="Không tìm thấy người dùng phù hợp" /> }}
+        locale={{ emptyText: <Empty description="No matching users found" /> }}
         pagination={{ 
           current: currentPage,
           pageSize: pageSize,
           total: filteredData.length, 
-          pageSizeOptions: ['6', '8', '10', '15', '20'], 
           showSizeChanger: true, 
-          onShowSizeChange: (_, size) => {
-            setPageSize(size);
-            setCurrentPage(1);
-          },
-          onChange: (page) => {
-            setCurrentPage(page);
-          }
+          onShowSizeChange: (_, size) => { setPageSize(size); setCurrentPage(1); },
+          onChange: (page) => setCurrentPage(page)
         }}
       />
 
       <CreateUser 
         isModalOpen={isModalOpen} 
         setIsModalOpen={setIsModalOpen}
-        onSuccess={fetchUsers}
+        onSuccess={refreshUsers} 
         data={editingUser} 
-        onCancel={handleCancelModal}
+        onCancel={() => { setIsModalOpen(false); setEditingUser(null); }}
       />
     </div>
   );

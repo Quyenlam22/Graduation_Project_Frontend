@@ -1,4 +1,4 @@
-import { useContext, useEffect, useState, useMemo } from 'react';
+import { useContext, useState, useMemo } from 'react';
 import { 
   Table, Space, Button, Tooltip, Typography, Badge,
   Popconfirm, Image, Empty 
@@ -7,72 +7,43 @@ import {
   EditOutlined, DeleteOutlined, PlusOutlined, HeartOutlined, AudioOutlined, UserOutlined 
 } from '@ant-design/icons';
 import { AppContext } from '../../../Context/AppProvider';
+import { AlbumContext } from '../../../Context/AlbumContext'; // IMPORT CONTEXT MỚI
 import { formatDate } from '../../../utils/formatTime';
 import CreateAlbum from '../../../components/Album/CreateAlbum';
-import { deleteAlbums, getAllAlbums } from '../../../services/albumService';
+import { deleteAlbums } from '../../../services/albumService';
 import { paginate } from '../../../utils/paginate';
 import FilterBar from '../../../components/Search/FilterBar';
 
 const { Text, Title } = Typography;
 
 function AlbumManagement() {
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const [editingAlbum, setEditingAlbum] = useState(null);
-  const [albums, setAlbums] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [pageSize, setPageSize] = useState(6);
-  const [currentPage, setCurrentPage] = useState(1);
-  
-  // --- STATE DÀNH CHO BỘ LỌC ---
-  const [filters, setFilters] = useState({ keyword: '', status: undefined });
-
+  const { albums, loading, refreshAlbums } = useContext(AlbumContext);
   const { messageApi } = useContext(AppContext);
 
-  const fetchAlbums = async () => {
-    setLoading(true);
-    try {
-      const response = await getAllAlbums();
-      if (response.success) {
-        const dataWithKey = response.data.map(item => ({
-          ...item,
-          key: item._id
-        }));
-        setAlbums(dataWithKey);
-      }
-    } catch (error) {
-      console.error("Fetch Albums Error:", error);
-      messageApi.error("Unable to load album list!");
-    } finally {
-      setLoading(false);
-    }
-  };
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [editingAlbum, setEditingAlbum] = useState(null);
+  const [pageSize, setPageSize] = useState(6);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [filters, setFilters] = useState({ keyword: '', status: undefined });
 
-  useEffect(() => {
-    fetchAlbums();
-  }, []);
-
-  // --- LOGIC FILTER DÀNH CHO ALBUM ---
+  // --- LOGIC FILTER ---
   const filteredData = useMemo(() => {
     return albums.filter(album => {
       const kw = filters.keyword.toLowerCase();
-      // Khớp theo tiêu đề album, tên nghệ sĩ hoặc deezerId (nếu có)
       const matchKeyword = !kw || 
         album.title?.toLowerCase().includes(kw) ||
         album.artistName?.toLowerCase().includes(kw);
-
       const matchStatus = !filters.status || album.status === filters.status;
-
       return matchKeyword && matchStatus;
     });
   }, [albums, filters]);
 
-  // --- PHÂN TRANG DỰA TRÊN DATA ĐÃ FILTER ---
   const paginationData = paginate(filteredData, currentPage, pageSize);
   const currentDisplayData = paginationData.currentItems;
 
   const handleFilterChange = (newFilters) => {
     setFilters(newFilters);
-    setCurrentPage(1); // Reset về trang 1 khi lọc
+    setCurrentPage(1);
   };
 
   const handleEdit = (record) => {
@@ -82,16 +53,13 @@ function AlbumManagement() {
 
   const handleDelete = async (id) => {
     try {
-      setLoading(true);
       const response = await deleteAlbums(id);
       if (response.success) {
-        messageApi.success(response.message || "Album successfully deleted.");
-        fetchAlbums();
+        messageApi.success(response.message || "Album deleted.");
+        refreshAlbums(); // GỌI REFRESH TỪ CONTEXT
       }
     } catch (error) {
       messageApi.error("Error when deleting album");
-    } finally {
-      setLoading(false);
     }
   };
 
@@ -104,7 +72,7 @@ function AlbumManagement() {
         <Space>
           <Image 
             src={record.avatar} 
-            width={50} 
+            width={50} height={50}
             style={{ borderRadius: 4, objectFit: 'cover' }} 
             fallback="https://via.placeholder.com/50"
           />
@@ -157,11 +125,7 @@ function AlbumManagement() {
           <Tooltip title="Edit">
             <Button type="text" icon={<EditOutlined />} onClick={() => handleEdit(record)} />
           </Tooltip>
-          <Popconfirm
-            title="Delete album?"
-            onConfirm={() => handleDelete(record._id)}
-            okButtonProps={{ danger: true }}
-          >
+          <Popconfirm title="Delete album?" onConfirm={() => handleDelete(record._id)} okButtonProps={{ danger: true }}>
             <Button type="text" danger icon={<DeleteOutlined />} />
           </Popconfirm>
         </Space>
@@ -173,21 +137,12 @@ function AlbumManagement() {
     <div className="album-management">
       <div style={{ marginBottom: 16, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
         <Title level={3} style={{ margin: 0 }}>Album Management</Title>
-        <Button 
-          type="primary" 
-          icon={<PlusOutlined />} 
-          onClick={() => {
-            setEditingAlbum(null);
-            setIsModalOpen(true);
-          }}
-        >
+        <Button type="primary" icon={<PlusOutlined />} onClick={() => { setEditingAlbum(null); setIsModalOpen(true); }}>
           Add New Album
         </Button>
       </div>
 
-      <FilterBar 
-        onFilterChange={handleFilterChange} 
-      />
+      <FilterBar onFilterChange={handleFilterChange} />
       
       <Table 
         loading={loading}
@@ -199,28 +154,17 @@ function AlbumManagement() {
         pagination={{ 
           current: currentPage,
           pageSize: pageSize,
-          total: filteredData.length, // Cập nhật dựa trên data đã lọc
-          pageSizeOptions: ['6', '8', '10', '15', '20'], 
-          showSizeChanger: true, 
-          onShowSizeChange: (_, size) => {
-            setPageSize(size);
-            setCurrentPage(1);
-          },
-          onChange: (page) => {
-            setCurrentPage(page);
-          }
+          total: filteredData.length,
+          onChange: (page, size) => { setCurrentPage(page); setPageSize(size); }
         }}
       />
 
       <CreateAlbum 
         isModalOpen={isModalOpen} 
         setIsModalOpen={setIsModalOpen}
-        onSuccess={fetchAlbums}
+        onSuccess={refreshAlbums} // DÙNG REFRESH TỪ CONTEXT
         data={editingAlbum}
-        onCancel={() => {
-          setIsModalOpen(false);
-          setEditingAlbum(null);
-        }}
+        onCancel={() => { setIsModalOpen(false); setEditingAlbum(null); }}
       />
     </div>
   );

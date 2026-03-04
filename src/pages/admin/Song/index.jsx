@@ -1,4 +1,4 @@
-import { useContext, useEffect, useState, useMemo } from 'react';
+import { useContext, useState, useMemo } from 'react';
 import { 
   Table, Space, Button, Tooltip, Typography, Badge,
   Popconfirm, Image, Empty 
@@ -8,76 +8,47 @@ import {
   PlayCircleOutlined, CustomerServiceOutlined, HeartOutlined 
 } from '@ant-design/icons';
 import { AppContext } from '../../../Context/AppProvider';
+import { SongContext } from '../../../Context/SongContext'; // IMPORT SONG CONTEXT
 import { formatDate } from '../../../utils/formatTime';
 import CreateSong from '../../../components/Song/CreateSong';
-import { deleteSongs, getAllSongs } from '../../../services/songService';
+import { deleteSongs } from '../../../services/songService';
 import { paginate } from '../../../utils/paginate';
 import FilterBar from '../../../components/Search/FilterBar';
+import { AlbumContext } from '../../../Context/AlbumContext';
 
 const { Text, Title } = Typography;
 
 function SongManagement() {
-  const [songs, setSongs] = useState([]);
-  const [filters, setFilters] = useState({ keyword: '', status: undefined });
-  const [loading, setLoading] = useState(true);
+  const { songs, loading, refreshSongs } = useContext(SongContext);
+  const { refreshAlbums } = useContext(AlbumContext);
+  const { messageApi } = useContext(AppContext);
+
   const [pageSize, setPageSize] = useState(6);
   const [currentPage, setCurrentPage] = useState(1);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingSong, setEditingSong] = useState(null);
+  const [filters, setFilters] = useState({ keyword: '', status: undefined });
 
-  const { messageApi } = useContext(AppContext);
-
-  const fetchSongs = async () => {
-    setLoading(true);
-    try {
-      const response = await getAllSongs();
-      if (response.success) {
-        setSongs(response.data.map(song => ({ ...song, key: song._id })));
-      }
-    } catch (error) {
-      console.error("Error fetching songs: ", error);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  useEffect(() => { fetchSongs(); }, []);
-
-  // --- LOGIC SEARCH ĐA TRƯỜNG ---
+  // --- LOGIC FILTER ---
   const filteredData = useMemo(() => {
     return songs.filter(song => {
-      // Lọc theo từ khóa (Tên, Artist)
       const kw = filters.keyword.toLowerCase();
       const matchKeyword = !kw || 
         song.title?.toLowerCase().includes(kw) ||
-        song.artistName?.toLowerCase().includes(kw)||
+        song.artistName?.toLowerCase().includes(kw) ||
         song.albumName?.toLowerCase().includes(kw);
-        // song.deezerId?.toString().includes(kw);
 
-      // Lọc theo trạng thái
       const matchStatus = !filters.status || song.status === filters.status;
-
       return matchKeyword && matchStatus;
     });
   }, [songs, filters]);
 
-  // --- KẾT HỢP PHÂN TRANG ---
   const paginationData = paginate(filteredData, currentPage, pageSize);
   const currentDisplayData = paginationData.currentItems;
 
   const handleFilterChange = (newFilters) => {
     setFilters(newFilters);
-    setCurrentPage(1); // Reset về trang 1 khi tìm kiếm
-  };
-
-  const handleCancelModal = () => {
-    setIsModalOpen(false);
-    setEditingSong(null);
-  };
-
-  const handleAddNew = () => {
-    setEditingSong(null);
-    setIsModalOpen(true);
+    setCurrentPage(1);
   };
 
   const handleEdit = (record) => {
@@ -85,18 +56,20 @@ function SongManagement() {
     setIsModalOpen(true);
   };
 
+  const onSuccess = () => {
+    refreshSongs();
+    refreshAlbums();
+  }
+
   const handleDelete = async (uid) => {
     try {
-      setLoading(true);
       const response = await deleteSongs(uid);
       if (response && response.success) {
         messageApi.success(response.message);
-        fetchSongs();
+        onSuccess(); 
       }
     } catch (error) {
       messageApi.error("An error occurred while deleting.");
-    } finally {
-      setLoading(false);
     }
   };
 
@@ -108,99 +81,90 @@ function SongManagement() {
   };
 
   const columns = [
-  {
-    title: 'Song Details',
-    key: 'song',
-    fixed: 'left',
-    width: 250,
-    // Sắp xếp theo bảng chữ cái của tiêu đề bài hát
-    sorter: (a, b) => a.title.localeCompare(b.title),
-    render: (_, record) => (
-      <Space>
-        <Image src={record.cover} width={50} style={{ borderRadius: 4, objectFit: 'cover' }} fallback="https://via.placeholder.com/50" />
-        <div style={{ display: 'flex', flexDirection: 'column' }}>
-          <Text strong>{record.title}</Text>
-          <Text type="secondary" style={{ fontSize: '12px' }}><CustomerServiceOutlined /> {record.artistName}</Text>
+    {
+      title: 'Song Details',
+      key: 'song',
+      fixed: 'left',
+      width: 250,
+      sorter: (a, b) => a.title.localeCompare(b.title),
+      render: (_, record) => (
+        <Space>
+          <Image src={record.cover} width={50} height={50} style={{ borderRadius: 4, objectFit: 'cover' }} fallback="https://via.placeholder.com/50" />
+          <div style={{ display: 'flex', flexDirection: 'column' }}>
+            <Text strong>{record.title}</Text>
+            <Text type="secondary" style={{ fontSize: '12px' }}><CustomerServiceOutlined /> {record.artistName}</Text>
+          </div>
+        </Space>
+      ),
+    },
+    {
+      title: 'Album',
+      dataIndex: 'albumName',
+      key: 'album',
+      responsive: ['md'],
+      sorter: (a, b) => (a.albumName || "").localeCompare(b.albumName || ""),
+      render: (text) => <Text type="secondary">{text || 'Single'}</Text>
+    },
+    {
+      title: 'Stats',
+      key: 'stats',
+      width: 150,
+      sorter: (a, b) => (a.listen || 0) - (b.listen || 0),
+      render: (_, record) => (
+        <div style={{ fontSize: '12px' }}>
+          <div><PlayCircleOutlined /> {record.listen?.toLocaleString() || 0}</div>
+          <div><HeartOutlined /> {record.like?.length || 0} Likes</div>
         </div>
-      </Space>
-    ),
-  },
-  {
-    title: 'Album',
-    dataIndex: 'albumName',
-    key: 'album',
-    responsive: ['md'],
-    render: (text) => <Text type="secondary">{text || 'Single'}</Text>
-  },
-  {
-    title: 'Stats',
-    key: 'stats',
-    width: 150,
-    render: (_, record) => (
-      <div style={{ fontSize: '12px' }}>
-        {/* Lượt nghe */}
-        <div><PlayCircleOutlined /> {record.listen?.toLocaleString() || 0}</div>
-        {/* Lượt thích */}
-        <div><HeartOutlined /> {record.like?.length || 0} Likes</div>
-      </div>
-    ),
-    // Bạn có thể chọn 1 trong 2 tiêu chí để làm sorter chính cho cột Stats
-    // Ví dụ: Sắp xếp theo lượt nghe
-    sorter: (a, b) => (a.listen || 0) - (b.listen || 0),
-  },
-  {
-    title: 'Duration',
-    dataIndex: 'duration',
-    key: 'duration',
-    width: 100,
-    // Sắp xếp theo tổng số giây
-    sorter: (a, b) => (a.duration || 0) - (b.duration || 0),
-    render: (val) => formatDuration(val)
-  },
-  {
-    title: 'Status',
-    dataIndex: 'status',
-    key: 'status',
-    render: (status) => (
-      <Badge status={status === 'active' ? 'success' : 'error'} text={status?.toUpperCase()} />
-    ),
-  },
-  {
-    title: 'Created At',
-    dataIndex: 'createdAt',
-    key: 'createdAt',
-    responsive: ['lg'],
-    // Sắp xếp theo thời gian thực (Timestamp)
-    sorter: (a, b) => new Date(a.createdAt) - new Date(b.createdAt),
-    render: (date) => formatDate(date, 'DD/MM/YYYY'),
-  },
-  {
-    title: 'Action',
-    key: 'action',
-    fixed: 'right',
-    width: 120,
-    render: (_, record) => (
-      <Space size="middle">
-        <Tooltip title="Edit"><Button type="text" icon={<EditOutlined />} onClick={() => handleEdit(record)} /></Tooltip>
-        <Tooltip title="Delete">
+      ),
+    },
+    {
+      title: 'Duration',
+      dataIndex: 'duration',
+      key: 'duration',
+      width: 100,
+      sorter: (a, b) => (a.duration || 0) - (b.duration || 0),
+      render: (val) => formatDuration(val)
+    },
+    {
+      title: 'Status',
+      dataIndex: 'status',
+      key: 'status',
+      render: (status) => (
+        <Badge status={status === 'active' ? 'success' : 'error'} text={status?.toUpperCase()} />
+      ),
+    },
+    {
+      title: 'Created At',
+      dataIndex: 'createdAt',
+      key: 'createdAt',
+      responsive: ['lg'],
+      sorter: (a, b) => new Date(a.createdAt) - new Date(b.createdAt),
+      render: (date) => formatDate(date, 'DD/MM/YYYY'),
+    },
+    {
+      title: 'Action',
+      key: 'action',
+      fixed: 'right',
+      width: 120,
+      render: (_, record) => (
+        <Space size="middle">
+          <Tooltip title="Edit"><Button type="text" icon={<EditOutlined />} onClick={() => handleEdit(record)} /></Tooltip>
           <Popconfirm title="Delete Song?" onConfirm={() => handleDelete(record._id)} okButtonProps={{ danger: true }}>
             <Button type="text" danger icon={<DeleteOutlined />} />
           </Popconfirm>
-        </Tooltip>
-      </Space>
-    ),
-  },
-];
+        </Space>
+      ),
+    },
+  ];
+
   return (
     <div className="song-management">
       <div style={{ marginBottom: 16, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
         <Title level={3} style={{ margin: 0 }}>Song Management</Title>
-        <Button type="primary" icon={<PlusOutlined />} onClick={handleAddNew}>Add New Song</Button>
+        <Button type="primary" icon={<PlusOutlined />} onClick={() => { setEditingSong(null); setIsModalOpen(true); }}>Add New Song</Button>
       </div>
 
-      <FilterBar 
-        onFilterChange={handleFilterChange} 
-      />
+      <FilterBar onFilterChange={handleFilterChange} />
       
       <Table 
         loading={loading}
@@ -212,20 +176,17 @@ function SongManagement() {
         pagination={{ 
           current: currentPage,
           pageSize: pageSize,
-          total: filteredData.length, // Quan trọng: total của mảng đã lọc
-          pageSizeOptions: ['6', '8', '10', '15', '20'], 
-          showSizeChanger: true, 
-          onShowSizeChange: (_, size) => { setPageSize(size); setCurrentPage(1); },
-          onChange: (page) => setCurrentPage(page)
+          total: filteredData.length,
+          onChange: (page, size) => { setCurrentPage(page); setPageSize(size); }
         }}
       />
 
       <CreateSong 
         isModalOpen={isModalOpen} 
         setIsModalOpen={setIsModalOpen}
-        onSuccess={fetchSongs}
+        onSuccess={onSuccess} // TRUYỀN HÀM REFRESH TỪ CONTEXT
         data={editingSong} 
-        onCancel={handleCancelModal}
+        onCancel={() => { setIsModalOpen(false); setEditingSong(null); }}
       />
     </div>
   );

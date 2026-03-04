@@ -1,4 +1,4 @@
-import { useContext, useEffect, useState, useMemo } from 'react';
+import { useContext, useState, useMemo } from 'react';
 import { 
   Table, Avatar, Space, Button, Tooltip, Typography, Badge,
   Popconfirm, Empty
@@ -8,72 +8,41 @@ import {
   UserOutlined, HeartOutlined, TeamOutlined 
 } from '@ant-design/icons';
 import { AppContext } from '../../../Context/AppProvider';
+import { ArtistContext } from '../../../Context/ArtistContext'; // IMPORT CONTEXT MỚI
 import { formatDate } from '../../../utils/formatTime';
 import CreateArtist from '../../../components/Artist/CreateArtist';
-import { deleteArtists, getAllArtists } from '../../../services/artistService';
+import { deleteArtists } from '../../../services/artistService';
 import { paginate } from '../../../utils/paginate';
 import FilterBar from '../../../components/Search/FilterBar';
 
 const { Text, Title } = Typography;
 
 function ArtistManagement() {
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const [editingArtist, setEditingArtist] = useState(null);
-  const [artists, setArtists] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [pageSize, setPageSize] = useState(6);
-  const [currentPage, setCurrentPage] = useState(1);
-
-  // --- STATE CHO BỘ LỌC ---
-  const [filters, setFilters] = useState({ keyword: '', status: undefined });
-
+  const { artists, loading, refreshArtists } = useContext(ArtistContext);
   const { messageApi } = useContext(AppContext);
 
-  // --- LẤY DATA TỪ BACKEND ---
-  const fetchArtists = async () => {
-    setLoading(true);
-    try {
-      const response = await getAllArtists();
-      if (response.success) {
-        const dataWithKey = response.data.map(item => ({
-          ...item,
-          key: item._id
-        }));
-        setArtists(dataWithKey);
-      }
-    } catch (error) {
-      console.error("Fetch Artists Error:", error);
-      messageApi.error("Unable to load artist list!");
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  useEffect(() => {
-    fetchArtists();
-  }, []);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [editingArtist, setEditingArtist] = useState(null);
+  const [pageSize, setPageSize] = useState(6);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [filters, setFilters] = useState({ keyword: '', status: undefined });
 
   // --- LOGIC FILTER NGHỆ SĨ ---
   const filteredData = useMemo(() => {
     return artists.filter(artist => {
       const kw = filters.keyword.toLowerCase();
-      // Tìm theo tên nghệ sĩ
-      const matchKeyword = !kw || 
-        artist.name?.toLowerCase().includes(kw);
-
+      const matchKeyword = !kw || artist.name?.toLowerCase().includes(kw);
       const matchStatus = !filters.status || artist.status === filters.status;
-
       return matchKeyword && matchStatus;
     });
   }, [artists, filters]);
 
-  // --- PHÂN TRANG DỰA TRÊN DATA ĐÃ LỌC ---
   const paginationData = paginate(filteredData, currentPage, pageSize);
   const currentDisplayData = paginationData.currentItems;
 
   const handleFilterChange = (newFilters) => {
     setFilters(newFilters);
-    setCurrentPage(1); // Reset về trang 1 khi tìm kiếm
+    setCurrentPage(1);
   };
 
   const handleEdit = (record) => {
@@ -83,16 +52,13 @@ function ArtistManagement() {
 
   const handleDelete = async (id) => {
     try {
-      setLoading(true);
       const response = await deleteArtists(id);
       if (response.success) {
-        messageApi.success(response.message || "Artist successfully removed!");
-        fetchArtists();
+        messageApi.success(response.message || "Artist removed!");
+        refreshArtists(); // CẬP NHẬT LẠI CONTEXT
       }
     } catch (error) {
       messageApi.error("Error when deleting artist!");
-    } finally {
-      setLoading(false);
     }
   };
 
@@ -101,6 +67,7 @@ function ArtistManagement() {
       title: 'Artist',
       key: 'artist',
       fixed: 'left',
+      sorter: (a, b) => a.name.localeCompare(b.name),
       render: (_, record) => (
         <Space>
           <Avatar src={record.avatar} size={50} icon={<UserOutlined />} />
@@ -116,7 +83,6 @@ function ArtistManagement() {
     {
       title: 'Fans & Likes',
       key: 'stats',
-      // Sắp xếp dựa trên số lượng Fan (nb_fan)
       sorter: (a, b) => (a.nb_fan || 0) - (b.nb_fan || 0),
       render: (_, record) => (
         <div style={{ fontSize: '12px' }}>
@@ -154,13 +120,7 @@ function ArtistManagement() {
           <Tooltip title="Edit">
             <Button type="text" icon={<EditOutlined />} onClick={() => handleEdit(record)} />
           </Tooltip>
-          <Popconfirm
-            title="Remove the artist?"
-            onConfirm={() => handleDelete(record._id)}
-            okText="Delete"
-            cancelText="Cancel"
-            okButtonProps={{ danger: true }}
-          >
+          <Popconfirm title="Remove the artist?" onConfirm={() => handleDelete(record._id)} okButtonProps={{ danger: true }}>
             <Button type="text" danger icon={<DeleteOutlined />} />
           </Popconfirm>
         </Space>
@@ -172,22 +132,12 @@ function ArtistManagement() {
     <div className="artist-management">
       <div style={{ marginBottom: 16, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
         <Title level={3} style={{ margin: 0 }}>Artist Management</Title>
-        <Button 
-          type="primary" 
-          icon={<PlusOutlined />} 
-          onClick={() => {
-            setEditingArtist(null);
-            setIsModalOpen(true);
-          }}
-        >
+        <Button type="primary" icon={<PlusOutlined />} onClick={() => { setEditingArtist(null); setIsModalOpen(true); }}>
           Add New Artist
         </Button>
       </div>
 
-      {/* TÁI SỬ DỤNG FILTERBAR */}
-      <FilterBar 
-        onFilterChange={handleFilterChange} 
-      />
+      <FilterBar onFilterChange={handleFilterChange} />
       
       <Table 
         loading={loading}
@@ -200,27 +150,16 @@ function ArtistManagement() {
           current: currentPage,
           pageSize: pageSize,
           total: filteredData.length, 
-          pageSizeOptions: ['6', '8', '10', '15', '20'], 
-          showSizeChanger: true, 
-          onShowSizeChange: (_, size) => {
-            setPageSize(size);
-            setCurrentPage(1);
-          },
-          onChange: (page) => {
-            setCurrentPage(page);
-          }
+          onChange: (page, size) => { setCurrentPage(page); setPageSize(size); }
         }}
       />
 
       <CreateArtist 
         isModalOpen={isModalOpen} 
         setIsModalOpen={setIsModalOpen}
-        onSuccess={fetchArtists}
+        onSuccess={refreshArtists}
         data={editingArtist}
-        onCancel={() => {
-          setIsModalOpen(false);
-          setEditingArtist(null);
-        }}
+        onCancel={() => { setIsModalOpen(false); setEditingArtist(null); }}
       />
     </div>
   );
