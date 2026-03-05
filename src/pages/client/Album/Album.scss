@@ -1,12 +1,10 @@
 .album-detail-container {
-  padding: 20px;
   max-width: 1400px;
   margin: 0 auto;
 
   .album-hero {
     display: flex;
     gap: 50px;
-    margin-bottom: 40px;
     padding: 20px;
     background: rgba(255, 255, 255, 0.02);
     border-radius: 20px;
@@ -80,5 +78,40 @@
     margin-bottom: 20px;
     .section-title { color: #fff !important; margin: 0; }
     .see-all { color: #9CA3A1; font-size: 12px; &:hover { color: #1890ff; } }
+  }
+}
+
+.album-section-slider {
+  position: relative;
+
+  .swiper-button-next,
+  .swiper-button-prev {
+    width: 32px; 
+    height: 32px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    padding: 8px;
+    border-radius: 50%;
+    color: #fff; 
+    transition: all 0.3s ease;
+
+    &::after {
+      font-size: 14px; 
+      font-weight: bold;
+    }
+
+    &:hover {
+      background: #FE2851; 
+      border-color: #FE2851;
+      color: #fff;
+    }
+  }
+
+  .swiper-button-prev { left: -10px; }
+  .swiper-button-next { right: -10px; }
+
+  @media (max-width: 768px) {
+    .swiper-button-next, .swiper-button-prev {
+      display: none;
+    }
   }
 }

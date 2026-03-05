@@ -5,10 +5,14 @@ import './Artist.scss';
 import AlbumSection from '../../../components/Album/AlbumSection';
 import "../../client/Home/Home.scss"
 import ArtistSection from '../../../components/Artist/ArtistSection';
+import { useContext } from 'react';
+import { AlbumContext } from '../../../Context/AlbumContext';
 
 const { Title, Text } = Typography;
 
 function Artist() {
+  const { albums } = useContext(AlbumContext);
+
   const currentArtist = {
     name: "Luna Eclipse",
     followers: "2.4M",
@@ -90,7 +94,7 @@ function Artist() {
             <Title level={4} className="section-title">Fans also like</Title>
             <Link to="/albums" className="see-all">View all</Link>
         </Flex>
-        <AlbumSection/>
+        <AlbumSection albums={albums} isSlider={true}/>
       </section>
 
       <Divider className="custom-divider" />

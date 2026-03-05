@@ -5,10 +5,16 @@ import useTitle from "../../../hooks/useTitle";
 import "./Home.scss"; // Đừng quên import file scss nhé
 import AlbumSection from "../../../components/Album/AlbumSection";
 import PlaylistSection from "../../../components/Playlist/PlaylistSection";
+import { useContext } from "react";
+import { AlbumContext } from "../../../Context/AlbumContext";
+import { PlaylistContext } from "../../../Context/PlaylistContext";
 
 const { Title, Text } = Typography;
 
 function Home() {
+    const { albums } = useContext(AlbumContext);
+    const { playlists } = useContext(PlaylistContext);
+
     useTitle("Muzia");
 
     return (
@@ -34,7 +40,10 @@ function Home() {
                     <Title level={4} className="section-title">Suggested for you</Title>
                     <Link to={"/albums"} className="see-all">See all</Link>
                 </Flex>
-                <AlbumSection/>
+                <AlbumSection 
+                    albums={albums} 
+                    isSlider={true} 
+                />
             </section>
 
             <section style={{ marginBottom: 50 }}>
@@ -42,7 +51,11 @@ function Home() {
                     <Title level={4} className="section-title">Your Playlists</Title>
                     <Link to={"/playlists"} className="see-all">View all</Link>
                 </Flex>
-                <PlaylistSection/>
+                <PlaylistSection 
+                    playlists={playlists}
+                    isSlider={true}
+                    albums={albums}
+                />
             </section>
 
             <Row gutter={40}>

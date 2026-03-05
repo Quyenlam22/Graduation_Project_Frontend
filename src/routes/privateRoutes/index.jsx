@@ -35,7 +35,15 @@ export const privateRoutes = [
                 element: <Album/>,
             },
             {
+                path: "/albums/:id",
+                element: <Album/>,
+            },
+            {
                 path: "/playlists",
+                element: <Playlist/>,
+            },
+            {
+                path: "/playlists/:id",
                 element: <Playlist/>,
             },
             {
@@ -63,9 +71,9 @@ export const privateRoutes = [
         ],
     },
     {
-        element: <PrivateRouteAdmin/>,
-        children: [
-            {
+        // element: <PrivateRouteAdmin/>,
+        // children: [
+        //     {
                 path: "/admin",
                 element: <LayoutAdmin />,
                 children: [
@@ -101,8 +109,8 @@ export const privateRoutes = [
                         path: "*",
                         element: <Error404/>,
                     },
-                ],
-            }
+            //     ],
+            // }
         ]
     },
 ];
