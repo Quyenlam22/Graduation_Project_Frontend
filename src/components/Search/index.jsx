@@ -23,7 +23,7 @@ function Search() {
   return (
     <div className="search-wrapper" ref={searchRef}>
       <Input 
-        placeholder="Search for songs, artists, albums..." 
+        placeholder="Explore more..." 
         prefix={<SearchOutlined style={{ color: 'rgba(255,255,255,0.5)' }} />} 
         variant="filled"
         value={keyword}
@@ -39,7 +39,6 @@ function Search() {
         }} 
       />
 
-      {/* Chỉ hiển thị preview khi có từ khóa và đang focus vào ô input */}
       <SearchPreview visible={isFocus && keyword.trim().length > 0} />
     </div>
   );

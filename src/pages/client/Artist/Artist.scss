@@ -96,3 +96,38 @@
     .see-all { color: #9CA3A1; font-size: 12px; &:hover { color: #1890ff; } }
   }
 }
+
+.artist-section-slider {
+  position: relative;
+
+  .swiper-button-next,
+  .swiper-button-prev {
+    width: 32px; 
+    height: 32px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    padding: 8px;
+    border-radius: 50%;
+    color: #fff; 
+    transition: all 0.3s ease;
+
+    &::after {
+      font-size: 14px; 
+      font-weight: bold;
+    }
+
+    &:hover {
+      background: #FE2851; 
+      border-color: #FE2851;
+      color: #fff;
+    }
+  }
+
+  .swiper-button-prev { left: -10px; }
+  .swiper-button-next { right: -10px; }
+
+  @media (max-width: 768px) {
+    .swiper-button-next, .swiper-button-prev {
+      display: none;
+    }
+  }
+}

@@ -1,38 +1,84 @@
 import { Button, Card, Avatar, Typography, Flex, Divider, Row, Col } from "antd";
 import { PlayCircleFilled } from "@ant-design/icons";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import useTitle from "../../../hooks/useTitle";
 import "./Home.scss"; // Đừng quên import file scss nhé
 import AlbumSection from "../../../components/Album/AlbumSection";
 import PlaylistSection from "../../../components/Playlist/PlaylistSection";
-import { useContext } from "react";
+import { useContext, useMemo } from "react";
 import { AlbumContext } from "../../../Context/AlbumContext";
 import { PlaylistContext } from "../../../Context/PlaylistContext";
+import { SongContext } from "../../../Context/SongContext";
+import { ArtistContext } from "../../../Context/ArtistContext";
 
 const { Title, Text } = Typography;
 
 function Home() {
     const { albums } = useContext(AlbumContext);
     const { playlists } = useContext(PlaylistContext);
+    const { songs } = useContext(SongContext);
+    const { artists } = useContext(ArtistContext);
+
+    const navigate = useNavigate();
+    
+    const newReleases = useMemo(() => {
+        if (!songs || songs.length === 0) return [];
+
+        // Sao chép mảng để tránh làm thay đổi mảng gốc trong Context
+        return [...songs]
+            .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
+            .slice(0, 4); 
+    }, [songs]);
+
+    const topArtists = useMemo(() => {
+        if (!artists || artists.length === 0) return [];
+
+        return [...artists]
+            .sort((a, b) => {
+                return b.nb_fan - a.nb_fan; 
+            })
+            .slice(0, 3); // Lấy 3 người đứng đầu
+    }, [artists]);
+
+    // Hàm format thời gian (giây -> mm:ss)
+    const formatTime = (seconds) => {
+        if (!seconds) return "0:00";
+        const mins = Math.floor(seconds / 60);
+        const secs = seconds % 60;
+        return `${mins}:${secs < 10 ? '0' : ''}${secs}`;
+    };
 
     useTitle("Muzia");
 
     return (
         <div className="home-container">
-            {/* HERO SECTION */}
             <div className="hero-section">
-                <div className="featured-badge">Featured Artist</div>
-                <h1 className="hero-title">Luna Eclipse</h1>
-                <Text className="hero-subtitle">Pop  •  2.4M followers</Text>
-                <Flex gap={15} className="hero-buttons">
-                    <Button type="primary" size="large" icon={<PlayCircleFilled />} shape="round" className="btn-play">
-                        Play Now
-                    </Button>
-                    <Button ghost size="large" shape="round" className="btn-profile">
-                        View Profile
-                    </Button>
-                </Flex>
-            </div>
+            <div className="featured-badge">Welcome to Muzia</div>
+            <h1 className="hero-title">Music For Everyone</h1>
+            <Text className="hero-subtitle">
+                Explore millions of songs, albums and artists. Create your own flow.
+            </Text>
+            <Flex gap={15} className="hero-buttons">
+                <Button 
+                    type="primary" 
+                    size="large" 
+                    icon={<PlayCircleFilled />} 
+                    shape="round" 
+                    className="btn-play"
+                >
+                    Start Listening
+                </Button>
+                <Button 
+                    ghost 
+                    size="large" 
+                    shape="round" 
+                    className="btn-profile"
+                    onClick={() => navigate("/artists")}
+                >
+                    Explore More
+                </Button>
+            </Flex>
+        </div>
 
             {/* SUGGESTED SECTION */}
             <section style={{ marginBottom: 50 }}>
@@ -63,21 +109,31 @@ function Home() {
                 <Col span={16}>
                     <Flex justify="space-between" align="baseline" className="section-title-container">
                         <Title level={4} className="section-title">New Releases</Title>
-                        {/* <Text type="secondary" className="see-all">See all</Text> */}
                     </Flex>
                     <div className="new-release-list">
-                        {[1, 2, 3, 4].map((i) => (
-                            <div key={i} className="new-release-item">
-                                <Text className="track-number">{i}</Text>
-                                <Avatar shape="square" size={48} src={`https://picsum.photos/100/100?random=${i+10}`} />
+                        {newReleases.map((song, index) => (
+                            <div key={song._id} className="new-release-item">
+                                <Text className="track-number">{index + 1}</Text>
+                                {/* Sử dụng song.cover hoặc song.avatar tùy theo model của bạn */}
+                                <Avatar shape="square" size={48} src={song.cover || song.avatar} />
                                 <div className="track-info">
-                                    <Text strong className="song-name">Song Title {i}</Text>
-                                    <Text type="secondary" style={{ fontSize: '12px', color: '#9CA3A1' }}>Artist Name</Text>
+                                    <Text strong className="song-name">{song.title}</Text>
+                                    <Text type="secondary" style={{ fontSize: '12px', color: '#9CA3A1' }}>
+                                        {song.artistName}
+                                    </Text>
                                 </div>
-                                <Text type="secondary" style={{ fontSize: '12px', color: '#95a9e4'}}>3:45</Text>
+                                <Text type="secondary" style={{ fontSize: '12px', color: '#95a9e4' }}>
+                                    {formatTime(song.duration)}
+                                </Text>
                                 <PlayCircleFilled className="play-icon" />
                             </div>
                         ))}
+
+                        {newReleases.length === 0 && (
+                            <Text type="secondary" style={{ padding: '10px', display: 'block' }}>
+                                No new songs available.
+                            </Text>
+                        )}
                     </div>
                 </Col>
 
@@ -88,13 +144,25 @@ function Home() {
                         <Link to={"/artists"} className="see-all">See all</Link>
                     </Flex>
                     <Flex vertical gap={20}>
-                        {[1, 2, 3].map((i) => (
-                            <Flex align="center" gap={15} key={i} className="artist-item">
-                                <Avatar size={54} src={`https://i.pravatar.cc/150?img=${i+10}`} />
-                                <div>
-                                    <Text strong className="artist-name">Artist Name {i}</Text>
-                                    <Text type="secondary" style={{ fontSize: '12px', color: '#9CA3A1' }}>1.2M Monthly Listeners</Text>
-                                </div>
+                        {topArtists.map((artist) => (
+                            <Flex 
+                                align="center" 
+                                gap={15} 
+                                key={artist._id} 
+                                className="artist-item"
+                                style={{ cursor: 'pointer' }}
+                                onClick={() => navigate(`/artists/${artist._id}`)}
+                            >
+                                <Avatar size={54} src={artist.avatar} />
+                                <Flex vertical>
+                                    <Text strong className="artist-name" style={{ color: '#fff' }}>
+                                        {artist.name}
+                                    </Text>
+                                    <Text type="secondary" style={{ fontSize: '12px', color: '#9CA3A1' }}>
+                                        {/* Hiển thị số lượng fans từ mảng like hoặc trường nb_fan */}
+                                        {artist.nb_fan ? artist.nb_fan.toLocaleString() : (artist.like?.length || 0)} Fans
+                                    </Text>
+                                </Flex>
                             </Flex>
                         ))}
                     </Flex>

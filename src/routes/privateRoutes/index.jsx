@@ -51,6 +51,10 @@ export const privateRoutes = [
                 element: <Artist/>,
             },
             {
+                path: "/artists/:id",
+                element: <Artist/>,
+            },
+            {
                 element: <PrivateRouteClient/>,
                 children:[
                     {
