@@ -8,21 +8,24 @@ import SongProvider from './Context/SongContext';
 import ArtistProvider from './Context/ArtistContext';
 import AlbumProvider from './Context/AlbumContext';
 import PlaylistProvider from './Context/PlaylistContext';
+import { MusicProvider } from './Context/MusicContext'; 
 
 createRoot(document.getElementById('root')).render(
   <BrowserRouter>
     <AuthProvider>
       <AppProvider>
         <UserProvider>
-          <SongProvider>
-            <ArtistProvider>
-              <AlbumProvider>
-                <PlaylistProvider>
-                  <App />
-                </PlaylistProvider>
-              </AlbumProvider>
-            </ArtistProvider>
-          </SongProvider>
+          <ArtistProvider>
+            <AlbumProvider>
+              <SongProvider>
+                <MusicProvider>
+                  <PlaylistProvider>
+                    <App />
+                  </PlaylistProvider>
+                </MusicProvider>
+              </SongProvider>
+            </AlbumProvider>
+          </ArtistProvider>
         </UserProvider>
       </AppProvider>
     </AuthProvider>

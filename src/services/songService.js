@@ -5,6 +5,11 @@ export const getAllSongs = async () => {
     return result;
 }
 
+export const getPreview = async (id) => {
+    const result = await get(`songs/preview/${id}`);
+    return result;
+}
+
 export const createSong = async (options) => {
     const result = await post(options, `songs/create`);
     return result;

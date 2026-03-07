@@ -2,7 +2,7 @@ import { Button, Card, Avatar, Typography, Flex, Divider, Row, Col } from "antd"
 import { PlayCircleFilled } from "@ant-design/icons";
 import { Link, useNavigate } from "react-router-dom";
 import useTitle from "../../../hooks/useTitle";
-import "./Home.scss"; // Đừng quên import file scss nhé
+import "./Home.scss"; 
 import AlbumSection from "../../../components/Album/AlbumSection";
 import PlaylistSection from "../../../components/Playlist/PlaylistSection";
 import { useContext, useMemo } from "react";
@@ -10,6 +10,7 @@ import { AlbumContext } from "../../../Context/AlbumContext";
 import { PlaylistContext } from "../../../Context/PlaylistContext";
 import { SongContext } from "../../../Context/SongContext";
 import { ArtistContext } from "../../../Context/ArtistContext";
+import { MusicContext } from "../../../Context/MusicContext";
 
 const { Title, Text } = Typography;
 
@@ -18,13 +19,13 @@ function Home() {
     const { playlists } = useContext(PlaylistContext);
     const { songs } = useContext(SongContext);
     const { artists } = useContext(ArtistContext);
+    
+    const { playSong } = useContext(MusicContext);
 
     const navigate = useNavigate();
     
     const newReleases = useMemo(() => {
         if (!songs || songs.length === 0) return [];
-
-        // Sao chép mảng để tránh làm thay đổi mảng gốc trong Context
         return [...songs]
             .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
             .slice(0, 4); 
@@ -32,15 +33,11 @@ function Home() {
 
     const topArtists = useMemo(() => {
         if (!artists || artists.length === 0) return [];
-
         return [...artists]
-            .sort((a, b) => {
-                return b.nb_fan - a.nb_fan; 
-            })
-            .slice(0, 3); // Lấy 3 người đứng đầu
+            .sort((a, b) => b.nb_fan - a.nb_fan)
+            .slice(0, 3);
     }, [artists]);
 
-    // Hàm format thời gian (giây -> mm:ss)
     const formatTime = (seconds) => {
         if (!seconds) return "0:00";
         const mins = Math.floor(seconds / 60);
@@ -48,37 +45,48 @@ function Home() {
         return `${mins}:${secs < 10 ? '0' : ''}${secs}`;
     };
 
+    // 3. Hàm xử lý phát nhạc
+    // const handlePlayNewRelease = (song) => {
+    //     playSong({
+    //         title: song.title,
+    //         artist: song.artistName,
+    //         avatar: song.cover,
+    //         src: song.audio 
+    //     });
+    // };
+
     useTitle("Muzia");
 
     return (
         <div className="home-container">
             <div className="hero-section">
-            <div className="featured-badge">Welcome to Muzia</div>
-            <h1 className="hero-title">Music For Everyone</h1>
-            <Text className="hero-subtitle">
-                Explore millions of songs, albums and artists. Create your own flow.
-            </Text>
-            <Flex gap={15} className="hero-buttons">
-                <Button 
-                    type="primary" 
-                    size="large" 
-                    icon={<PlayCircleFilled />} 
-                    shape="round" 
-                    className="btn-play"
-                >
-                    Start Listening
-                </Button>
-                <Button 
-                    ghost 
-                    size="large" 
-                    shape="round" 
-                    className="btn-profile"
-                    onClick={() => navigate("/artists")}
-                >
-                    Explore More
-                </Button>
-            </Flex>
-        </div>
+                <div className="featured-badge">Welcome to Muzia</div>
+                <h1 className="hero-title">Music For Everyone</h1>
+                <Text className="hero-subtitle">
+                    Explore millions of songs, albums and artists. Create your own flow.
+                </Text>
+                <Flex gap={15} className="hero-buttons">
+                    <Button 
+                        type="primary" 
+                        size="large" 
+                        icon={<PlayCircleFilled />} 
+                        shape="round" 
+                        className="btn-play"
+                        onClick={() => newReleases.length > 0 && playSong(newReleases[0])}
+                    >
+                        Start Listening
+                    </Button>
+                    <Button 
+                        ghost 
+                        size="large" 
+                        shape="round" 
+                        className="btn-profile"
+                        onClick={() => navigate("/artists")}
+                    >
+                        Explore More
+                    </Button>
+                </Flex>
+            </div>
 
             {/* SUGGESTED SECTION */}
             <section style={{ marginBottom: 50 }}>
@@ -86,10 +94,7 @@ function Home() {
                     <Title level={4} className="section-title">Suggested for you</Title>
                     <Link to={"/albums"} className="see-all">See all</Link>
                 </Flex>
-                <AlbumSection 
-                    albums={albums} 
-                    isSlider={true} 
-                />
+                <AlbumSection albums={albums} isSlider={true} />
             </section>
 
             <section style={{ marginBottom: 50 }}>
@@ -97,11 +102,7 @@ function Home() {
                     <Title level={4} className="section-title">Your Playlists</Title>
                     <Link to={"/playlists"} className="see-all">View all</Link>
                 </Flex>
-                <PlaylistSection 
-                    playlists={playlists}
-                    isSlider={true}
-                    albums={albums}
-                />
+                <PlaylistSection playlists={playlists} isSlider={true} albums={albums} />
             </section>
 
             <Row gutter={40}>
@@ -112,9 +113,15 @@ function Home() {
                     </Flex>
                     <div className="new-release-list">
                         {newReleases.map((song, index) => (
-                            <div key={song._id} className="new-release-item">
+                            <div 
+                                key={song._id} 
+                                className="new-release-item"
+                                // 4. Thêm sự kiện click cho toàn bộ hàng hoặc icon play
+                                // onClick={() => handlePlayNewRelease(song)}
+                                onClick={() => playSong(song)}
+                                style={{ cursor: 'pointer' }}
+                            >
                                 <Text className="track-number">{index + 1}</Text>
-                                {/* Sử dụng song.cover hoặc song.avatar tùy theo model của bạn */}
                                 <Avatar shape="square" size={48} src={song.cover || song.avatar} />
                                 <div className="track-info">
                                     <Text strong className="song-name">{song.title}</Text>
@@ -159,7 +166,6 @@ function Home() {
                                         {artist.name}
                                     </Text>
                                     <Text type="secondary" style={{ fontSize: '12px', color: '#9CA3A1' }}>
-                                        {/* Hiển thị số lượng fans từ mảng like hoặc trường nb_fan */}
                                         {artist.nb_fan ? artist.nb_fan.toLocaleString() : (artist.like?.length || 0)} Fans
                                     </Text>
                                 </Flex>

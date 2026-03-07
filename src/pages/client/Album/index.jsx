@@ -4,6 +4,7 @@ import { Typography, Row, Col, Avatar, Flex, Button, Space, Divider, Spin } from
 import { PlayCircleFilled, HeartOutlined, ClockCircleOutlined } from '@ant-design/icons';
 import { AlbumContext } from '../../../Context/AlbumContext';
 import { SongContext } from '../../../Context/SongContext';
+import { MusicContext } from '../../../Context/MusicContext'; 
 import { formatDate } from '../../../utils/formatTime';
 import AlbumSection from '../../../components/Album/AlbumSection';
 import './Album.scss';
@@ -11,26 +12,42 @@ import './Album.scss';
 const { Title, Text } = Typography;
 
 function Album() {
-  const { id } = useParams(); // Lấy ID từ URL (nếu có)
+  const { id } = useParams();
   const { albums, loading: albumLoading } = useContext(AlbumContext);
   const { songs, loading: songLoading } = useContext(SongContext);
+  
+  // 2. Lấy hàm playSong từ MusicContext
+  const { playSong } = useContext(MusicContext);
 
-  // 1. Tìm thông tin album hiện tại dựa trên ID từ URL
   const currentAlbum = useMemo(() => {
     return albums.find(item => item._id === id);
   }, [albums, id]);
 
-  // 2. Lọc danh sách bài hát thuộc album này
   const albumSongs = useMemo(() => {
     return songs.filter(song => song.albumId === id);
   }, [songs, id]);
 
-  // Hàm format thời gian (giây -> phút:giây)
   const formatDuration = (seconds) => {
     if (!seconds) return "0:00";
     const mins = Math.floor(seconds / 60);
     const secs = seconds % 60;
     return `${mins}:${secs < 10 ? '0' : ''}${secs}`;
+  };
+
+  // 3. Hàm xử lý phát một bài hát cụ thể
+  const handlePlaySong = (song) => {
+    playSong({
+      ...song,
+      artist: song.artistName,
+      avatar: song.cover,
+    });
+  };
+
+  // 4. Hàm xử lý phát toàn bộ album (phát bài đầu tiên)
+  const handlePlayAll = () => {
+    if (albumSongs.length > 0) {
+      handlePlaySong(albumSongs[0]);
+    }
   };
 
   if (albumLoading || songLoading) {
@@ -47,12 +64,18 @@ function Album() {
               <Title level={2} style={{ color: '#fff', margin: '15px 0 5px 0' }}>{currentAlbum.title}</Title>
               <Text style={{ color: '#FE2851', fontSize: '18px', display: 'block' }}>{currentAlbum.artistName}</Text>
               <Text type="secondary" style={{ color: '#9CA3A1' }}>
-                {/* {formatDate(currentAlbum.createdAt, 'YYYY')} • {currentAlbum.nb_tracks || albumSongs.length} songs */}
                 {formatDate(currentAlbum.createdAt, 'YYYY')} • {albumSongs.length} songs
               </Text>
               
               <Space size="middle" style={{ marginTop: 12 }}>
-                <Button type="primary" shape="round" icon={<PlayCircleFilled />} size="large" className="btn-play-all">
+                <Button 
+                  type="primary" 
+                  shape="round" 
+                  icon={<PlayCircleFilled />} 
+                  size="large" 
+                  className="btn-play-all"
+                  onClick={handlePlayAll} // 5. Gán sự kiện Play All
+                >
                   Play All
                 </Button>
                 <Button ghost shape="circle" icon={<HeartOutlined />} size="large" className="btn-action" />
@@ -72,7 +95,12 @@ function Album() {
             
             <div className="track-list">
               {albumSongs.map((song, index) => (
-                <div className="track-item" key={song._id}>
+                <div 
+                  className="track-item" 
+                  key={song._id} 
+                  onClick={() => handlePlaySong(song)} // 6. Gán sự kiện phát bài hát khi click vào hàng
+                  style={{ cursor: 'pointer' }}
+                >
                   <Row align="middle" style={{ width: '100%' }}>
                     <Col span={1}>
                       <Text className="track-index">{index + 1}</Text>
@@ -87,7 +115,11 @@ function Album() {
                       </Flex>
                     </Col>
                     <Col span={4}>
-                      <HeartOutlined style={{paddingLeft: "6px"}} className="favorite-icon" />
+                      <HeartOutlined 
+                        style={{paddingLeft: "6px"}} 
+                        className="favorite-icon" 
+                        onClick={(e) => e.stopPropagation()} // Ngăn việc trigger play khi nhấn icon Like
+                      />
                     </Col>
                     <Col span={3} style={{ textAlign: 'right' }}>
                       <Text className="track-duration">{formatDuration(song.duration)}</Text>

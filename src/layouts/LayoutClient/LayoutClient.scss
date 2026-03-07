@@ -195,4 +195,24 @@ input::placeholder {
             width: 100px;
         }
     }
+
+    .time-text {
+        color: #9CA3A1;
+        font-size: 12px;
+        min-width: 35px;
+    }
+
+    .spinning {
+        animation: rotate 10s linear infinite;
+    }
+}
+
+@keyframes rotate {
+    from {
+        transform: rotate(0deg);
+    }
+
+    to {
+        transform: rotate(360deg);
+    }
 }

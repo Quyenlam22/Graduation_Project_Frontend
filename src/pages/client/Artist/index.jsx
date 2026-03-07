@@ -5,6 +5,8 @@ import { useContext, useMemo } from 'react';
 import { ArtistContext } from '../../../Context/ArtistContext';
 import { AlbumContext } from '../../../Context/AlbumContext';
 import { SongContext } from '../../../Context/SongContext';
+// 1. Import MusicContext
+import { MusicContext } from '../../../Context/MusicContext'; 
 import AlbumSection from '../../../components/Album/AlbumSection';
 import ArtistSection from '../../../components/Artist/ArtistSection';
 import './Artist.scss';
@@ -16,21 +18,20 @@ function Artist() {
   const { artists, loading: artistLoading } = useContext(ArtistContext);
   const { albums } = useContext(AlbumContext);
   const { songs } = useContext(SongContext);
+  
+  // 2. Lấy hàm playSong và formatTime từ MusicContext
+  const { playSong, formatTime } = useContext(MusicContext);
 
-  // 1. Tìm thông tin Artist hiện tại
   const currentArtist = useMemo(() => artists.find(a => a._id === id), [artists, id]);
 
-  // 2. Lọc 5 bài hát phổ biến nhất của Artist này
   const popularSongs = useMemo(() => 
     songs.filter(s => s.artistId === id).slice(0, 5), 
   [songs, id]);
 
-  // 3. Lọc danh sách Album của Artist này
   const artistAlbums = useMemo(() => 
     albums.filter(al => al.artistId === id), 
   [albums, id]);
 
-  // Hàm bổ trợ định dạng số (Ví dụ: 257795 -> 257.8K)
   const formatNumber = (num) => {
     if (!num) return "0";
     if (num >= 1000000) return (num / 1000000).toFixed(1) + "M";
@@ -38,11 +39,27 @@ function Artist() {
     return num;
   };
 
+  // 3. Hàm xử lý phát một bài hát cụ thể
+  const handlePlaySong = (song) => {
+    playSong({
+      ...song,
+      artist: song.artistName,
+      avatar: song.cover,
+    });
+  };
+
+  // 4. Hàm xử lý Random Play (phát ngẫu nhiên 1 trong 5 bài phổ biến)
+  const handleRandomPlay = () => {
+    if (popularSongs.length > 0) {
+      const randomIndex = Math.floor(Math.random() * popularSongs.length);
+      handlePlaySong(popularSongs[randomIndex]);
+    }
+  };
+
   if (artistLoading) return <div style={{ textAlign: 'center', padding: '50px' }}><Spin size="large" /></div>;
 
   return (
     <div className="artist-detail-container">
-      {/* CASE 1: HIỂN THỊ CHI TIẾT NGHỆ SĨ KHI CÓ ID */}
       {id && currentArtist ? (
         <>
           <div className="artist-hero" style={{ backgroundImage: `url(${currentArtist.avatar})` }}>
@@ -54,11 +71,19 @@ function Artist() {
                 </Flex>
                 <Title className="artist-name-big">{currentArtist.name}</Title>
                 <Text className="artist-stats">
-                  {/* Lấy số lượng người nghe từ nb_fan trong DB */}
                   {formatNumber(currentArtist.nb_fan || 0)} listeners
                 </Text>
                 <Space size="middle" style={{ marginTop: 25 }}>
-                  <Button type="primary" shape="round" icon={<PlayCircleFilled />} size="large" className="btn-play-artist">Random Play</Button>
+                  <Button 
+                    type="primary" 
+                    shape="round" 
+                    icon={<PlayCircleFilled />} 
+                    size="large" 
+                    className="btn-play-artist"
+                    onClick={handleRandomPlay} // 5. Gán sự kiện Random Play
+                  >
+                    Random Play
+                  </Button>
                   <Button ghost shape="circle" icon={<HeartOutlined />} size="large" className="btn-action" />
                 </Space>
               </Flex>
@@ -70,7 +95,12 @@ function Artist() {
               <Title level={4} className="section-title">Popular</Title>
               <div className="track-list">
                 {popularSongs.map((song, i) => (
-                  <div className="track-item" key={song._id}>
+                  <div 
+                    className="track-item" 
+                    key={song._id}
+                    onClick={() => handlePlaySong(song)} // 6. Phát bài khi click vào hàng
+                    style={{ cursor: 'pointer' }}
+                  >
                     <Row align="middle" style={{ width: '100%' }}>
                       <Col span={1}><Text className="track-index">{i + 1}</Text></Col>
                       <Col span={18}>
@@ -79,11 +109,15 @@ function Artist() {
                           <Text strong style={{ color: '#fff' }}>{song.title}</Text>
                         </Flex>
                       </Col>
-                      <Col span={2}><HeartOutlined className="favorite-icon" /></Col>
+                      <Col span={2}>
+                        <HeartOutlined 
+                          className="favorite-icon" 
+                          onClick={(e) => e.stopPropagation()} // Chống nổi bọt sự kiện
+                        />
+                      </Col>
                       <Col span={3} style={{ textAlign: 'right' }}>
                         <Text style={{ color: '#9CA3A1' }}>
-                          {/* Giả sử bạn có hàm formatDuration cho song.duration */}
-                          3:45 
+                          {formatTime(song.duration || 0)} 
                         </Text>
                       </Col>
                     </Row>
@@ -100,7 +134,6 @@ function Artist() {
                 </Text>
                 <Divider style={{ borderColor: 'rgba(255,255,255,0.1)' }} />
                 <Title level={5} style={{ color: '#fff' }}>Information</Title>
-                {/* Đếm số lượng like thực tế từ mảng like trong DB */}
                 <Text style={{ color: '#9CA3A1', display: 'block' }}>Likes: {formatNumber(currentArtist.like?.length || 0)}</Text>
                 <Text style={{ color: '#9CA3A1', display: 'block' }}>Fans: {formatNumber(currentArtist.nb_fan || 0)}</Text>
               </div>
@@ -113,14 +146,12 @@ function Artist() {
           </section>
         </>
       ) : (
-        /* CASE 2: HIỂN THỊ DANH SÁCH TẤT CẢ KHI Ở ROUTE /artists */
         <section style={{ padding: '40px 24px' }}>
           <Title level={2} style={{ color: '#fff', marginBottom: '30px' }}>All Artists</Title>
           <ArtistSection artists={artists} isSlider={false} />
         </section>
       )}
 
-      {/* SECTION GỢI Ý NGHỆ SĨ KHÁC (LUÔN HIỂN THỊ SLIDER KHI ĐANG XEM CHI TIẾT) */}
       {id && (
         <>
           <Divider className="custom-divider" />
