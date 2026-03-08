@@ -118,7 +118,6 @@ input::placeholder {
 
 .ant-menu-dark {
 
-    // Khi item được chọn
     &.ant-menu-inline .ant-menu-item-selected,
     &.ant-menu-vertical .ant-menu-item-selected {
         background-color: #393243 !important; // Màu hồng Muzia
@@ -126,6 +125,111 @@ input::placeholder {
         border-radius: 8px;
         width: calc(100% - 16px);
         margin-left: 8px;
+    }
+}
+
+.ai-chat-wrapper {
+    position: fixed;
+    right: 30px;
+    bottom: 60px;
+    z-index: 10000;
+
+    .ai-chat-trigger {
+        width: 55px;
+        height: 55px;
+        background-color: #FE2851;
+        border: none;
+        box-shadow: 0 4px 15px rgba(254, 40, 81, 0.4);
+
+        &:hover {
+            background-color: #d62244;
+        }
+    }
+
+    .ai-chat-window {
+        width: 300px;
+        height: 400px;
+        background: #170F23;
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        border-radius: 15px;
+        display: flex;
+        flex-direction: column;
+        overflow: hidden;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+        backdrop-filter: blur(20px);
+    }
+
+    .ai-chat-header {
+        padding: 15px;
+        background: rgba(255, 255, 255, 0.05);
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .ai-chat-body {
+        flex: 1;
+        padding: 15px;
+        overflow-y: auto;
+
+        &::-webkit-scrollbar {
+            width: 4px;
+        }
+
+        &::-webkit-scrollbar-thumb {
+            background: #393243;
+            border-radius: 10px;
+        }
+
+        .chat-msg-container {
+            margin-bottom: 15px;
+            display: flex;
+            width: 100%;
+
+            // Căn phải cho User
+            &.user {
+                justify-content: flex-end;
+                text-align: right;
+            }
+
+            // Căn trái cho AI (model)
+            &.model {
+                justify-content: flex-start;
+                text-align: left;
+            }
+        }
+
+        .chat-bubble {
+            padding: 10px 15px;
+            border-radius: 15px;
+            max-width: 80%;
+            word-wrap: break-word; // Đảm bảo text không bị tràn
+
+            &.model {
+                background: #231B2E; // Màu tối cho AI
+                color: #fff;
+                border-bottom-left-radius: 2px;
+            }
+
+            &.user {
+                padding-left: 0;
+                background: #FE2851; // Màu hồng đặc trưng Muzia cho User
+                color: #fff;
+                border-bottom-right-radius: 2px;
+            }
+        }
+    }
+
+    .ai-chat-footer {
+        padding: 10px;
+        background: rgba(255, 255, 255, 0.05);
+        border-top: 1px solid rgba(255, 255, 255, 0.1);
+
+        .ant-input {
+            background: #231B2E;
+
+            &::placeholder {
+                color: rgba(255, 255, 255, 0.5) !important;
+            }
+        }
     }
 }
 
