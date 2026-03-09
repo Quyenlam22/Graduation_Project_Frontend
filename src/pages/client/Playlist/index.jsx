@@ -15,15 +15,13 @@ function Playlist() {
   const { playlists, loading: playlistLoading } = useContext(PlaylistContext);
   const { loading: songLoading } = useContext(SongContext);
   
-  // 2. Lấy các hàm cần thiết từ MusicContext
+  // Lấy các hàm từ MusicContext
   const { playSong, formatTime } = useContext(MusicContext);
 
-  // Tìm thông tin playlist hiện tại
   const currentPlaylist = useMemo(() => {
     return playlists.find(item => item._id === id);
   }, [playlists, id]);
 
-  // Lấy danh sách bài hát trong playlist
   const playlistSongs = useMemo(() => {
     if (currentPlaylist && currentPlaylist.songs && currentPlaylist.songs.length > 0) {
       return currentPlaylist.songs;
@@ -31,7 +29,6 @@ function Playlist() {
     return [];
   }, [currentPlaylist]);
 
-  // Tính tổng thời lượng playlist
   const totalDuration = useMemo(() => {
     const totalSeconds = playlistSongs.reduce((acc, song) => acc + (song.duration || 0), 0);
     const hours = Math.floor(totalSeconds / 3600);
@@ -39,19 +36,23 @@ function Playlist() {
     return hours > 0 ? `${hours} hr ${minutes} min` : `${minutes} min`;
   }, [playlistSongs]);
 
-  // 3. Hàm xử lý phát một bài hát cụ thể
+  // 1. Cập nhật hàm xử lý phát một bài hát cụ thể và truyền kèm Playlist làm Queue
   const handlePlaySong = (song) => {
-    playSong({
-      ...song,
-      artist: song.artistName,
-      avatar: song.cover,
-    });
+    playSong(
+      {
+        ...song,
+        artist: song.artistName,
+        avatar: song.cover,
+      },
+      playlistSongs // Truyền toàn bộ danh sách bài hát vào Queue
+    );
   };
 
-  // 4. Hàm xử lý phát toàn bộ playlist (phát từ bài đầu tiên)
+  // 2. Cập nhật hàm phát toàn bộ Playlist từ bài đầu tiên
   const handlePlayAll = () => {
     if (playlistSongs.length > 0) {
-      handlePlaySong(playlistSongs[0]);
+      // Phát bài đầu tiên và truyền toàn bộ danh sách để tự động chuyển bài
+      playSong(playlistSongs[0], playlistSongs);
     }
   };
 
@@ -82,7 +83,7 @@ function Playlist() {
                   icon={<PlayCircleFilled />} 
                   size="large" 
                   className="btn-play-all"
-                  onClick={handlePlayAll} // 5. Sự kiện Play All
+                  onClick={handlePlayAll} // Kích hoạt phát toàn bộ
                 >
                   Play All
                 </Button>
@@ -109,7 +110,7 @@ function Playlist() {
               <div 
                 className="track-item" 
                 key={song._id}
-                onClick={() => handlePlaySong(song)} // 6. Sự kiện phát nhạc khi nhấn vào hàng
+                onClick={() => handlePlaySong(song)} // Phát bài chọn kèm danh sách sau nó
                 style={{ cursor: 'pointer' }}
               >
                 <Row align="middle" style={{ width: '100%' }}>
@@ -126,7 +127,7 @@ function Playlist() {
                   <Col span={6}>
                     <HeartOutlined 
                       className="favorite-icon" 
-                      onClick={(e) => e.stopPropagation()} // Ngăn phát nhạc khi nhấn Like
+                      onClick={(e) => e.stopPropagation()} 
                     />
                   </Col>
                   <Col span={3} style={{ textAlign: 'right', display: 'flex', justifyContent: 'flex-end', gap: '20px' }}>

@@ -16,8 +16,8 @@ function Album() {
   const { albums, loading: albumLoading } = useContext(AlbumContext);
   const { songs, loading: songLoading } = useContext(SongContext);
   
-  // 2. Lấy hàm playSong từ MusicContext
-  const { playSong } = useContext(MusicContext);
+  // Lấy các hàm cần thiết từ MusicContext
+  const { playSong, formatTime } = useContext(MusicContext);
 
   const currentAlbum = useMemo(() => {
     return albums.find(item => item._id === id);
@@ -27,26 +27,23 @@ function Album() {
     return songs.filter(song => song.albumId === id);
   }, [songs, id]);
 
-  const formatDuration = (seconds) => {
-    if (!seconds) return "0:00";
-    const mins = Math.floor(seconds / 60);
-    const secs = seconds % 60;
-    return `${mins}:${secs < 10 ? '0' : ''}${secs}`;
-  };
-
-  // 3. Hàm xử lý phát một bài hát cụ thể
+  // 1. Cập nhật hàm phát một bài hát cụ thể: Truyền kèm albumSongs làm Queue
   const handlePlaySong = (song) => {
-    playSong({
-      ...song,
-      artist: song.artistName,
-      avatar: song.cover,
-    });
+    playSong(
+      {
+        ...song,
+        artist: song.artistName,
+        avatar: song.cover,
+      },
+      albumSongs // Truyền toàn bộ bài hát trong album vào hàng đợi
+    );
   };
 
-  // 4. Hàm xử lý phát toàn bộ album (phát bài đầu tiên)
+  // 2. Cập nhật hàm phát toàn bộ album: Phát từ bài đầu tiên kèm theo Queue
   const handlePlayAll = () => {
     if (albumSongs.length > 0) {
-      handlePlaySong(albumSongs[0]);
+      // Gọi playSong với bài đầu tiên và toàn bộ danh sách album
+      playSong(albumSongs[0], albumSongs);
     }
   };
 
@@ -74,7 +71,7 @@ function Album() {
                   icon={<PlayCircleFilled />} 
                   size="large" 
                   className="btn-play-all"
-                  onClick={handlePlayAll} // 5. Gán sự kiện Play All
+                  onClick={handlePlayAll} 
                 >
                   Play All
                 </Button>
@@ -98,7 +95,7 @@ function Album() {
                 <div 
                   className="track-item" 
                   key={song._id} 
-                  onClick={() => handlePlaySong(song)} // 6. Gán sự kiện phát bài hát khi click vào hàng
+                  onClick={() => handlePlaySong(song)} // Phát bài và nạp danh sách album
                   style={{ cursor: 'pointer' }}
                 >
                   <Row align="middle" style={{ width: '100%' }}>
@@ -118,11 +115,11 @@ function Album() {
                       <HeartOutlined 
                         style={{paddingLeft: "6px"}} 
                         className="favorite-icon" 
-                        onClick={(e) => e.stopPropagation()} // Ngăn việc trigger play khi nhấn icon Like
+                        onClick={(e) => e.stopPropagation()} 
                       />
                     </Col>
                     <Col span={3} style={{ textAlign: 'right' }}>
-                      <Text className="track-duration">{formatDuration(song.duration)}</Text>
+                      <Text className="track-duration">{formatTime(song.duration || 0)}</Text>
                     </Col>
                   </Row>
                 </div>

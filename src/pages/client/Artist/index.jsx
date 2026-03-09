@@ -5,7 +5,6 @@ import { useContext, useMemo } from 'react';
 import { ArtistContext } from '../../../Context/ArtistContext';
 import { AlbumContext } from '../../../Context/AlbumContext';
 import { SongContext } from '../../../Context/SongContext';
-// 1. Import MusicContext
 import { MusicContext } from '../../../Context/MusicContext'; 
 import AlbumSection from '../../../components/Album/AlbumSection';
 import ArtistSection from '../../../components/Artist/ArtistSection';
@@ -19,7 +18,6 @@ function Artist() {
   const { albums } = useContext(AlbumContext);
   const { songs } = useContext(SongContext);
   
-  // 2. Lấy hàm playSong và formatTime từ MusicContext
   const { playSong, formatTime } = useContext(MusicContext);
 
   const currentArtist = useMemo(() => artists.find(a => a._id === id), [artists, id]);
@@ -39,20 +37,32 @@ function Artist() {
     return num;
   };
 
-  // 3. Hàm xử lý phát một bài hát cụ thể
+  // 1. Cập nhật hàm phát một bài hát: Truyền kèm danh sách popularSongs làm Queue
   const handlePlaySong = (song) => {
-    playSong({
-      ...song,
-      artist: song.artistName,
-      avatar: song.cover,
-    });
+    playSong(
+      {
+        ...song,
+        artist: song.artistName,
+        avatar: song.cover,
+      },
+      popularSongs // Thiết lập hàng đợi là danh sách bài hát phổ biến
+    );
   };
 
-  // 4. Hàm xử lý Random Play (phát ngẫu nhiên 1 trong 5 bài phổ biến)
+  // 2. Cập nhật hàm Random Play: Chọn ngẫu nhiên nhưng vẫn giữ Queue là popularSongs
   const handleRandomPlay = () => {
     if (popularSongs.length > 0) {
       const randomIndex = Math.floor(Math.random() * popularSongs.length);
-      handlePlaySong(popularSongs[randomIndex]);
+      const selectedSong = popularSongs[randomIndex];
+      
+      playSong(
+        {
+          ...selectedSong,
+          artist: selectedSong.artistName,
+          avatar: selectedSong.cover,
+        },
+        popularSongs // Vẫn duy trì danh sách phổ biến trong hàng đợi
+      );
     }
   };
 
@@ -80,7 +90,7 @@ function Artist() {
                     icon={<PlayCircleFilled />} 
                     size="large" 
                     className="btn-play-artist"
-                    onClick={handleRandomPlay} // 5. Gán sự kiện Random Play
+                    onClick={handleRandomPlay} 
                   >
                     Random Play
                   </Button>
@@ -98,7 +108,7 @@ function Artist() {
                   <div 
                     className="track-item" 
                     key={song._id}
-                    onClick={() => handlePlaySong(song)} // 6. Phát bài khi click vào hàng
+                    onClick={() => handlePlaySong(song)} // Phát bài và nạp danh sách phổ biến
                     style={{ cursor: 'pointer' }}
                   >
                     <Row align="middle" style={{ width: '100%' }}>
@@ -112,7 +122,7 @@ function Artist() {
                       <Col span={2}>
                         <HeartOutlined 
                           className="favorite-icon" 
-                          onClick={(e) => e.stopPropagation()} // Chống nổi bọt sự kiện
+                          onClick={(e) => e.stopPropagation()} 
                         />
                       </Col>
                       <Col span={3} style={{ textAlign: 'right' }}>

@@ -9,13 +9,24 @@ $overlay: rgba(0, 0, 0, 0.6);
 $transition: 0.5s all;
 
 .auth-container {
+  position: relative;
   min-height: 100vh;
-  background: url('../../../assets/images/banner.jpg') no-repeat center center fixed;
-  background-size: cover;
   display: flex;
   flex-direction: column;
   align-items: center;
   font-family: $font-main;
+  overflow: hidden;
+
+  &::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: url('../../../assets/images/banner.jpg') no-repeat center center fixed;
+    background-size: cover;
+    filter: blur(2px); 
+    transform: scale(1.05);
+    z-index: -1;
+  }
 
   h1 {
     font-family: $font-title;

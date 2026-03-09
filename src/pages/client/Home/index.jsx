@@ -21,7 +21,7 @@ function Home() {
     const { artists } = useContext(ArtistContext);
     
     const { playSong } = useContext(MusicContext);
-
+    
     const navigate = useNavigate();
     
     const newReleases = useMemo(() => {
@@ -45,16 +45,6 @@ function Home() {
         return `${mins}:${secs < 10 ? '0' : ''}${secs}`;
     };
 
-    // 3. Hàm xử lý phát nhạc
-    // const handlePlayNewRelease = (song) => {
-    //     playSong({
-    //         title: song.title,
-    //         artist: song.artistName,
-    //         avatar: song.cover,
-    //         src: song.audio 
-    //     });
-    // };
-
     useTitle("Muzia");
 
     return (
@@ -72,7 +62,7 @@ function Home() {
                         icon={<PlayCircleFilled />} 
                         shape="round" 
                         className="btn-play"
-                        onClick={() => newReleases.length > 0 && playSong(newReleases[0])}
+                        onClick={() => newReleases.length > 0 && playSong(newReleases[0], songs)}
                     >
                         Start Listening
                     </Button>
@@ -118,7 +108,7 @@ function Home() {
                                 className="new-release-item"
                                 // 4. Thêm sự kiện click cho toàn bộ hàng hoặc icon play
                                 // onClick={() => handlePlayNewRelease(song)}
-                                onClick={() => playSong(song)}
+                                onClick={() => playSong(song, newReleases)}
                                 style={{ cursor: 'pointer' }}
                             >
                                 <Text className="track-number">{index + 1}</Text>
