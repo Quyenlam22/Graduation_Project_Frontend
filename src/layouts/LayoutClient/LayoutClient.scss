@@ -210,7 +210,7 @@ input::placeholder {
             }
 
             &.user {
-                padding-left: 0;
+                // padding-left: 0;
                 background: #FE2851; // Màu hồng đặc trưng Muzia cho User
                 color: #fff;
                 border-bottom-right-radius: 2px;
@@ -219,17 +219,110 @@ input::placeholder {
     }
 
     .ai-chat-footer {
-        padding: 10px;
-        background: rgba(255, 255, 255, 0.05);
-        border-top: 1px solid rgba(255, 255, 255, 0.1);
+        padding: 10px 15px;
 
-        .ant-input {
-            background: #231B2E;
+        // Nút Mic nhấp nháy đỏ
+        .mic-active {
+            animation: pulse-red 1.5s infinite;
+        }
 
-            &::placeholder {
-                color: rgba(255, 255, 255, 0.5) !important;
+        .input-wrapper {
+            display: flex;
+            align-items: center;
+        }
+
+        // Hiệu ứng sóng âm
+        .voice-waves {
+            position: absolute;
+            left: 10px;
+            display: flex;
+            align-items: center;
+            gap: 3px;
+            height: 20px;
+
+            span {
+                display: block;
+                width: 3px;
+                height: 4px;
+                background: #FE2851;
+                border-radius: 10px;
+                animation: wave-animation 0.8s infinite ease-in-out;
+
+                &:nth-child(2) {
+                    animation-delay: 0.1s;
+                    height: 8px;
+                }
+
+                &:nth-child(3) {
+                    animation-delay: 0.2s;
+                    height: 12px;
+                }
+
+                &:nth-child(4) {
+                    animation-delay: 0.3s;
+                    height: 8px;
+                }
+
+                &:nth-child(5) {
+                    animation-delay: 0.4s;
+                    height: 4px;
+                }
             }
         }
+
+        .lang-select-footer {
+            .ant-select-selection-item {
+                padding-inline-end: 0 !important;
+                text-align: center;
+            }
+
+            .ant-select-arrow {
+                display: none; // Ẩn mũi tên để tiết kiệm diện tích ở footer
+            }
+        }
+
+        .voice-waves {
+            left: 5px; // Căn chỉnh lại vị trí sóng âm
+        }
+    }
+
+    .lang-dropdown-custom {
+        z-index: 10001 !important;
+        background-color: #170F23 !important;
+        border: 1px solid #FE2851;
+    }
+}
+
+.lang-dropdown-custom {
+    z-index: 10001 !important; 
+    background-color: #170F23 !important;
+    border: 1px solid #FE2851;
+}
+
+@keyframes wave-animation {
+
+    0%,
+    100% {
+        transform: scaleY(1);
+    }
+
+    50% {
+        transform: scaleY(2.5);
+    }
+}
+
+// Keyframes cho nút Mic tỏa sáng
+@keyframes pulse-red {
+    0% {
+        box-shadow: 0 0 0 0 rgba(254, 40, 81, 0.7);
+    }
+
+    70% {
+        box-shadow: 0 0 0 10px rgba(254, 40, 81, 0);
+    }
+
+    100% {
+        box-shadow: 0 0 0 0 rgba(254, 40, 81, 0);
     }
 }
 
