@@ -8,8 +8,8 @@
 
   &__title {
     color: #fff;
-    font-size: 48px;
-    font-weight: 700;
+    font-size: 40px;
+    font-weight: 800;
     display: flex;
     align-items: center;
     gap: 15px;
@@ -17,17 +17,21 @@
   }
 
   &__play-icon {
-    font-size: 40px;
+    font-size: 45px;
+    color: #FE2851;
     cursor: pointer;
+    transition: transform 0.3s;
+
     &:hover {
-      color: #eb2f96;
+      transform: scale(1.1);
+      color: #ff4d6d;
     }
   }
 
-  // Override Ant Design Tabs
   .ant-tabs {
     .ant-tabs-nav {
-      margin-bottom: 30px;
+      margin-bottom: 25px;
+
       &::before {
         border-bottom: 1px solid rgba(255, 255, 255, 0.1);
       }
@@ -35,9 +39,8 @@
 
     .ant-tabs-tab {
       color: rgba(255, 255, 255, 0.6);
-      font-weight: 500;
-      padding: 12px 0;
-      margin-right: 40px;
+      font-weight: 600;
+      font-size: 14px;
 
       &:hover {
         color: #fff;
@@ -49,14 +52,14 @@
     }
 
     .ant-tabs-ink-bar {
-      background: #eb2f96; // Màu tím hồng của Muzia
+      background: #FE2851;
     }
   }
 
   &__actions {
     display: flex;
-    gap: 15px;
-    margin-bottom: 50px;
+    gap: 12px;
+    margin-bottom: 24px;
   }
 
   &__btn {
@@ -64,58 +67,225 @@
     border: 1px solid rgba(255, 255, 255, 0.2);
     color: #fff;
     font-size: 12px;
-    height: 24px;
-    padding: 0 15px;
+    text-transform: uppercase;
 
     &.active {
-      background: #eb2f96;
-      border-color: #eb2f96;
+      background: #FE2851;
+      border-color: #FE2851;
     }
 
     &:hover {
+      border-color: #FE2851 !important;
       color: #fff !important;
-      border-color: #eb2f96 !important;
     }
   }
 
-  // Empty State Styling
+  // Tracklist Styling
+  .playlist-tracks {
+    .header-text {
+      color: rgba(255, 255, 255, 0.5);
+      font-size: 12px;
+      font-weight: 600;
+    }
+
+    .track-item {
+      padding: 10px;
+      border-radius: 6px;
+      cursor: pointer;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+      transition: background 0.3s;
+
+      &:hover {
+        background: rgba(255, 255, 255, 0.1);
+
+        .delete-icon {
+          opacity: 1;
+        }
+      }
+
+      &.active {
+        background: rgba(254, 40, 81, 0.15);
+
+        .song-name {
+          color: #FE2851;
+        }
+      }
+
+      .track-index {
+        color: rgba(255, 255, 255, 0.5);
+        width: 20px;
+      }
+
+      .song-name {
+        color: #fff;
+        display: block;
+        font-size: 14px;
+      }
+
+      .artist-name,
+      .album-text {
+        color: rgba(255, 255, 255, 0.5);
+        font-size: 12px;
+      }
+
+      .track-actions {
+        display: flex;
+        justify-content: flex-end;
+        align-items: center;
+        gap: 20px;
+
+        .heart-active {
+          color: #FE2851;
+          font-size: 16px;
+          cursor: pointer;
+          transition: transform 0.2s ease;
+
+          &:hover {
+            transform: scale(1.2);
+            color: #ff4d6d; // Sáng hơn khi hover để biết là có thể bấm
+          }
+        }
+
+        .delete-icon {
+          color: rgba(255, 255, 255, 0.5);
+          opacity: 0;
+          transition: opacity 0.2s;
+
+          &:hover {
+            color: #fff;
+          }
+        }
+
+        .track-duration {
+          color: rgba(255, 255, 255, 0.5);
+          min-width: 40px;
+          text-align: right;
+        }
+      }
+    }
+  }
+
   &__empty {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    min-height: 300px;
+    text-align: center;
+    padding: 60px 0;
 
     &-icon {
-      width: 80px;
-      margin-bottom: 20px;
-      opacity: 0.5;
+      margin-bottom: 15px;
+      opacity: 0.6;
+
       img {
-        width: 100%;
+        width: 100px;
       }
     }
 
     &-text {
       color: rgba(255, 255, 255, 0.5);
-      font-size: 16px;
-      margin-bottom: 25px;
+      margin-bottom: 20px;
     }
 
     &-btn {
-      background-color: #eb2f96;
-      border-color: #eb2f96;
-      height: 40px;
-      padding: 0 35px;
-      font-weight: 600;
+      background: #FE2851;
+      border: none;
 
       &:hover {
-        background-color: #ff4d9f !important;
-        border-color: #ff4d9f !important;
+        background: #ff4d6d !important;
+      }
+    }
+  }
+
+  .favorite-card {
+    text-align: center;
+    cursor: pointer;
+
+    .card-image {
+      position: relative;
+      width: 100%;
+      aspect-ratio: 1/1;
+      border-radius: 8px;
+      overflow: hidden;
+      margin-bottom: 12px;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+
+      &.circle {
+        border-radius: 50%;
+      }
+
+      // Style riêng cho Nghệ sĩ
+
+      img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        transition: transform 0.5s ease;
+      }
+
+      .overlay {
+        position: absolute;
+        inset: 0;
+        background: rgba(0, 0, 0, 0.4);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        opacity: 0;
+        transition: opacity 0.3s ease;
+
+        .play-icon {
+          font-size: 45px;
+          color: #fff;
+        }
+      }
+
+      .btn-unfav {
+        position: absolute;
+        bottom: 10px;
+        right: 10px;
+        color: #FE2851;
+        font-size: 18px;
+        opacity: 0;
+        transition: 0.3s;
+
+        &:hover {
+          transform: scale(1.2);
+        }
+      }
+    }
+
+    &:hover {
+      .card-image img {
+        transform: scale(1.1);
+      }
+
+      .overlay,
+      .btn-unfav {
+        opacity: 1;
+      }
+
+      .card-info .title {
+        color: #FE2851;
+      }
+    }
+
+    .card-info {
+      .title {
+        display: block;
+        color: #fff;
+        font-size: 14px;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        transition: 0.3s;
+      }
+
+      .subtitle {
+        color: rgba(255, 255, 255, 0.5);
+        font-size: 12px;
+        text-transform: capitalize;
       }
     }
   }
 }
 
+/* Responsive (Mobile/Tablet) giữ nguyên logic cũ của bạn nhưng cập nhật màu */
 /* ================= RESPONSIVE - MY LIBRARY ================= */
 
 /* Tablet <= 992px */
@@ -147,7 +317,8 @@
     .playlist-tracks {
 
       .tracklist-header {
-        display: none; /* Ẩn header bảng cho gọn */
+        display: none;
+        /* Ẩn header bảng cho gọn */
       }
 
       .track-item {
@@ -159,7 +330,8 @@
 
         .ant-col:nth-child(1),
         .ant-col:nth-child(3) {
-          display: none; /* Ẩn index + time add */
+          display: none;
+          /* Ẩn index + time add */
         }
 
         .ant-col:nth-child(2) {
@@ -190,12 +362,6 @@
       font-size: 28px;
     }
 
-    &__actions {
-      flex-wrap: wrap;
-      gap: 10px;
-      margin-bottom: 30px;
-    }
-
     .ant-tabs {
       .ant-tabs-tab {
         margin-right: 20px;
@@ -214,7 +380,8 @@
       }
 
       .btn-action {
-        display: none; /* Ẩn nút more trên mobile cho gọn */
+        display: none;
+        /* Ẩn nút more trên mobile cho gọn */
       }
     }
 
@@ -232,7 +399,8 @@
       }
 
       .track-duration {
-        display: none; /* Ẩn duration cho đỡ chật */
+        display: none;
+        /* Ẩn duration cho đỡ chật */
       }
     }
   }

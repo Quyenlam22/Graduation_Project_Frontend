@@ -1,19 +1,22 @@
-import { Typography, Row, Col, Avatar, Flex, Button, Space, Divider, Spin } from 'antd';
-import { PlayCircleFilled, HeartOutlined, CheckCircleFilled } from '@ant-design/icons';
+import { Typography, Row, Col, Avatar, Flex, Button, Space, Divider, Spin, message } from 'antd';
+import { PlayCircleFilled, HeartOutlined, HeartFilled, CheckCircleFilled } from '@ant-design/icons';
 import { useParams, Link } from 'react-router-dom';
 import { useContext, useMemo } from 'react';
 import { ArtistContext } from '../../../Context/ArtistContext';
 import { AlbumContext } from '../../../Context/AlbumContext';
 import { SongContext } from '../../../Context/SongContext';
 import { MusicContext } from '../../../Context/MusicContext'; 
+import { AuthContext } from '../../../Context/AuthProvider'; // Thêm AuthContext
 import AlbumSection from '../../../components/Album/AlbumSection';
 import ArtistSection from '../../../components/Artist/ArtistSection';
 import './Artist.scss';
+import { toggleFavorite } from '../../../services/authService'; // Thêm service
 
 const { Title, Text } = Typography;
 
 function Artist() {
   const { id } = useParams();
+  const { user, setUser } = useContext(AuthContext); // Lấy thông tin user
   const { artists, loading: artistLoading } = useContext(ArtistContext);
   const { albums } = useContext(AlbumContext);
   const { songs } = useContext(SongContext);
@@ -30,6 +33,36 @@ function Artist() {
     albums.filter(al => al.artistId === id), 
   [albums, id]);
 
+  // Logic xử lý yêu thích (Y hệt bên Album và Playlist)
+  const handleToggleFavorite = async (type, itemId, e) => {
+    if (e) e.stopPropagation(); 
+    if (!user) {
+        message.error("Please log in to use this function!");
+        return;
+    }
+
+    try {
+      const response = await toggleFavorite({
+        uid: user.uid,
+        type: type, // 'artists' hoặc 'songs'
+        itemId: itemId
+      });
+      
+      if (response.success) {
+        setUser({
+          ...user,
+          favorites: {
+            ...user.favorites,
+            [type]: response.updatedFavorites
+          }
+        });
+        message.success(response.updatedFavorites.includes(itemId) ? "Added to favorites" : "Removed from favorites");
+      }
+    } catch (error) {
+      message.error("An error occurred, please try again later.");
+    }
+  };
+
   const formatNumber = (num) => {
     if (!num) return "0";
     if (num >= 1000000) return (num / 1000000).toFixed(1) + "M";
@@ -37,7 +70,6 @@ function Artist() {
     return num;
   };
 
-  // 1. Cập nhật hàm phát một bài hát: Truyền kèm danh sách popularSongs làm Queue
   const handlePlaySong = (song) => {
     playSong(
       {
@@ -45,11 +77,10 @@ function Artist() {
         artist: song.artistName,
         avatar: song.cover,
       },
-      popularSongs // Thiết lập hàng đợi là danh sách bài hát phổ biến
+      popularSongs 
     );
   };
 
-  // 2. Cập nhật hàm Random Play: Chọn ngẫu nhiên nhưng vẫn giữ Queue là popularSongs
   const handleRandomPlay = () => {
     if (popularSongs.length > 0) {
       const randomIndex = Math.floor(Math.random() * popularSongs.length);
@@ -61,7 +92,7 @@ function Artist() {
           artist: selectedSong.artistName,
           avatar: selectedSong.cover,
         },
-        popularSongs // Vẫn duy trì danh sách phổ biến trong hàng đợi
+        popularSongs 
       );
     }
   };
@@ -94,7 +125,19 @@ function Artist() {
                   >
                     Random Play
                   </Button>
-                  <Button ghost shape="circle" icon={<HeartOutlined />} size="large" className="btn-action" />
+
+                  {/* NÚT LIKE ARTIST: Đổi màu và viền khi đã like */}
+                  <Button 
+                    ghost 
+                    shape="circle" 
+                    icon={user?.favorites?.artists?.includes(id) ? <HeartFilled /> : <HeartOutlined />} 
+                    size="large" 
+                    style={{
+                      color: user?.favorites?.artists?.includes(id) ? '#FE2851' : '#fff',
+                      borderColor: user?.favorites?.artists?.includes(id) ? '#FE2851' : '#fff'
+                    }}
+                    onClick={(e) => handleToggleFavorite('artists', id, e)}
+                  />
                 </Space>
               </Flex>
             </div>
@@ -108,7 +151,7 @@ function Artist() {
                   <div 
                     className="track-item" 
                     key={song._id}
-                    onClick={() => handlePlaySong(song)} // Phát bài và nạp danh sách phổ biến
+                    onClick={() => handlePlaySong(song)} 
                     style={{ cursor: 'pointer' }}
                   >
                     <Row align="middle" style={{ width: '100%' }}>
@@ -120,10 +163,14 @@ function Artist() {
                         </Flex>
                       </Col>
                       <Col span={2}>
-                        <HeartOutlined 
-                          className="favorite-icon" 
-                          onClick={(e) => e.stopPropagation()} 
-                        />
+                        {/* NÚT LIKE BÀI HÁT PHỔ BIẾN CỦA NGHỆ SĨ */}
+                        <div onClick={(e) => handleToggleFavorite('songs', song._id, e)}>
+                            {user?.favorites?.songs?.includes(song._id) ? (
+                                <HeartFilled style={{ color: '#FE2851', fontSize: '18px', cursor: 'pointer' }} />
+                            ) : (
+                                <HeartOutlined style={{ fontSize: '18px', cursor: 'pointer', color: '#9CA3A1' }} />
+                            )}
+                        </div>
                       </Col>
                       <Col span={3} style={{ textAlign: 'right' }}>
                         <Text style={{ color: '#9CA3A1' }}>

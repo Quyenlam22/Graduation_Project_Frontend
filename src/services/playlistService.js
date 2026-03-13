@@ -19,3 +19,8 @@ export const deletePlaylists = async (id) => {
     const result = await del(`playlists/delete/${id}`);
     return result;
 }
+
+export const getFavoritePlaylistsDetail = async (listId) => {
+    const result = await post({ ids: listId }, `playlists/get-playlists-by-ids`);
+    return result;
+}

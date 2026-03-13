@@ -24,3 +24,8 @@ export const deleteAlbums = async (id) => {
     const result = await del(`albums/delete/${id}`);
     return result;
 }
+
+export const getFavoriteAlbumsDetail = async (listId) => {
+    const result = await post({ ids: listId }, `albums/get-albums-by-ids`);
+    return result;
+}

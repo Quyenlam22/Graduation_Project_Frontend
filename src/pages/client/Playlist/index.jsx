@@ -1,21 +1,25 @@
 import { useContext, useMemo } from 'react';
 import { useParams, Link } from 'react-router-dom';
-import { Typography, Row, Col, Avatar, Flex, Button, Space, Divider, Spin } from 'antd';
-import { PlayCircleFilled, HeartOutlined, MoreOutlined, ClockCircleOutlined } from '@ant-design/icons';
+import { Typography, Row, Col, Avatar, Flex, Button, Space, Spin, message } from 'antd';
+import { 
+  PlayCircleFilled, HeartOutlined, HeartFilled, 
+  MoreOutlined, ClockCircleOutlined 
+} from '@ant-design/icons';
 import { PlaylistContext } from '../../../Context/PlaylistContext';
 import { SongContext } from '../../../Context/SongContext';
 import { MusicContext } from '../../../Context/MusicContext'; 
+import { AuthContext } from '../../../Context/AuthProvider'; // Thêm AuthContext
 import PlaylistSection from '../../../components/Playlist/PlaylistSection';
 import './Playlist.scss';
+import { toggleFavorite } from '../../../services/authService'; // Thêm service
 
 const { Title, Text } = Typography;
 
 function Playlist() {
   const { id } = useParams();
+  const { user, setUser } = useContext(AuthContext); // Lấy thông tin user
   const { playlists, loading: playlistLoading } = useContext(PlaylistContext);
   const { loading: songLoading } = useContext(SongContext);
-  
-  // Lấy các hàm từ MusicContext
   const { playSong, formatTime } = useContext(MusicContext);
 
   const currentPlaylist = useMemo(() => {
@@ -36,24 +40,42 @@ function Playlist() {
     return hours > 0 ? `${hours} hr ${minutes} min` : `${minutes} min`;
   }, [playlistSongs]);
 
-  // 1. Cập nhật hàm xử lý phát một bài hát cụ thể và truyền kèm Playlist làm Queue
-  const handlePlaySong = (song) => {
-    playSong(
-      {
-        ...song,
-        artist: song.artistName,
-        avatar: song.cover,
-      },
-      playlistSongs // Truyền toàn bộ danh sách bài hát vào Queue
-    );
+  // Logic xử lý yêu thích (Y hệt bên Album)
+  const handleToggleFavorite = async (type, itemId, e) => {
+    if (e) e.stopPropagation(); 
+    if (!user) {
+        message.error("Please log in to use this function!");
+        return;
+    }
+
+    try {
+      const response = await toggleFavorite({
+        uid: user.uid,
+        type: type, // 'playlists' hoặc 'songs'
+        itemId: itemId
+      });
+      
+      if (response.success) {
+        setUser({
+          ...user,
+          favorites: {
+            ...user.favorites,
+            [type]: response.updatedFavorites
+          }
+        });
+        message.success(response.updatedFavorites.includes(itemId) ? "Added to favorites" : "Removed from favorites");
+      }
+    } catch (error) {
+      message.error("An error occurred, please try again later.");
+    }
   };
 
-  // 2. Cập nhật hàm phát toàn bộ Playlist từ bài đầu tiên
+  const handlePlaySong = (song) => {
+    playSong({ ...song, artist: song.artistName, avatar: song.cover }, playlistSongs);
+  };
+
   const handlePlayAll = () => {
-    if (playlistSongs.length > 0) {
-      // Phát bài đầu tiên và truyền toàn bộ danh sách để tự động chuyển bài
-      playSong(playlistSongs[0], playlistSongs);
-    }
+    if (playlistSongs.length > 0) playSong(playlistSongs[0], playlistSongs);
   };
 
   if (playlistLoading || songLoading) {
@@ -78,15 +100,24 @@ function Playlist() {
               
               <Space size="middle" style={{ marginTop: 25 }}>
                 <Button 
-                  type="primary" 
-                  shape="round" 
-                  icon={<PlayCircleFilled />} 
-                  size="large" 
-                  className="btn-play-all"
-                  onClick={handlePlayAll} // Kích hoạt phát toàn bộ
+                  type="primary" shape="round" icon={<PlayCircleFilled />} 
+                  size="large" className="btn-play-all" onClick={handlePlayAll}
                 >
                   Play All
                 </Button>
+
+                {/* NÚT LIKE PLAYLIST: Ở cạnh Play All */}
+                <Button 
+                  ghost shape="circle" 
+                  icon={user?.favorites?.playlists?.includes(id) ? <HeartFilled /> : <HeartOutlined />} 
+                  size="large" 
+                  style={{
+                    color: user?.favorites?.playlists?.includes(id) ? '#FE2851' : '#fff',
+                    borderColor: user?.favorites?.playlists?.includes(id) ? '#FE2851' : '#fff'
+                  }}
+                  onClick={(e) => handleToggleFavorite('playlists', id, e)}
+                />
+
                 <Button ghost shape="circle" icon={<MoreOutlined />} size="large" className="btn-action" />
               </Space>
             </Flex>
@@ -98,9 +129,9 @@ function Playlist() {
         <div className="playlist-tracks">
           <div className="tracklist-header">
             <Row align="middle">
-              <Col span={1}><Text type="secondary">#</Text></Col>
-              <Col span={14}><Text type="secondary">Songs</Text></Col>
-              <Col span={6}><Text type="secondary">Like</Text></Col>
+              <Col span={1}><Text type="secondary" style={{ color: '#9CA3A1' }}>#</Text></Col>
+              <Col span={14}><Text type="secondary" style={{ color: '#9CA3A1' }}>Songs</Text></Col>
+              <Col span={6}><Text type="secondary" style={{ color: '#9CA3A1' }}>Like</Text></Col>
               <Col span={3} style={{ textAlign: 'right' }}><ClockCircleOutlined style={{ color: '#9CA3A1' }} /></Col>
             </Row>
           </div>
@@ -110,11 +141,11 @@ function Playlist() {
               <div 
                 className="track-item" 
                 key={song._id}
-                onClick={() => handlePlaySong(song)} // Phát bài chọn kèm danh sách sau nó
+                onClick={() => handlePlaySong(song)}
                 style={{ cursor: 'pointer' }}
               >
                 <Row align="middle" style={{ width: '100%' }}>
-                  <Col span={1}><Text className="track-index">{index + 1}</Text></Col>
+                  <Col span={1}><Text className="track-index" style={{ color: '#9CA3A1' }}>{index + 1}</Text></Col>
                   <Col span={14}>
                     <Flex align="center" gap={15}>
                       <Avatar shape="square" size={40} src={song.cover} />
@@ -125,13 +156,17 @@ function Playlist() {
                     </Flex>
                   </Col>
                   <Col span={6}>
-                    <HeartOutlined 
-                      className="favorite-icon" 
-                      onClick={(e) => e.stopPropagation()} 
-                    />
+                    {/* NÚT LIKE BÀI HÁT TRONG PLAYLIST */}
+                    <div onClick={(e) => handleToggleFavorite('songs', song._id, e)}>
+                        {user?.favorites?.songs?.includes(song._id) ? (
+                            <HeartFilled style={{ color: '#FE2851', fontSize: '18px', cursor: 'pointer' }} />
+                        ) : (
+                            <HeartOutlined style={{ fontSize: '18px', cursor: 'pointer', color: '#9CA3A1' }} />
+                        )}
+                    </div>
                   </Col>
-                  <Col span={3} style={{ textAlign: 'right', display: 'flex', justifyContent: 'flex-end', gap: '20px' }}>
-                    <Text className="track-duration">{formatTime(song.duration || 0)}</Text>
+                  <Col span={3} style={{ textAlign: 'right', display: 'flex', justifyContent: 'flex-end' }}>
+                    <Text className="track-duration" style={{ color: '#9CA3A1' }}>{formatTime(song.duration || 0)}</Text>
                   </Col>
                 </Row>
               </div>
@@ -148,10 +183,10 @@ function Playlist() {
 
       <section style={{ marginBottom: 50, marginTop: id ? 50 : 0 }}>
         <Flex justify="space-between" align="baseline" className="section-title-container">
-          <Title level={4} className="section-title">
+          <Title level={4} className="section-title" style={{ color: '#fff' }}>
             {!id ? "All Playlists" : "Suggested Playlists"}
           </Title>
-          <Link to={"/playlists"} className="see-all">View all</Link>
+          <Link to={"/playlists"} className="see-all" style={{ color: '#FE2851' }}>View all</Link>
         </Flex>
         <PlaylistSection playlists={playlists} isSlider={!!id} />
       </section>

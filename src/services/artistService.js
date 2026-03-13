@@ -24,3 +24,8 @@ export const deleteArtists = async (id) => {
     const result = await del(`artists/delete/${id}`);
     return result;
 }
+
+export const getFavoriteArtistsDetail = async (listId) => {
+    const result = await post({ ids: listId }, `artists/get-artists-by-ids`);
+    return result;
+}

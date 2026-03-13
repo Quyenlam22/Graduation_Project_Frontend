@@ -44,3 +44,8 @@ export const deleteUser = async (id) => {
     const result = await del(`users/delete/${id}`);
     return result;
 }
+
+export const toggleFavorite = async (options) => {
+    const result = await post(options, `users/toggle-favorite`);
+    return result;
+}
