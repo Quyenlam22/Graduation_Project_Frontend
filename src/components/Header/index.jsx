@@ -1,4 +1,4 @@
-import { Button, Image } from "antd";
+import { Button, Image, Space } from "antd"; // Thêm Space
 import { useEffect, useState, useContext } from 'react';
 import Notice from "../../components/Notice";
 import { LogoutOutlined, MenuFoldOutlined, MenuUnfoldOutlined, UserOutlined } from '@ant-design/icons'
@@ -10,12 +10,14 @@ import { signOut } from "firebase/auth";
 import { useNavigate } from "react-router";
 import { auth } from "../../firebase/config";
 import Search from "../Search";
+import { useTranslation } from "react-i18next"; // Import i18n
 
 function HeaderClient (props) {
   const { setCollapse, collapse } = props;
   const { user } = useContext(AuthContext);
   const navigate = useNavigate();
   const { messageApi } = useContext(AppContext);
+  const { t, i18n } = useTranslation(); // Khai báo t và i18n
   const [isMobile, setIsMobile] = useState(window.innerWidth < 560);
 
   useEffect(() => {
@@ -27,16 +29,21 @@ function HeaderClient (props) {
     return () => window.removeEventListener("resize", handleResize);
   }, []);
 
+  // Hàm thay đổi ngôn ngữ
+  const changeLanguage = (lng) => {
+    i18n.changeLanguage(lng);
+    localStorage.setItem("muzia_lang", lng);
+  };
+
   const handleLogout = async () => {
         if (user?.uid) {
             try {
-                // const token = await auth.currentUser.getIdToken();
                 await changeStatus({ uid: user.uid, state: "offline" });
             } catch (e) { console.error(e); }
         }
         localStorage.removeItem("accessToken");
         await signOut(auth);
-        messageApi.success("Logout successfully!")
+        messageApi.success(t('auth.logout_success')) // Dùng đa ngôn ngữ
         navigate("/");
     };
     
@@ -57,10 +64,42 @@ function HeaderClient (props) {
               </div>
               <div className="header-client__nav-between">
                 <div className="header-client__search">
-                      <Search/>
-                  </div>
+                    <Search/>
+                </div>
               </div>
+
               <div className="header-client__nav-right">
+                {/* PHẦN CHUYỂN NGÔN NGỮ */}
+                {!isMobile && (
+                    <Space size={2} className="header-client__lang-switch">
+                        <Button 
+                            type="text" 
+                            size="small" 
+                            style={{ 
+                                color: i18n.language === 'vi' ? '#FE2851' : '#9CA3A1', 
+                                fontWeight: i18n.language === 'vi' ? 'bold' : 'normal',
+                                padding: '0 4px'
+                            }}
+                            onClick={() => changeLanguage('vi')}
+                        >
+                            VI
+                        </Button>
+                        <span style={{ color: '#393243' }}>|</span>
+                        <Button 
+                            type="text" 
+                            size="small" 
+                            style={{ 
+                                color: i18n.language === 'en' ? '#FE2851' : '#9CA3A1', 
+                                fontWeight: i18n.language === 'en' ? 'bold' : 'normal',
+                                padding: '0 4px'
+                            }}
+                            onClick={() => changeLanguage('en')}
+                        >
+                            EN
+                        </Button>
+                    </Space>
+                )}
+
                 { user ? (
                     <>
                         <div className="header-client__nav-right__notify">
@@ -81,7 +120,7 @@ function HeaderClient (props) {
                                     onClick={() => {navigate("/user-info")}}
                                 />
                             }
-                            <Button icon={<LogoutOutlined />} danger onClick={handleLogout}>{!isMobile && "Logout"}</Button>
+                            <Button icon={<LogoutOutlined />} danger onClick={handleLogout}>{!isMobile && t('auth.logout')}</Button>
                         </div>
                     </>
                     ) : (
@@ -91,7 +130,7 @@ function HeaderClient (props) {
                                 icon={<UserOutlined />} 
                                 onClick={() => navigate("/auth")}
                             >
-                                Sign In
+                                {t('auth.sign_in')}
                             </Button>
                         </div>
                     )

@@ -4,7 +4,7 @@ import { getAuth, FacebookAuthProvider, GoogleAuthProvider, connectAuthEmulator 
 import { connectFirestoreEmulator, getFirestore } from "firebase/firestore";
 import { getStorage } from "firebase/storage";
 
-console.log("Kiểm tra Project ID:", import.meta.env.VITE_FIREBASE_PROJECT_ID);
+// console.log("Kiểm tra Project ID:", import.meta.env.VITE_FIREBASE_PROJECT_ID);
 
 const firebaseConfig = {
   apiKey: import.meta.env.VITE_FIREBASE_API_KEY,

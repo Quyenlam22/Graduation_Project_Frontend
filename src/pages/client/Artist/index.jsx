@@ -11,6 +11,7 @@ import AlbumSection from '../../../components/Album/AlbumSection';
 import ArtistSection from '../../../components/Artist/ArtistSection';
 import './Artist.scss';
 import { toggleFavorite } from '../../../services/authService'; // Thêm service
+import { useTranslation } from 'react-i18next';
 
 const { Title, Text } = Typography;
 
@@ -23,6 +24,8 @@ function Artist() {
   
   const { playSong, formatTime } = useContext(MusicContext);
 
+  const { t } = useTranslation();
+
   const currentArtist = useMemo(() => artists.find(a => a._id === id), [artists, id]);
 
   const popularSongs = useMemo(() => 
@@ -33,11 +36,10 @@ function Artist() {
     albums.filter(al => al.artistId === id), 
   [albums, id]);
 
-  // Logic xử lý yêu thích (Y hệt bên Album và Playlist)
   const handleToggleFavorite = async (type, itemId, e) => {
     if (e) e.stopPropagation(); 
     if (!user) {
-        message.error("Please log in to use this function!");
+        message.error(t('auth.login_required'));
         return;
     }
 
@@ -56,10 +58,10 @@ function Artist() {
             [type]: response.updatedFavorites
           }
         });
-        message.success(response.updatedFavorites.includes(itemId) ? "Added to favorites" : "Removed from favorites");
+        message.success(response.updatedFavorites.includes(itemId) ? t('common.added_favorite') : t('common.removed_favorite'));
       }
     } catch (error) {
-      message.error("An error occurred, please try again later.");
+      message.error(t('common.error_occurred'));
     }
   };
 
@@ -77,7 +79,8 @@ function Artist() {
         artist: song.artistName,
         avatar: song.cover,
       },
-      popularSongs 
+      popularSongs,
+      `Artist: ${currentArtist.name}`
     );
   };
 
@@ -92,7 +95,8 @@ function Artist() {
           artist: selectedSong.artistName,
           avatar: selectedSong.cover,
         },
-        popularSongs 
+        popularSongs,
+        `Artist: ${currentArtist.name}`
       );
     }
   };
@@ -108,11 +112,11 @@ function Artist() {
               <Flex vertical>
                 <Flex align="center" gap={5} className="verified-badge">
                   <CheckCircleFilled style={{ color: '#3d91ff' }} />
-                  <Text style={{ color: '#fff', fontSize: '12px' }}>Verified Artist</Text>
+                  <Text style={{ color: '#fff', fontSize: '12px' }}>{t('artist.verified')}</Text>
                 </Flex>
                 <Title className="artist-name-big">{currentArtist.name}</Title>
                 <Text className="artist-stats">
-                  {formatNumber(currentArtist.nb_fan || 0)} listeners
+                  {t('artist.listeners_count', { count: formatNumber(currentArtist.nb_fan || 0) })}
                 </Text>
                 <Space size="middle" style={{ marginTop: 25 }}>
                   <Button 
@@ -123,7 +127,7 @@ function Artist() {
                     className="btn-play-artist"
                     onClick={handleRandomPlay} 
                   >
-                    Random Play
+                    {t('artist.random_play')}
                   </Button>
 
                   {/* NÚT LIKE ARTIST: Đổi màu và viền khi đã like */}
@@ -145,7 +149,7 @@ function Artist() {
 
           <Row gutter={40} className="artist-content" style={{ padding: '24px' }}>
             <Col span={16}>
-              <Title level={4} className="section-title">Popular</Title>
+              <Title level={4} className="section-title">{t('artist.popular')}</Title>
               <div className="track-list">
                 {popularSongs.map((song, i) => (
                   <div 
@@ -184,27 +188,27 @@ function Artist() {
             </Col>
 
             <Col span={8}>
-              <Title level={4} className="section-title">Introduction</Title>
+              <Title level={4} className="section-title">{t('artist.introduction')}</Title>
               <div className="about-card" style={{ background: 'rgba(255,255,255,0.05)', padding: '20px', borderRadius: '8px' }}>
                 <Text style={{ color: '#9CA3A1', display: 'block', marginBottom: '15px' }}>
-                  {currentArtist.description || `Thông tin về ${currentArtist.name} đang được cập nhật...`}
+                  {currentArtist.description || t('artist.no_description', { name: currentArtist.name })}
                 </Text>
                 <Divider style={{ borderColor: 'rgba(255,255,255,0.1)' }} />
-                <Title level={5} style={{ color: '#fff' }}>Information</Title>
-                <Text style={{ color: '#9CA3A1', display: 'block' }}>Likes: {formatNumber(currentArtist.like?.length || 0)}</Text>
-                <Text style={{ color: '#9CA3A1', display: 'block' }}>Fans: {formatNumber(currentArtist.nb_fan || 0)}</Text>
+                <Title level={5} style={{ color: '#fff' }}>{t('artist.info_title')}</Title>
+                <Text style={{ color: '#9CA3A1', display: 'block' }}>{t('artist.likes')}: {formatNumber(currentArtist.like?.length || 0)}</Text>
+                <Text style={{ color: '#9CA3A1', display: 'block' }}>{t('artist.fans')}: {formatNumber(currentArtist.nb_fan || 0)}</Text>
               </div>
             </Col>
           </Row>
 
           <Divider className="custom-divider" />
           <section style={{ marginBottom: 50, padding: '0 24px' }}>
-            <AlbumSection albums={artistAlbums} title="Discography" isSlider={true} />
+            <AlbumSection albums={artistAlbums} title={t('artist.discography')} isSlider={true} />
           </section>
         </>
       ) : (
         <section style={{ padding: '40px 24px' }}>
-          <Title level={2} style={{ color: '#fff', marginBottom: '30px' }}>All Artists</Title>
+          <Title level={2} style={{ color: '#fff', marginBottom: '30px' }}>{t('artist.all_artists')}</Title>
           <ArtistSection artists={artists} isSlider={false} />
         </section>
       )}
@@ -214,8 +218,8 @@ function Artist() {
           <Divider className="custom-divider" />
           <section style={{ marginBottom: 50, padding: '0 24px' }}>
             <Flex justify="space-between" align="baseline" className="section-title-container">
-              <Title level={4} className="section-title">Another Artists</Title>
-              <Link to="/artists" className="see-all">View all</Link>
+              <Title level={4} className="section-title">{t('artist.another_artists')}</Title>
+              <Link to="/artists" className="see-all">{t('common.view_all')}</Link>
             </Flex>
             <ArtistSection artists={artists} isSlider={true} />
           </section>

@@ -11,10 +11,12 @@ import { toggleFavorite } from "../../../services/authService";
 import { getFavoriteAlbumsDetail } from "../../../services/albumService";
 import { getFavoritePlaylistsDetail } from "../../../services/playlistService";
 import { getFavoriteArtistsDetail } from "../../../services/artistService";
+import { useTranslation } from "react-i18next";
 
 const { Text } = Typography;
 
 function MyFavorite() {
+  const { t } = useTranslation();
   const navigate = useNavigate();
   const { user, setUser } = useContext(AuthContext);
   const { playSong, isPlaying, currentSong, formatTime } = useContext(MusicContext);
@@ -22,14 +24,12 @@ function MyFavorite() {
   const [data, setData] = useState({ songs: [], albums: [], playlists: [], artists: [] });
   const [loading, setLoading] = useState(false);
   
-  // Dùng Ref để tránh việc fetch đi fetch lại khi không cần thiết
   const isFirstLoad = useRef(true);
 
-  useTitle("My Library");
+  useTitle(t('sidebar.library'));
 
   useEffect(() => {
     const fetchAllFavorites = async () => {
-      // Chỉ hiện loading ở lần đầu tiên truy cập trang
       if (isFirstLoad.current) {
         setLoading(true);
       }
@@ -56,12 +56,10 @@ function MyFavorite() {
       }
     };
 
-    // Chỉ fetch khi user đã login và có thông tin favorites
     if (user) {
       fetchAllFavorites();
     }
   }, [user?.favorites?.songs?.length, user?.favorites?.albums?.length, user?.favorites?.playlists?.length, user?.favorites?.artists?.length]);
-  // Chỉ lắng nghe sự thay đổi về độ dài mảng để tránh re-render vô tận
 
   const handleRemoveFavorite = async (e, id, type) => {
     e.stopPropagation();
@@ -69,25 +67,30 @@ function MyFavorite() {
       const response = await toggleFavorite({ uid: user.uid, type, itemId: id });
       if (response.success) {
         setUser({ ...user, favorites: { ...user.favorites, [type]: response.updatedFavorites } });
-        message.success("Removed from library");
+        message.success(t('common.removed_favorite')); // Dùng đa ngôn ngữ
       }
-    } catch (error) { message.error("Error updating favorites"); }
+    } catch (error) { 
+        message.error(t('common.error_occurred')); 
+    }
   };
 
-  // --- RENDER SUB-COMPONENTS (Giữ nguyên logic hiển thị của bạn) ---
   const SongList = () => (
     <div className="playlist-tracks">
       <div className="tracklist-header">
         <Row align="middle">
           <Col span={1}><Text className="header-text">#</Text></Col>
-          <Col span={14}><Text className="header-text">SONG</Text></Col>
-          <Col span={6}><Text className="header-text">ALBUM</Text></Col>
+          <Col span={14}><Text className="header-text">{t('common.songs_list')}</Text></Col>
+          <Col span={6}><Text className="header-text">{t('album.title_prefix')}</Text></Col>
           <Col span={3} style={{ textAlign: 'right' }}><ClockCircleOutlined className="header-text" /></Col>
         </Row>
       </div>
       <div className="track-list">
         {data.songs.map((song, index) => (
-          <div className={`track-item ${currentSong?._id === song._id ? 'active' : ''}`} key={song._id} onClick={() => playSong(song, data.songs)}>
+          <div 
+            className={`track-item ${currentSong?._id === song._id ? 'active' : ''}`} 
+            key={song._id} 
+            onClick={() => playSong(song, data.songs, t('sidebar.library'))}
+          >
             <Row align="middle" style={{ width: '100%' }}>
               <Col span={1}><Text className="track-index">{index + 1}</Text></Col>
               <Col span={14}>
@@ -99,7 +102,7 @@ function MyFavorite() {
                   </div>
                 </Flex>
               </Col>
-              <Col span={6}><Text className="album-text">{song.albumName || "Single"}</Text></Col>
+              <Col span={6}><Text className="album-text">{song.albumName || t('common.single')}</Text></Col>
               <Col span={3} className="track-actions">
                 <HeartFilled className="heart-active" onClick={(e) => handleRemoveFavorite(e, song._id, 'songs')} />
                 <Text className="track-duration">{formatTime(song.duration)}</Text>
@@ -125,7 +128,7 @@ function MyFavorite() {
               </div>
               <div className="card-info">
                 <Text strong className="title">{item.title || item.name}</Text>
-                <Text className="subtitle">{type === 'artists' ? 'Artist' : item.artistName || 'Muzia User'}</Text>
+                <Text className="subtitle">{type === 'artists' ? t('common.artist') : item.artistName || 'Muzia User'}</Text>
               </div>
             </div>
           </Col>
@@ -140,25 +143,30 @@ function MyFavorite() {
         <img src="https://zmp3-static.zmdcdn.me/skins/zmp3-v6.1/images/icons/empty-fav-song-dark.png" alt="Empty" />
       </div>
       <p className="favorite__empty-text">{message}</p>
-      <Button className="favorite__empty-btn" type="primary" shape="round" onClick={() => navigate("/")}>DISCOVER NOW</Button>
+      <Button className="favorite__empty-btn" type="primary" shape="round" onClick={() => navigate("/")}>
+        {t('common.discover_now')}
+      </Button>
     </div>
   );
 
   const tabItems = [
-    { key: 'songs', label: 'SONGS', children: data.songs.length > 0 ? <SongList /> : <EmptyState message="No liked songs yet." /> },
-    { key: 'albums', label: 'ALBUMS', children: <GridView items={data.albums} type="albums" emptyMsg="No favorite albums yet." /> },
-    { key: 'playlists', label: 'PLAYLISTS', children: <GridView items={data.playlists} type="playlists" emptyMsg="No favorite playlists yet." /> },
-    { key: 'artists', label: 'ARTISTS', children: <GridView items={data.artists} type="artists" emptyMsg="No favorite artists yet." /> },
+    { key: 'songs', label: t('sidebar.songs'), children: data.songs.length > 0 ? <SongList /> : <EmptyState message={t('library.empty_songs')} /> },
+    { key: 'albums', label: t('sidebar.albums'), children: <GridView items={data.albums} type="albums" emptyMsg={t('library.empty_albums')} /> },
+    { key: 'playlists', label: t('sidebar.playlists'), children: <GridView items={data.playlists} type="playlists" emptyMsg={t('library.empty_playlists')} /> },
+    { key: 'artists', label: t('sidebar.artists'), children: <GridView items={data.artists} type="artists" emptyMsg={t('library.empty_artists')} /> },
   ];
 
   return (
     <div className="favorite">
       <div className="favorite__header">
-        <h2 className="favorite__title">My Library {data.songs.length > 0 && <PlayCircleFilled className="favorite__play-icon" onClick={() => playSong(data.songs[0], data.songs)} />}</h2>
+        <h2 className="favorite__title">
+            {t('sidebar.library')} 
+            {data.songs.length > 0 && <PlayCircleFilled className="favorite__play-icon" onClick={() => playSong(data.songs[0], data.songs, t('sidebar.library'))} />}
+        </h2>
       </div>
       {loading ? (
         <Flex justify="center" align="center" style={{ padding: '100px' }}>
-          <Spin size="large" tip="Loading Library..." />
+          <Spin size="large" tip={t('common.loading')} />
         </Flex>
       ) : (
         <Tabs defaultActiveKey="songs" items={tabItems} className="favorite__tabs" />

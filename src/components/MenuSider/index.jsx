@@ -7,8 +7,10 @@ import { IoMdHome } from "react-icons/io";
 import { PiPlaylistFill } from "react-icons/pi";
 import { useContext } from "react";
 import { AuthContext } from "../../Context/AuthProvider";
+import { useTranslation } from "react-i18next";
 
 function MenuSider () {
+    const { t } = useTranslation();
     const { user } = useContext(AuthContext);
     const location = useLocation();
     const path = location.pathname;
@@ -19,33 +21,32 @@ function MenuSider () {
         return path;
     };
 
-    // Định nghĩa tất cả các item
     const allItems = [
         {
             key: '/',
             icon: <IoMdHome />,
-            label: <Link to={"/"}>Home</Link>,
+            label: <Link to={"/"}>{t('menu.home')}</Link>,
         },
         {
             key: '/my-favorite',
             icon: <IoLibrary />,
-            label: <Link to={"/my-library"}>My Library</Link>,
+            label: <Link to={"/my-library"}>{t('menu.library')}</Link>,
             requiredAuth: true, 
         },
         {
             key: '/playlists',
             icon: <PiPlaylistFill />,
-            label: <Link to={"/playlists"}>Playlists</Link>,
+            label: <Link to={"/playlists"}>{t('menu.playlists')}</Link>,
         },
         {
             key: '/artists',
             icon: <TbMoodSing />,
-            label: <Link to={"/artists"}>Artists</Link>,
+            label: <Link to={"/artists"}>{t('menu.artists')}</Link>,
         },
         {
             key: '/albums',
             icon: <BiSolidAlbum />,
-            label: <Link to={"/albums"}>Albums</Link>,
+            label: <Link to={"/albums"}>{t('menu.albums')}</Link>,
         },
     ];
 

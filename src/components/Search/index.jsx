@@ -3,8 +3,10 @@ import { Input } from "antd";
 import { SearchOutlined } from '@ant-design/icons';
 import SearchPreview from "./SearchPreview";
 import "./Search.scss";
+import { useTranslation } from "react-i18next";
 
 function Search() {
+  const { t } = useTranslation();
   const [isFocus, setIsFocus] = useState(false);
   const [keyword, setKeyword] = useState("");
   const searchRef = useRef(null);
@@ -23,7 +25,8 @@ function Search() {
   return (
     <div className="search-wrapper" ref={searchRef}>
       <Input 
-        placeholder="Explore more..." 
+        // 3. Dùng t() cho placeholder
+        placeholder={t('search.placeholder')} 
         prefix={<SearchOutlined style={{ color: 'rgba(255,255,255,0.5)' }} />} 
         variant="filled"
         value={keyword}

@@ -1,21 +1,23 @@
 import { useContext, useEffect } from "react";
 import { Flex, Avatar, Slider, message } from "antd";
 import { 
-  StepBackwardOutlined, StepForwardOutlined, RetweetOutlined, 
-  HeartOutlined, HeartFilled, ExpandOutlined, UnorderedListOutlined, 
-  SoundOutlined, MutedOutlined, PlayCircleFilled, PauseCircleFilled,
-  LoadingOutlined
+    StepBackwardOutlined, StepForwardOutlined, RetweetOutlined, 
+    HeartOutlined, HeartFilled, ExpandOutlined, UnorderedListOutlined, 
+    SoundOutlined, MutedOutlined, PlayCircleFilled, PauseCircleFilled,
+    LoadingOutlined
 } from "@ant-design/icons";
 import { TiArrowShuffle } from "react-icons/ti";
 import { MusicContext } from "../../Context/MusicContext";
 import { AuthContext } from "../../Context/AuthProvider";
 import { toggleFavorite } from "../../services/authService";
+import { useTranslation } from "react-i18next";
 
 function MusicPlayer() {
+  const { t } = useTranslation();
   const { user, setUser } = useContext(AuthContext);
   const {
     currentSong, isPlaying, isLoading, currentTime, duration, progress, volume, isMuted, 
-    isLoop, isShuffle,
+    isLoop, isShuffle, queueTitle,
     togglePlay, handleSeek, handleVolumeChange, toggleMute, toggleLoop, 
     toggleShuffle, formatTime, handleNext, handlePrev
   } = useContext(MusicContext);
@@ -24,7 +26,7 @@ function MusicPlayer() {
   const handleToggleFavorite = async (e) => {
     if (e) e.stopPropagation();
     if (!user) {
-      message.error("Please log in to use this feature!");
+      message.error(t('auth.login_required'));
       return;
     }
 
@@ -43,19 +45,18 @@ function MusicPlayer() {
             songs: response.updatedFavorites
           }
         });
-        message.success(response.updatedFavorites.includes(currentSong._id) ? "Added to favorites" : "Removed from favorites");
+        const isAdded = response.updatedFavorites.includes(currentSong._id);
+        message.success(isAdded ? t('common.added_favorite') : t('common.removed_favorite'));
       }
     } catch (error) {
-      message.error("An error occurred, please try again later.");
+      message.error(t('common.error_occurred'));
     }
   };
 
-  // --- LẮNG NGHE LỆNH TỪ AI CHATBOT ---
+  // --- LẮNG NGHE LỆNH TỪ AI CHATBOT (Giữ nguyên logic điều khiển) ---
   useEffect(() => {
     const onVoiceControl = (e) => {
       const action = e.detail;
-      console.log("Muzia Command Received:", action);
-
       switch (action) {
         case 'play': if (!isPlaying) togglePlay(); break;
         case 'pause': if (isPlaying) togglePlay(); break;
@@ -70,7 +71,6 @@ function MusicPlayer() {
         default: break;
       }
     };
-
     window.addEventListener('muzia-control', onVoiceControl);
     return () => window.removeEventListener('muzia-control', onVoiceControl);
   }, [isPlaying, isMuted, isLoop, isShuffle, togglePlay, toggleMute, toggleLoop, toggleShuffle, handleNext, handlePrev]);
@@ -84,9 +84,22 @@ function MusicPlayer() {
             <div className="song-detail">
                 <h5 className="song-name">{currentSong.title}</h5>
                 <p className="artist-name" style={{ color: '#9CA3A1' }}>{currentSong.artistName}</p>
+                {queueTitle && (
+                  <p className="queue-source" style={{ 
+                      color: '#FE2851', 
+                      fontSize: '11px', 
+                      margin: 0,
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '4px',
+                      opacity: 0.8
+                  }}>
+                      <UnorderedListOutlined style={{ fontSize: '10px' }} /> 
+                      {queueTitle}
+                  </p>
+              )}
             </div>
             
-            {/* NÚT TIM CHO BÀI HÁT ĐANG PHÁT */}
             <div onClick={handleToggleFavorite} style={{ marginLeft: '20px', cursor: 'pointer', fontSize: '20px' }}>
                 {user?.favorites?.songs?.includes(currentSong._id) ? (
                     <HeartFilled style={{ color: '#FE2851' }} />

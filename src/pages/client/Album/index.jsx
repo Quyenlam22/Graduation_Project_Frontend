@@ -10,11 +10,13 @@ import { formatDate } from '../../../utils/formatTime';
 import AlbumSection from '../../../components/Album/AlbumSection';
 import './Album.scss';
 import { toggleFavorite } from '../../../services/authService';
+import { useTranslation } from 'react-i18next';
 
 const { Title, Text } = Typography;
 
 function Album() {
   const { id } = useParams();
+  const { t } = useTranslation();
   const { user, setUser } = useContext(AuthContext); 
   const { albums, loading: albumLoading } = useContext(AlbumContext);
   const { songs, loading: songLoading } = useContext(SongContext);
@@ -27,7 +29,7 @@ function Album() {
     if (e) e.stopPropagation(); 
     
     if (!user) {
-        message.error("Please log in to use this function!");
+        message.error(t('auth.login_required'));
         return;
     }
 
@@ -46,19 +48,19 @@ function Album() {
             [type]: response.updatedFavorites
           }
         });
-        message.success(response.updatedFavorites.includes(itemId) ? "Added to favorites" : "Removed from favorites");
+        message.success(response.updatedFavorites.includes(itemId) ? t('common.added_favorite') : t('common.removed_favorite'));
       }
     } catch (error) {
-      message.error("An error occurred, please try again later.");
+      message.error(t('common.error_occurred'));
     }
   };
 
   const handlePlaySong = (song) => {
-    playSong({ ...song, artist: song.artistName, avatar: song.cover }, albumSongs);
+    playSong({ ...song, artist: song.artistName, avatar: song.cover }, albumSongs, `${t('album.title_prefix')}: ${currentAlbum.title}`);
   };
 
   const handlePlayAll = () => {
-    if (albumSongs.length > 0) playSong(albumSongs[0], albumSongs);
+    if (albumSongs.length > 0) playSong(albumSongs[0], albumSongs, `${t('album.title_prefix')}: ${currentAlbum.title}`);
   };
 
   if (albumLoading || songLoading) {
@@ -75,12 +77,12 @@ function Album() {
               <Title level={2} style={{ color: '#fff', margin: '15px 0 5px 0' }}>{currentAlbum.title}</Title>
               <Text style={{ color: '#FE2851', fontSize: '18px', display: 'block' }}>{currentAlbum.artistName}</Text>
               <Text type="secondary" style={{ color: '#9CA3A1', marginBottom: "8px" }}>
-                {formatDate(currentAlbum.createdAt, 'YYYY')} • {albumSongs.length} songs
+                {formatDate(currentAlbum.createdAt, 'YYYY')} • {albumSongs.length} {t('common.songs')}
               </Text>
               
               <Space size="middle" className="mt-4">
                 <Button type="primary" shape="round" icon={<PlayCircleFilled />} size="large" className="btn-play-all" onClick={handlePlayAll}>
-                  Play All
+                  {t('common.play_all')}
                 </Button>
                 
                 {/* NÚT LIKE ALBUM: Tự động đổi màu hồng và viền hồng khi đã like */}
@@ -103,8 +105,8 @@ function Album() {
             <div className="tracklist-header">
               <Row align="middle">
                 <Col span={1}><Text type="secondary" style={{ color: '#9CA3A1' }}>#</Text></Col>
-                <Col span={16}><Text type="secondary" style={{ color: '#9CA3A1' }}>Songs</Text></Col>
-                <Col span={4}><Text type="secondary" style={{ color: '#9CA3A1' }}>Like</Text></Col>
+                <Col span={16}><Text type="secondary" style={{ color: '#9CA3A1' }}>{t('common.songs_list')}</Text></Col>
+                <Col span={4}><Text type="secondary" style={{ color: '#9CA3A1' }}>{t('common.like')}</Text></Col>
                 <Col span={3}><ClockCircleOutlined style={{ color: '#9CA3A1' }} /></Col>
               </Row>
             </div>
@@ -145,7 +147,7 @@ function Album() {
       )}
 
       <section className="mb-12">
-        <AlbumSection albums={albums} title={!id ? "All Albums" : "Other Albums"} />
+        <AlbumSection albums={albums} title={!id ? t('album.all_albums') : t('album.other_albums')} />
       </section>
     </div>
   );

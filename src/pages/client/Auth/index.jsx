@@ -4,16 +4,15 @@ import { FaFacebookF, FaGoogle, FaGithub } from "react-icons/fa";
 import { signInWithPopup } from "firebase/auth";
 import { auth, fbProvider, googleProvider } from "../../../firebase/config";
 import { AuthContext } from "../../../Context/AuthProvider";
-// import { AppContext } from "../../../Context/AppProvider"; 
-// import { addDocument } from "../../../firebase/services";
-// import { serverTimestamp } from "firebase/firestore";
 import { authWithEmail } from "../../../utils/authWithEmail";
 import useTitle from "../../../hooks/useTitle";
 import "./Auth.scss";
 import { register } from '../../../services/authService';
 import { AppContext } from '../../../Context/AppProvider';
+import { useTranslation } from 'react-i18next';
 
 const Auth = () => {
+  const { t } = useTranslation();
   const { messageApi } = useContext(AppContext);
 
   const [isLoginMode, setIsLoginMode] = useState(true);
@@ -28,7 +27,7 @@ const Auth = () => {
   const { user } = useContext(AuthContext);
   const navigate = useNavigate();
   
-  useTitle(isLoginMode ? 'Login' : 'Register');
+  useTitle(isLoginMode ? t('auth.login_form') : t('auth.register_form'));
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -39,7 +38,7 @@ const Auth = () => {
     const { email, password, confirmPassword, displayName } = formData;
 
     if (!isLoginMode && password !== confirmPassword) {
-      messageApi.error("Passwords do not match!");
+      messageApi.error(t('auth.error_password_match'));
       return;
     }
 
@@ -48,26 +47,21 @@ const Auth = () => {
       const mode = isLoginMode ? "login" : "register";
       const data = await authWithEmail(email, password, mode, displayName);
       
-      // messageApi.success(`${isLoginMode ? 'Login' : 'Register'} successfully!`);
-      messageApi.success(`Hello ${data.displayName}`);
-      
+      messageApi.success(`${t('auth.hello')} ${data.displayName}`);
       navigate("/");
     } catch (error) {
-      console.error("Auth Error Code:", error.code);
-      
-      // Xử lý bắt lỗi chi tiết từ Firebase
-      let errorText = "An error occurred. Please try again.";
+      let errorKey = "auth.error_general";
       if (error.code === 'auth/email-already-in-use') {
-        errorText = "This email is already in the system!";
+        errorKey = "auth.error_email_exists";
       } else if (error.code === 'auth/invalid-credential' || error.code === 'auth/wrong-password') {
-        errorText = "Invalid email or password!";
+        errorKey = "auth.error_invalid_auth";
       } else if (error.code === 'auth/weak-password') {
-        errorText = "Password should be at least 6 characters!";
+        errorKey = "auth.error_weak_password";
       } else if (error.code === 'auth/invalid-email') {
-        errorText = "Invalid email format!";
+        errorKey = "auth.error_invalid_email";
       }
 
-      messageApi.error(errorText);
+      messageApi.error(t(errorKey));
     } finally {
       setLoading(false);
     }
@@ -76,7 +70,6 @@ const Auth = () => {
   const handleSocialLogin = async (provider) => {
     try {
       const result = await signInWithPopup(auth, provider);
-      
       const idToken = await result.user.getIdToken(true);
       localStorage.setItem("accessToken", idToken);
 
@@ -88,66 +81,65 @@ const Auth = () => {
         displayName: result.user.displayName,
         photoURL: result.user.photoURL,
         provider: loginMethod,
-        role: "user" // Mặc định cho social login
+        role: "user"
       })
 
-      messageApi.success(`Hello ${result.user.displayName}`);
-
+      messageApi.success(`${t('auth.hello')} ${result.user.displayName}`);
       navigate("/");
     } catch (error) {
-      console.error("Social Login failed!", error);
+      messageApi.error(t('auth.error_social'));
     }
   };
 
   useEffect(() => {
     const isLogout = localStorage.getItem("logout");
     if (isLogout === "true") {
-      messageApi.success('Logged out successfully!');
+      messageApi.success(t('auth.logout_success'));
       localStorage.removeItem("logout");
     }
-  }, [messageApi]);
+  }, [messageApi, t]);
 
   if (user) return null;
 
   return (
     <div className="auth-container">
-      <h1>{isLoginMode ? "Login Form" : "Register Form"}</h1>
+      <h1>{isLoginMode ? t('auth.login_form') : t('auth.register_form')}</h1>
       <div className="content-w3ls">
         <form onSubmit={handleSubmit}>
           {!isLoginMode && (
             <div className="form-control">
               <input 
-                type="text" name="displayName" placeholder="Display Name" 
+                type="text" name="displayName" placeholder={t('auth.placeholder_name')}
                 value={formData.displayName} onChange={handleChange} required 
               />
             </div>
           )}
           <div className="form-control">
             <input 
-              type="email" name="email" placeholder="Email Address" 
+              type="email" name="email" placeholder={t('auth.placeholder_email')}
               value={formData.email} onChange={handleChange} required 
             />
           </div>
           <div className="form-control">
             <input 
-              type="password" name="password" placeholder="Password" 
+              type="password" name="password" placeholder={t('auth.placeholder_password')}
               value={formData.password} onChange={handleChange} required 
             />
           </div>
           {!isLoginMode && (
             <div className="form-control">
               <input 
-                type="password" name="confirmPassword" placeholder="Confirm Password" 
+                type="password" name="confirmPassword" placeholder={t('auth.placeholder_confirm')}
                 value={formData.confirmPassword} onChange={handleChange} required 
               />
             </div>
           )}
           <button type="submit" className="auth-btn" disabled={loading}>
-            {loading ? "PROCESSING..." : (isLoginMode ? "LOGIN" : "REGISTER")}
+            {loading ? t('auth.processing') : (isLoginMode ? t('auth.login_upper') : t('auth.register_upper'))}
           </button>
         </form>
 
-        <p className="social-text">Or Login With</p>
+        <p className="social-text">{t('auth.social_login')}</p>
         <ul className="social-icons">
           <li><a href="#!" onClick={() => handleSocialLogin(fbProvider)}><FaFacebookF /></a></li>
           <li><a href="#!" onClick={() => handleSocialLogin(googleProvider)}><FaGoogle /></a></li>
@@ -155,7 +147,7 @@ const Auth = () => {
         </ul>
         
         <p className="social-text">
-          {isLoginMode ? "Don't have an account? " : "Already have an account? "} 
+          {isLoginMode ? t('auth.no_account') : t('auth.have_account')} 
           <Link 
             className="text" 
             onClick={() => {
@@ -163,7 +155,7 @@ const Auth = () => {
                 setFormData({ displayName: '', email: '', password: '', confirmPassword: '' });
             }}
           >
-            {isLoginMode ? "Register Now" : "Login Now"}
+            {isLoginMode ? t('auth.register_now') : t('auth.login_now')}
           </Link>
         </p>
       </div>

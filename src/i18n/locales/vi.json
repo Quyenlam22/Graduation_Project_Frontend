@@ -1,0 +1,156 @@
+{
+  "translation": {
+    "album": {
+      "title_prefix": "Album",
+      "all_albums": "Tất cả Album",
+      "other_albums": "Các Album khác"
+    },
+    "artist": {
+      "verified": "Nghệ sĩ đã xác minh",
+      "listeners_count": "{{count}} người nghe",
+      "random_play": "Phát ngẫu nhiên",
+      "popular": "Phổ biến",
+      "introduction": "Giới thiệu",
+      "info_title": "Thông tin",
+      "likes": "Lượt thích",
+      "fans": "Người hâm mộ",
+      "discography": "Danh sách đĩa nhạc",
+      "all_artists": "Tất cả nghệ sĩ",
+      "another_artists": "Nghệ sĩ khác",
+      "no_description": "Thông tin về {{name}} đang được cập nhật..."
+    },
+    "auth": {
+      "login_form": "Đăng nhập",
+      "register_form": "Đăng ký",
+      "login_upper": "ĐĂNG NHẬP",
+      "register_upper": "ĐĂNG KÝ",
+      "processing": "ĐANG XỬ LÝ...",
+      "placeholder_name": "Tên hiển thị",
+      "placeholder_email": "Địa chỉ Email",
+      "placeholder_password": "Mật khẩu",
+      "placeholder_confirm": "Xác nhận mật khẩu",
+      "social_login": "Hoặc đăng nhập bằng",
+      "no_account": "Chưa có tài khoản? ",
+      "have_account": "Đã có tài khoản? ",
+      "register_now": "Đăng ký ngay",
+      "login_now": "Đăng nhập ngay",
+      "hello": "Xin chào",
+      "error_password_match": "Mật khẩu không khớp!",
+      "error_email_exists": "Email này đã tồn tại trên hệ thống!",
+      "error_invalid_auth": "Email hoặc mật khẩu không chính xác!",
+      "error_weak_password": "Mật khẩu phải có ít nhất 6 ký tự!",
+      "error_invalid_email": "Định dạng email không hợp lệ!",
+      "error_general": "Đã xảy ra lỗi. Vui lòng thử lại.",
+      "error_social": "Đăng nhập bằng mạng xã hội thất bại!",
+      "login_required": "Vui lòng đăng nhập để tiếp tục!",
+      "logout_success": "Đăng xuất thành công!",
+      "logout": "Đăng xuất",
+      "sign_in": "Đăng nhập"
+    },
+    "common": {
+      "play_all": "Phát tất cả",
+      "songs": "bài hát",
+      "songs_list": "Bài hát",
+      "like": "Thích",
+      "added_favorite": "Đã thêm vào danh sách yêu thích",
+      "removed_favorite": "Đã xóa khỏi danh sách yêu thích",
+      "error_occurred": "Có lỗi xảy ra, vui lòng thử lại sau.",
+      "see_all": "Xem tất cả",
+      "view_all": "Xem tất cả",
+      "fans": "Người hâm mộ",
+      "hr": "giờ",
+      "min": "phút",
+      "loading": "Đang tải...",
+      "discover_now": "KHÁM PHÁ NGAY",
+      "single": "Đĩa đơn",
+      "artist": "Nghệ sĩ"
+    },
+    "chat": {
+      "welcome_msg": "Muzia AI Assistant sẵn sàng phục vụ!",
+      "history_cleared": "Lịch sử trò chuyện đã được xóa.",
+      "clear": "Xóa",
+      "placeholder": "Hỏi Muzia...",
+      "btn_send": "Gửi"
+    },
+    "error": {
+      "oops": "Rất tiếc! Không tìm thấy trang",
+      "message": "Chúng tôi xin lỗi, nhưng trang bạn yêu cầu không tồn tại hoặc đã bị di dời.",
+      "btn_back": "Quay lại Trang chủ"
+    },
+    "home": {
+      "welcome": "Chào mừng đến với Muzia",
+      "hero_title": "Âm nhạc cho mọi người",
+      "hero_subtitle": "Khám phá hàng triệu bài hát, album và nghệ sĩ. Tạo phong cách riêng của bạn.",
+      "btn_start": "Bắt đầu nghe",
+      "btn_explore": "Khám phá thêm",
+      "suggested": "Gợi ý cho bạn",
+      "trending_playlists": "Playlist thịnh hành",
+      "new_releases": "Nhạc mới phát hành",
+      "no_new_songs": "Hiện chưa có bài hát mới.",
+      "top_artists": "Nghệ sĩ hàng đầu"
+    },
+    "library": {
+      "empty_songs": "Chưa có bài hát nào trong thư viện.",
+      "empty_albums": "Chưa có album nào trong thư viện.",
+      "empty_playlists": "Chưa có danh sách phát nào trong thư viện.",
+      "empty_artists": "Chưa có nghệ sĩ nào trong thư viện."
+    },
+    "menu": {
+      "home": "Trang chủ",
+      "library": "Thư viện của tôi",
+      "playlists": "Danh sách phát",
+      "artists": "Nghệ sĩ",
+      "albums": "Album"
+    },
+    "notice": {
+      "title": "Thông báo",
+      "new_message": "Bạn nhận được tin nhắn mới",
+      "minutes_ago": "{{count}} phút trước"
+    },
+    "playlist": {
+      "label": "Playlist",
+      "label_upper": "PLAYLIST CỦA TÔI",
+      "no_description": "Không có mô tả cho danh sách này",
+      "no_songs": "Chưa có bài hát nào trong danh sách phát này.",
+      "all_playlists": "Tất cả danh sách phát",
+      "suggested_playlists": "Danh sách phát gợi ý"
+    },
+    "sidebar": {
+      "songs": "Bài hát",
+      "library": "Thư viện của tôi",
+      "playlists": "Danh sách phát",
+      "artists": "Nghệ sĩ",
+      "albums": "Album"
+    },
+    "search": {
+      "placeholder": "Khám phá thêm...",
+      "result_album": "KẾT QUẢ ALBUM",
+      "result_artist": "KẾT QUẢ NGHỆ SĨ",
+      "result_playlist": "KẾT QUẢ PLAYLIST",
+      "result_songs": "KẾT QUẢ BÀI HÁT",
+      "found_album": "Album Tìm Thấy",
+      "found_artist": "Nghệ Sĩ Tìm Thấy",
+      "suggested_playlist": "Playlist Gợi Ý",
+      "hot_song": "Bài Hát Hot",
+      "see_all": "Xem tất cả kết quả"
+    },
+    "user": {
+      "page_title": "Thiết lập cá nhân",
+      "personal_info": "Thông tin cá nhân",
+      "change_avatar": "Thay đổi ảnh đại diện",
+      "email_readonly": "Email (Chỉ đọc)",
+      "btn_save": "Lưu thay đổi",
+      "security": "Bảo mật",
+      "new_password": "Mật khẩu mới",
+      "confirm_password": "Xác nhận mật khẩu",
+      "placeholder_new_pass": "Nhập mật khẩu mới",
+      "placeholder_confirm_pass": "Xác nhận mật khẩu mới",
+      "btn_update_pass": "Cập nhật mật khẩu",
+      "update_success": "Cập nhật thông tin thành công!",
+      "password_success": "Đổi mật khẩu thành công!",
+      "error_relogin": "Vui lòng đăng nhập lại để thực hiện thao tác này!",
+      "error_name_required": "Vui lòng nhập tên hiển thị!",
+      "error_confirm_required": "Vui lòng xác nhận mật khẩu mới!"
+    }
+  }
+}

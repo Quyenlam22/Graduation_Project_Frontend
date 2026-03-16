@@ -2,19 +2,21 @@ import { useContext, useEffect } from "react";
 import { Navigate, Outlet } from "react-router-dom";
 import { AuthContext } from "../../../Context/AuthProvider";
 import { AppContext } from "../../../Context/AppProvider";
+import { useTranslation } from "react-i18next";
 
 const PrivateRouteClient = () => {
-  const { user, loading } = useContext(AuthContext); // Nên lấy cả trạng thái loading
+  const { t } = useTranslation(); 
+  const { user, loading } = useContext(AuthContext); 
   const { messageApi } = useContext(AppContext);
 
   useEffect(() => {
     if (!loading && !user) {
-      messageApi.error("Please login to continue!");
+      messageApi.error(t('auth.login_required'));
     }
-  }, [user, loading, messageApi]);
+  }, [user, loading, messageApi, t]);
 
   if (loading) {
-    return null; // Hoặc một loading spinner
+    return null; 
   }
 
   return user ? <Outlet /> : <Navigate to="/auth" replace />;

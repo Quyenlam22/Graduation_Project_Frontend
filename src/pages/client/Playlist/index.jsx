@@ -12,12 +12,14 @@ import { AuthContext } from '../../../Context/AuthProvider'; // Thêm AuthContex
 import PlaylistSection from '../../../components/Playlist/PlaylistSection';
 import './Playlist.scss';
 import { toggleFavorite } from '../../../services/authService'; // Thêm service
+import { useTranslation } from 'react-i18next';
 
 const { Title, Text } = Typography;
 
 function Playlist() {
   const { id } = useParams();
-  const { user, setUser } = useContext(AuthContext); // Lấy thông tin user
+  const { t } = useTranslation();
+  const { user, setUser } = useContext(AuthContext);
   const { playlists, loading: playlistLoading } = useContext(PlaylistContext);
   const { loading: songLoading } = useContext(SongContext);
   const { playSong, formatTime } = useContext(MusicContext);
@@ -37,14 +39,16 @@ function Playlist() {
     const totalSeconds = playlistSongs.reduce((acc, song) => acc + (song.duration || 0), 0);
     const hours = Math.floor(totalSeconds / 3600);
     const minutes = Math.floor((totalSeconds % 3600) / 60);
-    return hours > 0 ? `${hours} hr ${minutes} min` : `${minutes} min`;
-  }, [playlistSongs]);
+    if (hours > 0) {
+      return `${hours} ${t('common.hr')} ${minutes} ${t('common.min')}`;
+    }
+    return `${minutes} ${t('common.min')}`;
+  }, [playlistSongs, t]);
 
-  // Logic xử lý yêu thích (Y hệt bên Album)
   const handleToggleFavorite = async (type, itemId, e) => {
     if (e) e.stopPropagation(); 
     if (!user) {
-        message.error("Please log in to use this function!");
+        message.error(t('auth.login_required'));
         return;
     }
 
@@ -63,19 +67,19 @@ function Playlist() {
             [type]: response.updatedFavorites
           }
         });
-        message.success(response.updatedFavorites.includes(itemId) ? "Added to favorites" : "Removed from favorites");
+        message.success(response.updatedFavorites.includes(itemId) ? t('common.added_favorite') : t('common.removed_favorite'));
       }
     } catch (error) {
-      message.error("An error occurred, please try again later.");
+      message.error(t('common.error_occurred'));
     }
   };
 
   const handlePlaySong = (song) => {
-    playSong({ ...song, artist: song.artistName, avatar: song.cover }, playlistSongs);
+    playSong({ ...song, artist: song.artistName, avatar: song.cover }, playlistSongs, `${t('playlist.label')}: ${currentPlaylist.title}`);
   };
 
   const handlePlayAll = () => {
-    if (playlistSongs.length > 0) playSong(playlistSongs[0], playlistSongs);
+    if (playlistSongs.length > 0) playSong(playlistSongs[0], playlistSongs, `${t('playlist.label')}: ${currentPlaylist.title}`);
   };
 
   if (playlistLoading || songLoading) {
@@ -89,13 +93,14 @@ function Playlist() {
           <div className="playlist-left">
             <img className="playlist-avatar" src={currentPlaylist.avatar} alt={currentPlaylist.title} />
             <Flex vertical className="playlist-info-text">
-              <Text className="label-playlist">MY PLAYLIST</Text>
+              <Text className="label-playlist">{t('playlist.label_upper')}</Text>
               <Title level={1} style={{ color: '#fff', margin: '5px 0' }}>{currentPlaylist.title}</Title>
               <Text style={{ color: '#9CA3A1', display: 'block', marginBottom: '15px' }}>
-                {currentPlaylist.description || "No description available"}
+                {currentPlaylist.description || t('playlist.no_description')}
               </Text>
               <Text style={{ color: '#fff' }}>
-                <Text strong style={{ color: '#FE2851' }}>{currentPlaylist.userId || "Muzia Flow"}</Text> • {playlistSongs.length} songs, {totalDuration}
+                <Text strong style={{ color: '#FE2851' }}>{currentPlaylist.userId || "Muzia Flow"}</Text> 
+                {` • ${playlistSongs.length} ${t('common.songs')}, ${totalDuration}`}
               </Text>
               
               <Space size="middle" style={{ marginTop: 25 }}>
@@ -103,7 +108,7 @@ function Playlist() {
                   type="primary" shape="round" icon={<PlayCircleFilled />} 
                   size="large" className="btn-play-all" onClick={handlePlayAll}
                 >
-                  Play All
+                  {t('common.play_all')}
                 </Button>
 
                 {/* NÚT LIKE PLAYLIST: Ở cạnh Play All */}
@@ -130,8 +135,8 @@ function Playlist() {
           <div className="tracklist-header">
             <Row align="middle">
               <Col span={1}><Text type="secondary" style={{ color: '#9CA3A1' }}>#</Text></Col>
-              <Col span={14}><Text type="secondary" style={{ color: '#9CA3A1' }}>Songs</Text></Col>
-              <Col span={6}><Text type="secondary" style={{ color: '#9CA3A1' }}>Like</Text></Col>
+              <Col span={14}><Text type="secondary" style={{ color: '#9CA3A1' }}>{t('common.songs_list')}</Text></Col>
+              <Col span={6}><Text type="secondary" style={{ color: '#9CA3A1' }}>{t('common.like')}</Text></Col>
               <Col span={3} style={{ textAlign: 'right' }}><ClockCircleOutlined style={{ color: '#9CA3A1' }} /></Col>
             </Row>
           </div>
@@ -174,7 +179,7 @@ function Playlist() {
 
             {playlistSongs.length === 0 && (
               <Text type="secondary" style={{ display: 'block', textAlign: 'center', marginTop: 20 }}>
-                No songs available in this playlist.
+                {t('playlist.no_songs')}
               </Text>
             )}
           </div>
@@ -184,9 +189,9 @@ function Playlist() {
       <section style={{ marginBottom: 50, marginTop: id ? 50 : 0 }}>
         <Flex justify="space-between" align="baseline" className="section-title-container">
           <Title level={4} className="section-title" style={{ color: '#fff' }}>
-            {!id ? "All Playlists" : "Suggested Playlists"}
+            {!id ? t('playlist.all_playlists') : t('playlist.suggested_playlists')}
           </Title>
-          <Link to={"/playlists"} className="see-all" style={{ color: '#FE2851' }}>View all</Link>
+          <Link to={"/playlists"} className="see-all" style={{ color: '#FE2851' }}>{t('common.view_all')}</Link>
         </Flex>
         <PlaylistSection playlists={playlists} isSlider={!!id} />
       </section>

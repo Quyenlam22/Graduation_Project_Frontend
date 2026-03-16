@@ -1,0 +1,156 @@
+{
+  "translation": {
+    "album": {
+      "title_prefix": "Album",
+      "all_albums": "All Albums",
+      "other_albums": "Other Albums"
+    },
+    "artist": {
+      "verified": "Verified Artist",
+      "listeners_count": "{{count}} listeners",
+      "random_play": "Random Play",
+      "popular": "Popular",
+      "introduction": "Introduction",
+      "info_title": "Information",
+      "likes": "Likes",
+      "fans": "Fans",
+      "discography": "Discography",
+      "all_artists": "All Artists",
+      "another_artists": "Another Artists",
+      "no_description": "Information about {{name}} is being updated..."
+    },
+    "auth": {
+      "login_form": "Login",
+      "register_form": "Register",
+      "login_upper": "LOGIN",
+      "register_upper": "REGISTER",
+      "processing": "PROCESSING...",
+      "placeholder_name": "Display Name",
+      "placeholder_email": "Email Address",
+      "placeholder_password": "Password",
+      "placeholder_confirm": "Confirm Password",
+      "social_login": "Or Login With",
+      "no_account": "Don't have an account? ",
+      "have_account": "Already have an account? ",
+      "register_now": "Register Now",
+      "login_now": "Login Now",
+      "hello": "Hello",
+      "error_password_match": "Passwords do not match!",
+      "error_email_exists": "This email is already in the system!",
+      "error_invalid_auth": "Invalid email or password!",
+      "error_weak_password": "Password should be at least 6 characters!",
+      "error_invalid_email": "Invalid email format!",
+      "error_general": "An error occurred. Please try again.",
+      "error_social": "Social Login failed!",
+      "login_required": "Please log in to continue!",
+      "logout_success": "Logout successfully!",
+      "logout": "Logout",
+      "sign_in": "Sign In"
+    },
+    "common": {
+      "play_all": "Play All",
+      "songs": "songs",
+      "songs_list": "Songs",
+      "like": "Like",
+      "added_favorite": "Added to favorites",
+      "removed_favorite": "Removed from favorites",
+      "error_occurred": "An error occurred, please try again later.",
+      "see_all": "See All",
+      "view_all": "View All",
+      "fans": "Fans",
+      "hr": "hr",
+      "min": "min",
+      "loading": "Loading...",
+      "discover_now": "DISCOVER NOW",
+      "single": "Single",
+      "artist": "Artist"
+    },
+    "chat": {
+      "welcome_msg": "Muzia AI Assistant is ready to help!",
+      "history_cleared": "Chat history has been cleared.",
+      "clear": "Clear",
+      "placeholder": "Ask Muzia...",
+      "btn_send": "Send"
+    },
+    "error": {
+      "oops": "Oops! Page not found",
+      "message": "We are sorry, but the page you requested was not found or has been moved.",
+      "btn_back": "Back to Home"
+    },
+    "home": {
+      "welcome": "Welcome to Muzia",
+      "hero_title": "Music For Everyone",
+      "hero_subtitle": "Explore millions of songs, albums and artists. Create your own flow.",
+      "btn_start": "Start Listening",
+      "btn_explore": "Explore More",
+      "suggested": "Suggested for you",
+      "trending_playlists": "Trending playlists",
+      "new_releases": "New Releases",
+      "no_new_songs": "No new songs available.",
+      "top_artists": "Top Artists"
+    },
+    "library": {
+      "empty_songs": "No liked songs yet.",
+      "empty_albums": "No favorite albums yet.",
+      "empty_playlists": "No favorite playlists yet.",
+      "empty_artists": "No favorite artists yet."
+    },
+    "menu": {
+      "home": "Home",
+      "library": "My Library",
+      "playlists": "Playlists",
+      "artists": "Artists",
+      "albums": "Albums"
+    },
+    "notice": {
+      "title": "Notification",
+      "new_message": "You received a new message",
+      "minutes_ago": "{{count}} minutes ago"
+    },
+    "playlist": {
+      "label": "Playlist",
+      "label_upper": "MY PLAYLIST",
+      "no_description": "No description available",
+      "no_songs": "No songs available in this playlist.",
+      "all_playlists": "All Playlists",
+      "suggested_playlists": "Suggested Playlists"
+    },
+    "sidebar": {
+      "songs": "Songs",
+      "library": "My Library",
+      "playlists": "Playlists",
+      "artists": "Artists",
+      "albums": "Albums"
+    },
+    "search": {
+      "placeholder": "Explore more...",
+      "result_album": "RESULT ALBUM",
+      "result_artist": "RESULT ARTIST",
+      "result_playlist": "RESULT PLAYLIST",
+      "result_songs": "RESULT SONGS",
+      "found_album": "Album Found",
+      "found_artist": "Artist Found",
+      "suggested_playlist": "Suggested Playlist",
+      "hot_song": "Hot Song",
+      "see_all": "See all results"
+    },
+    "user": {
+      "page_title": "Profile Settings",
+      "personal_info": "Personal Information",
+      "change_avatar": "Change Avatar",
+      "email_readonly": "Email (Read Only)",
+      "btn_save": "Save Changes",
+      "security": "Security",
+      "new_password": "New Password",
+      "confirm_password": "Confirm Password",
+      "placeholder_new_pass": "Enter new password",
+      "placeholder_confirm_pass": "Confirm new password",
+      "btn_update_pass": "Update Password",
+      "update_success": "Update successful!",
+      "password_success": "Password changed successfully!",
+      "error_relogin": "Please log in again to perform this action!",
+      "error_name_required": "Please enter your display name!",
+      "error_confirm_required": "Please confirm your new password!"
+    }
+  }
+}

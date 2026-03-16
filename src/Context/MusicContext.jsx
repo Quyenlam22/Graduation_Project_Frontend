@@ -1,13 +1,12 @@
 import { createContext, useState, useRef, useContext, useEffect } from "react";
 import { Howl } from "howler";
-import { AppContext } from "./AppProvider";
 import { getPreview } from "../services/songService";
 
 export const MusicContext = createContext();
 
-export const MusicProvider = ({ children }) => {
-  const { messageApi } = useContext(AppContext);
-  
+export const MusicProvider = ({ children }) => {  
+  const [queueTitle, setQueueTitle] = useState(localStorage.getItem('muzia_queue_title') || "");
+
   const savedSong = JSON.parse(localStorage.getItem('muzia_current_song'));
   const savedQueue = JSON.parse(localStorage.getItem('muzia_play_queue')) || [];
   const savedIndex = parseInt(localStorage.getItem('muzia_current_index')) || -1;
@@ -88,7 +87,14 @@ export const MusicProvider = ({ children }) => {
     playSong(queue[nextIndex], queue);
   };
 
-  const playSong = async (song, list = []) => {
+  const playSong = async (song, list = [], title = "") => {
+    if (title) {
+        setQueueTitle(title);
+        localStorage.setItem('muzia_queue_title', title);
+    } else if (list.length === 0) {
+        setQueueTitle("Single Track");
+    }
+
     const newList = list.length > 0 ? list : [song];
     const index = newList.findIndex(s => (s.deezerId || s._id) === (song.deezerId || song._id));
     setPlayQueue(newList);
@@ -159,7 +165,7 @@ export const MusicProvider = ({ children }) => {
 
   return (
     <MusicContext.Provider value={{
-      currentSong, isPlaying, isLoading, currentTime, duration, progress, volume, isMuted, isLoop, isShuffle, playQueue, currentIndex,
+      currentSong, isPlaying, isLoading, currentTime, duration, progress, volume, isMuted, isLoop, isShuffle, playQueue, currentIndex, queueTitle,
       playSong, togglePlay, handleSeek, handleVolumeChange, toggleMute, toggleLoop, toggleShuffle, formatTime, handleNext, handlePrev
     }}>
       {children}

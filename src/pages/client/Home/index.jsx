@@ -11,19 +11,21 @@ import { PlaylistContext } from "../../../Context/PlaylistContext";
 import { SongContext } from "../../../Context/SongContext";
 import { ArtistContext } from "../../../Context/ArtistContext";
 import { MusicContext } from "../../../Context/MusicContext";
+import { useTranslation } from "react-i18next";
 
 const { Title, Text } = Typography;
 
 function Home() {
+    const { t } = useTranslation();
     const { albums } = useContext(AlbumContext);
     const { playlists } = useContext(PlaylistContext);
     const { songs } = useContext(SongContext);
     const { artists } = useContext(ArtistContext);
-    
     const { playSong } = useContext(MusicContext);
-    
     const navigate = useNavigate();
     
+    useTitle("Muzia");
+
     const newReleases = useMemo(() => {
         if (!songs || songs.length === 0) return [];
         return [...songs]
@@ -45,15 +47,13 @@ function Home() {
         return `${mins}:${secs < 10 ? '0' : ''}${secs}`;
     };
 
-    useTitle("Muzia");
-
     return (
         <div className="home-container">
             <div className="hero-section">
-                <div className="featured-badge">Welcome to Muzia</div>
-                <h1 className="hero-title">Music For Everyone</h1>
+                <div className="featured-badge">{t('home.welcome')}</div>
+                <h1 className="hero-title">{t('home.hero_title')}</h1>
                 <Text className="hero-subtitle">
-                    Explore millions of songs, albums and artists. Create your own flow.
+                    {t('home.hero_subtitle')}
                 </Text>
                 <Flex gap={15} className="hero-buttons">
                     <Button 
@@ -62,9 +62,9 @@ function Home() {
                         icon={<PlayCircleFilled />} 
                         shape="round" 
                         className="btn-play"
-                        onClick={() => newReleases.length > 0 && playSong(newReleases[0], songs)}
+                        onClick={() => newReleases.length > 0 && playSong(newReleases[0], newReleases, t('home.new_releases'))}
                     >
-                        Start Listening
+                        {t('home.btn_start')}
                     </Button>
                     <Button 
                         ghost 
@@ -73,7 +73,7 @@ function Home() {
                         className="btn-profile"
                         onClick={() => navigate("/artists")}
                     >
-                        Explore More
+                        {t('home.btn_explore')}
                     </Button>
                 </Flex>
             </div>
@@ -81,16 +81,16 @@ function Home() {
             {/* SUGGESTED SECTION */}
             <section style={{ marginBottom: 50 }}>
                 <Flex justify="space-between" align="baseline" className="section-title-container">
-                    <Title level={4} className="section-title">Suggested for you</Title>
-                    <Link to={"/albums"} className="see-all">See all</Link>
+                    <Title level={4} className="section-title">{t('home.suggested')}</Title>
+                    <Link to={"/albums"} className="see-all">{t('common.see_all')}</Link>
                 </Flex>
                 <AlbumSection albums={albums} isSlider={true} />
             </section>
 
             <section style={{ marginBottom: 50 }}>
                 <Flex justify="space-between" align="baseline" className="section-title-container">
-                    <Title level={4} className="section-title">Your Playlists</Title>
-                    <Link to={"/playlists"} className="see-all">View all</Link>
+                    <Title level={4} className="section-title">{t('home.trending_playlists')}</Title>
+                    <Link to={"/playlists"} className="see-all">{t('common.view_all')}</Link>
                 </Flex>
                 <PlaylistSection playlists={playlists} isSlider={true} albums={albums} />
             </section>
@@ -99,16 +99,14 @@ function Home() {
                 {/* NEW RELEASES */}
                 <Col span={16}>
                     <Flex justify="space-between" align="baseline" className="section-title-container">
-                        <Title level={4} className="section-title">New Releases</Title>
+                        <Title level={4} className="section-title">{t('home.new_releases')}</Title>
                     </Flex>
                     <div className="new-release-list">
                         {newReleases.map((song, index) => (
                             <div 
                                 key={song._id} 
                                 className="new-release-item"
-                                // 4. Thêm sự kiện click cho toàn bộ hàng hoặc icon play
-                                // onClick={() => handlePlayNewRelease(song)}
-                                onClick={() => playSong(song, newReleases)}
+                                onClick={() => playSong(song, newReleases, t('home.new_releases'))}
                                 style={{ cursor: 'pointer' }}
                             >
                                 <Text className="track-number">{index + 1}</Text>
@@ -128,7 +126,7 @@ function Home() {
 
                         {newReleases.length === 0 && (
                             <Text type="secondary" style={{ padding: '10px', display: 'block' }}>
-                                No new songs available.
+                                {t('home.no_new_songs')}
                             </Text>
                         )}
                     </div>
@@ -137,8 +135,8 @@ function Home() {
                 {/* SIDEBAR ARTISTS */}
                 <Col span={8}>
                     <Flex justify="space-between" align="baseline" className="section-title-container">
-                        <Title level={4} style={{ color: "#fff" }} className="section-title">Top Artists</Title>
-                        <Link to={"/artists"} className="see-all">See all</Link>
+                        <Title level={4} style={{ color: "#fff" }} className="section-title">{t('home.top_artists')}</Title>
+                        <Link to={"/artists"} className="see-all">{t('common.see_all')}</Link>
                     </Flex>
                     <Flex vertical gap={20}>
                         {topArtists.map((artist) => (
@@ -156,7 +154,7 @@ function Home() {
                                         {artist.name}
                                     </Text>
                                     <Text type="secondary" style={{ fontSize: '12px', color: '#9CA3A1' }}>
-                                        {artist.nb_fan ? artist.nb_fan.toLocaleString() : (artist.like?.length || 0)} Fans
+                                        {artist.nb_fan ? artist.nb_fan.toLocaleString() : (artist.like?.length || 0)} {t('common.fans')}
                                     </Text>
                                 </Flex>
                             </Flex>
