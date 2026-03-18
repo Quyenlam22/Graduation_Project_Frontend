@@ -1,64 +1,93 @@
-import { useLocation } from "react-router-dom";
-import { Typography } from "antd";
+import { useLocation, useNavigate } from "react-router-dom";
+import { Typography, Spin, Empty } from "antd";
 import { PlayCircleFilled } from "@ant-design/icons";
 import { useTranslation } from "react-i18next";
+import { useContext, useMemo } from "react";
+import { AlbumContext } from "../../Context/AlbumContext";
+import { ArtistContext } from "../../Context/ArtistContext";
+import { PlaylistContext } from "../../Context/PlaylistContext";
+import { SongContext } from "../../Context/SongContext";
+import { MusicContext } from "../../Context/MusicContext";
 
 const { Text } = Typography;
 
-function SearchPreview({ visible }) {
+function SearchPreview({ visible, keyword }) {
   const { t } = useTranslation();
   const location = useLocation();
+  const navigate = useNavigate();
   const path = location.pathname;
 
-  const dummyData = {
-    albums: [1, 2, 3, 4, 5].map(i => ({ id: i, title: `${t('search.found_album')} ${i}`, sub: "Artist Name", img: `https://picsum.photos/100/100?random=${i+10}` })),
-    artists: [1, 2, 3, 4, 5].map(i => ({ id: i, title: `${t('search.found_artist')} ${i}`, sub: "2.4M followers", img: `https://i.pravatar.cc/100?img=${i+10}` })),
-    playlists: [1, 2, 3, 4, 5].map(i => ({ id: i, title: `${t('search.suggested_playlist')} ${i}`, sub: "Muzia Flow", img: `https://picsum.photos/100/100?grayscale&random=${i+20}` })),
-    songs: [1, 2, 3, 4, 5].map(i => ({ id: i, title: `${t('search.hot_song')} ${i}`, sub: "Singer Name", img: `https://picsum.photos/100/100?random=${i+30}` }))
-  };
+  const { songs } = useContext(SongContext);
+  const { albums } = useContext(AlbumContext);
+  const { artists } = useContext(ArtistContext);
+  const { playlists } = useContext(PlaylistContext);
+  const { playSong } = useContext(MusicContext);
 
-  let currentData = [];
-  let label = "";
-  let isCircle = false;
+  const filteredData = useMemo(() => {
+    if (!keyword) return { results: [], label: "", type: "" };
 
-  if (path.includes("/albums")) {
-    currentData = dummyData.albums;
-    label = t('search.result_album');
-  } else if (path.includes("/artists")) {
-    currentData = dummyData.artists;
-    label = t('search.result_artist');
-    isCircle = true;
-  } else if (path.includes("/playlists")) {
-    currentData = dummyData.playlists;
-    label = t('search.result_playlist');
-    isCircle = true;
-  } else {
-    currentData = dummyData.songs;
-    label = t('search.result_songs');
-  }
+    const lowKeyword = keyword.toLowerCase();
+    
+    if (path.includes("/albums")) {
+      const res = albums.filter(a => a.title.toLowerCase().includes(lowKeyword)).slice(0, 5);
+      return { results: res, label: t('search.result_album'), type: 'album', isCircle: false };
+    } 
+    if (path.includes("/artists")) {
+      const res = artists.filter(a => a.name.toLowerCase().includes(lowKeyword)).slice(0, 5);
+      return { results: res, label: t('search.result_artist'), type: 'artist', isCircle: true };
+    } 
+    if (path.includes("/playlists")) {
+      const res = playlists.filter(a => a.title.toLowerCase().includes(lowKeyword)).slice(0, 5);
+      return { results: res, label: t('search.result_playlist'), type: 'playlist', isCircle: true };
+    } 
+    
+    // Mặc định tìm kiếm bài hát
+    const res = songs.filter(s => s.title.toLowerCase().includes(lowKeyword)).slice(0, 5);
+    return { results: res, label: t('search.result_songs'), type: 'song', isCircle: false };
+  }, [keyword, path, songs, albums, artists, playlists, t]);
 
   if (!visible) return null;
 
   return (
     <div className="search-preview-wrapper">
       <div className="preview-header">
-        <span className="label">{label}</span>
+        <span className="label">{filteredData.label}</span>
       </div>
-      {currentData.map((item) => (
-        <div className="preview-item" key={item.id}>
-          <img 
-            src={item.img} 
-            alt="thumb" 
-            className={`preview-img ${isCircle ? 'circle' : ''}`} 
-          />
-          <div className="preview-info">
-            <Text className="title" ellipsis>{item.title}</Text>
-            <Text className="sub-title" ellipsis>{item.sub}</Text>
+
+      {filteredData.results.length > 0 ? (
+        filteredData.results.map((item) => (
+          <div 
+            className="preview-item" 
+            key={item._id} 
+            onClick={() => {
+              if (filteredData.type === 'song') {
+                playSong(item, filteredData.results, "Search Result");
+              } else {
+                navigate(`/${filteredData.type}s/${item._id}`);
+              }
+            }}
+          >
+            <img 
+              src={item.avatar || item.cover} 
+              alt="thumb" 
+              className={`preview-img ${filteredData.isCircle ? 'circle' : ''}`} 
+            />
+            <div className="preview-info">
+              <Text className="title" ellipsis>{item.title || item.name}</Text>
+              <Text className="sub-title" ellipsis>
+                {item.artistName || (item.nb_fan ? `${item.nb_fan} Fans` : "Muzia")}
+              </Text>
+            </div>
+            <PlayCircleFilled className="play-icon-hover" />
           </div>
-          <PlayCircleFilled className="play-icon-hover" />
+        ))
+      ) : (
+        <div style={{ padding: '20px', textAlign: 'center' }}>
+          <Text type="secondary">{t('search.no_result_db')}</Text>
         </div>
-      ))}
-      <div className="preview-footer">
+      )}
+
+      <div className="preview-footer" onClick={() => navigate(`/search-all?q=${keyword}`)}>
          <Text className="view-all-text">{t('search.see_all')}</Text>
       </div>
     </div>

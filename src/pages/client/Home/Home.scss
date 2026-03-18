@@ -1,4 +1,5 @@
-// Home.scss
+@use "../../../layouts/LayoutClient/LayoutClient" as layout;
+
 .home-container {
   color: #fff;
   margin: 0 auto;
@@ -53,30 +54,11 @@
   }
 
   .glass-card {
-    background: rgba(255, 255, 255, 0.05) !important;
-    backdrop-filter: blur(10px);
-    border: 1px solid rgba(255, 255, 255, 0.1) !important;
-    border-radius: 12px;
-    overflow: hidden;
-
-    .ant-card-meta-title {
-      color: #fff !important;
-    }
-
-    .album-img-container {
-      padding: 12px;
-
-      img {
-        border-radius: 8px;
-        width: 100%;
-        aspect-ratio: 1/1;
-        object-fit: cover;
-      }
-    }
+    @extend .glass-card-global;
   }
 
   .playlist-card {
-    @extend .glass-card; // Kế thừa style glass-card đã có
+    @extend .glass-card;
 
     .playlist-img-container {
       padding: 12px;

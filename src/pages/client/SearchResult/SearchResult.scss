@@ -1,0 +1,149 @@
+@use "../../../layouts/LayoutClient/LayoutClient"as layout;
+
+.search-result-page {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 0 0 120px 0;
+
+  .search-result-header {
+    margin-bottom: 20px;
+
+    h2 {
+      color: #fff !important;
+      font-weight: 700;
+    }
+  }
+
+  .custom-tabs {
+    .ant-tabs-nav {
+      margin-bottom: 30px;
+
+      &::before {
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+      }
+    }
+
+    .ant-tabs-tab {
+      color: #9CA3A1;
+      font-size: 16px;
+      transition: all 0.3s;
+
+      &:hover {
+        color: #FE2851;
+      }
+    }
+
+    .ant-tabs-tab-active .ant-tabs-tab-btn {
+      color: #FE2851 !important;
+      font-weight: 600;
+    }
+
+    .ant-tabs-ink-bar {
+      background: #FE2851;
+    }
+  }
+
+  .search-song-item {
+    padding: 12px 15px;
+    border-radius: 12px;
+    transition: all 0.3s;
+    cursor: pointer;
+    margin-bottom: 4px;
+
+    &:hover {
+      background: rgba(255, 255, 255, 0.05);
+
+      .index {
+        color: #FE2851;
+      }
+    }
+
+    .index {
+      width: 30px;
+      color: rgba(255, 255, 255, 0.3);
+      font-size: 14px;
+    }
+
+    .song-cover {
+      width: 45px;
+      height: 45px;
+      border-radius: 6px;
+      object-fit: cover;
+    }
+
+    .info {
+      .title {
+        color: #fff;
+        font-size: 15px;
+      }
+
+      .artist {
+        color: #9CA3A1;
+        font-size: 12px;
+      }
+    }
+
+    .source-badge {
+      font-size: 10px;
+      padding: 2px 8px;
+      border-radius: 10px;
+      font-weight: bold;
+      text-transform: uppercase;
+
+      &.local {
+        background: rgba(254, 40, 81, 0.1);
+        color: #FE2851;
+        border: 1px solid rgba(254, 40, 81, 0.3);
+      }
+
+      &.deezer {
+        background: rgba(24, 144, 255, 0.1);
+        color: #1890ff;
+        border: 1px solid rgba(24, 144, 255, 0.3);
+      }
+    }
+  }
+
+  .glass-card {
+    @extend .glass-card-global;
+    transition: transform 0.3s ease;
+
+    &:hover {
+      transform: translateY(-5px);
+      background: rgba(255, 255, 255, 0.08) !important;
+    }
+
+    .ant-card-cover {
+      padding: 12px;
+
+      img {
+        border-radius: 8px;
+        width: 100%;
+        aspect-ratio: 1/1;
+        object-fit: cover;
+        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+      }
+
+      .artist-img {
+        border-radius: 50% !important;
+      }
+    }
+
+    .ant-card-meta-title {
+      color: #fff !important;
+      font-size: 14px !important;
+      margin-top: 5px;
+    }
+
+    .ant-card-meta-description {
+      color: #9CA3A1 !important;
+      font-size: 12px;
+    }
+  }
+
+  .pagination-container {
+    margin-top: 40px;
+    display: flex;
+    justify-content: center;
+  }
+}

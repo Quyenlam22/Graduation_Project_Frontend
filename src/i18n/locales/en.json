@@ -131,8 +131,13 @@
       "found_album": "Album Found",
       "found_artist": "Artist Found",
       "suggested_playlist": "Suggested Playlist",
-      "hot_song": "Hot Song",
-      "see_all": "See all results"
+      "songs": "Songs",
+      "see_all": "See all results",
+      "no_result_db": "No results found",
+      "result_for": "Results for",
+      "found_count": "Found {{count}} results",
+      "no_results": "No matching results found",
+      "search_result": "Search results"
     },
     "user": {
       "page_title": "Profile Settings",

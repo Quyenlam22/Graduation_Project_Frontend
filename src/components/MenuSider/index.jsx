@@ -50,7 +50,9 @@ function MenuSider () {
         },
     ];
 
-    const filteredItems = allItems.filter(item => !item.requiredAuth || (item.requiredAuth && user));
+    const filteredItems = allItems
+        .filter(item => !item.requiredAuth || (item.requiredAuth && user))
+        .map(({ requiredAuth, ...rest }) => rest);
 
     return (
         <Menu

@@ -1,4 +1,4 @@
-import { Avatar, Col, Row, Typography, Flex, ConfigProvider, Pagination } from "antd";
+import { Avatar, Col, Row, Typography, Flex, Pagination } from "antd";
 import { useNavigate, useLocation } from "react-router-dom";
 import { useState, useMemo } from "react";
 import { Swiper, SwiperSlide } from 'swiper/react';
@@ -6,6 +6,7 @@ import { Navigation, FreeMode, Autoplay } from 'swiper/modules';
 import { paginate } from "../../utils/paginate";
 import 'swiper/css';
 import 'swiper/css/navigation';
+import { formatNumber } from "../../utils/formatNumber";
 
 const { Text, Title } = Typography;
 
@@ -21,13 +22,6 @@ function ArtistSection(props) {
   }, [artists, currentPage]);
 
   const lgValue = pathname === "/artists" ? 4 : 4; // image_fab601 cho thấy 6 cột trên màn hình lớn
-
-  const formatNumber = (num) => {
-    if (!num) return "0";
-    if (num >= 1000000) return (num / 1000000).toFixed(1) + "M";
-    if (num >= 1000) return (num / 1000).toFixed(1) + "K";
-    return num;
-  };
 
   const renderArtistItem = (artist) => (
     <Flex 
@@ -56,7 +50,7 @@ function ArtistSection(props) {
 
   if (isSlider) {
     return (
-      <div className="artist-section-slider">
+      <div className="section-slider">
         {title && <Title level={4} style={{ color: "#fff", marginBottom: 25 }}>{title}</Title>}
         <Swiper
           modules={[Navigation, FreeMode, Autoplay]}
@@ -92,28 +86,17 @@ function ArtistSection(props) {
 
       {paginationData.totalPage > 1 && (
         <div style={{ marginTop: "40px", display: "flex", justifyContent: "center" }}>
-          <ConfigProvider
-            theme={{
-              components: {
-                Pagination: {
-                  colorPrimary: '#FE2851',
-                  itemBg: 'transparent',
-                  colorText: '#9CA3A1',
-                },
-              },
+          <Pagination
+            current={currentPage}
+            total={paginationData.quantityItem}
+            pageSize={pageSize}
+            onChange={(page) => {
+              setCurrentPage(page);
+              window.scrollTo({ top: 0, behavior: 'smooth' });
             }}
-          >
-            <Pagination
-              current={currentPage}
-              total={paginationData.quantityItem}
-              pageSize={pageSize}
-              onChange={(page) => {
-                setCurrentPage(page);
-                window.scrollTo({ top: 0, behavior: 'smooth' });
-              }}
-              showSizeChanger={false}
-            />
-          </ConfigProvider>
+            showSizeChanger={false}
+            className="custom-pagination"
+          />
         </div>
       )}
     </div>

@@ -1,120 +1,66 @@
 import { lazy } from "react";
 import withSuspense from "../../utils/withSuspense";
 
+// Layouts & Guards
 import LayoutAdmin from "../../layouts/LayoutAdmin";
 import LayoutClient from "../../layouts/LayoutClient";
-import Dashboard from "../../pages/admin/Dashboard";
-import Error404 from "../../pages/Error404";
-import PrivateRouteAdmin from "../../components/PrivateRoute/admin";
-import MyFavorite from "../../pages/client/MyFavorite";
-import UserInfo from "../../pages/client/UserInfo";
-import Album from "../../pages/client/Album";
-import Playlist from "../../pages/client/Playlist";
-import Artist from "../../pages/client/Artist";
-// import UserInfo from "../../pages/client/UserInfo";
-import AlbumManagement from "../../pages/admin/Album";
-import PlaylistManagement from "../../pages/admin/Playlist";
-import ArtistManagement from "../../pages/admin/Artist";
-import SongManagement from "../../pages/admin/Song";
-import UserManagement from "../../pages/admin/User";
 import PrivateRouteClient from "../../components/PrivateRoute/client";
 
+// Client Pages
 const Home = lazy(() => import("../../pages/client/Home"));
+const Album = lazy(() => import("../../pages/client/Album"));
+const Playlist = lazy(() => import("../../pages/client/Playlist"));
+const Artist = lazy(() => import("../../pages/client/Artist"));
+const MyFavorite = lazy(() => import("../../pages/client/MyFavorite"));
+const UserInfo = lazy(() => import("../../pages/client/UserInfo"));
+const SearchResult = lazy(() => import("../../pages/client/SearchResult"));
+
+// Admin Pages
+const Dashboard = lazy(() => import("../../pages/admin/Dashboard"));
+const AlbumManagement = lazy(() => import("../../pages/admin/Album"));
+const PlaylistManagement = lazy(() => import("../../pages/admin/Playlist"));
+const ArtistManagement = lazy(() => import("../../pages/admin/Artist"));
+const SongManagement = lazy(() => import("../../pages/admin/Song"));
+const UserManagement = lazy(() => import("../../pages/admin/User"));
+
+// Common
+const Error404 = lazy(() => import("../../pages/Error404"));
 
 export const privateRoutes = [
     {
         path: "/",
         element: <LayoutClient />,
         children: [
+            { index: true, element: withSuspense(Home) },
+            { path: "/search-all", element: withSuspense(SearchResult) },
+            { path: "/albums", element: withSuspense(Album) },
+            { path: "/albums/:id", element: withSuspense(Album) },
+            { path: "/playlists", element: withSuspense(Playlist) },
+            { path: "/playlists/:id", element: withSuspense(Playlist) },
+            { path: "/artists", element: withSuspense(Artist) },
+            { path: "/artists/:id", element: withSuspense(Artist) },
             {
-                index: true,
-                element: withSuspense(Home),
-            },
-            {
-                path: "/albums",
-                element: <Album/>,
-            },
-            {
-                path: "/albums/:id",
-                element: <Album/>,
-            },
-            {
-                path: "/playlists",
-                element: <Playlist/>,
-            },
-            {
-                path: "/playlists/:id",
-                element: <Playlist/>,
-            },
-            {
-                path: "/artists",
-                element: <Artist/>,
-            },
-            {
-                path: "/artists/:id",
-                element: <Artist/>,
-            },
-            {
-                element: <PrivateRouteClient/>,
-                children:[
-                    {
-                        path: "/my-library",
-                        element: <MyFavorite/>,
-                    },
-                    {
-                        path: "/user-info",
-                        element: <UserInfo/>,
-                    },
+                element: <PrivateRouteClient />,
+                children: [
+                    { path: "/my-library", element: withSuspense(MyFavorite) },
+                    { path: "/user-info", element: withSuspense(UserInfo) },
                 ]
             },
-            
-            {
-                path: "*",
-                element: <Error404/>,
-            },
+            { path: "*", element: withSuspense(Error404) },
         ],
     },
     {
-        // element: <PrivateRouteAdmin/>,
-        // children: [
-        //     {
-                path: "/admin",
-                element: <LayoutAdmin />,
-                children: [
-                    {
-                        index: true,
-                        element: <Dashboard />,
-                    },
-                    {
-                        path: "dashboard",
-                        element: <Dashboard/>,
-                    },
-                    {
-                        path: "albums",
-                        element: <AlbumManagement/>,
-                    },
-                    {
-                        path: "playlists",
-                        element: <PlaylistManagement/>,
-                    },
-                    {
-                        path: "artists",
-                        element: <ArtistManagement/>,
-                    },
-                    {
-                        path: "songs",
-                        element: <SongManagement/>,
-                    },
-                    {
-                        path: "users",
-                        element: <UserManagement/>,
-                    },
-                    {
-                        path: "*",
-                        element: <Error404/>,
-                    },
-            //     ],
-            // }
+        path: "/admin",
+        element: <LayoutAdmin />,
+        children: [
+            { index: true, element: withSuspense(Dashboard) },
+            { path: "dashboard", element: withSuspense(Dashboard) },
+            { path: "albums", element: withSuspense(AlbumManagement) },
+            { path: "playlists", element: withSuspense(PlaylistManagement) },
+            { path: "artists", element: withSuspense(ArtistManagement) },
+            { path: "songs", element: withSuspense(SongManagement) },
+            { path: "users", element: withSuspense(UserManagement) },
+            { path: "*", element: withSuspense(Error404) },
         ]
     },
 ];

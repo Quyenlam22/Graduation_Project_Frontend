@@ -1,28 +1,15 @@
 .search-wrapper {
-  position: relative; // Tạo mỏ neo cho Preview tuyệt đối
-  z-index: 10001; // Cao hơn Content và các nút Play bên dưới
+  position: relative;
+  z-index: 10001;
   width: clamp(80px, 40vw, 400px);
-
-  .custom-search-input {
-    width: 100%;
-
-    input {
-      background-color: transparent !important;
-      color: #fff !important;
-
-      &::placeholder {
-        color: rgba(255, 255, 255, 0.4);
-      }
-    }
-  }
 }
 
 .search-preview-wrapper {
   position: absolute;
-  top: calc(100% + 10px); // Xuất hiện ngay bên dưới ô Input
+  top: calc(100% + 10px);
   left: 0;
   width: 100%;
-  background: #2f2739; // Cùng tone với input để tạo sự liền mạch
+  background: #2f2739;
   backdrop-filter: blur(20px);
   border: 1px solid rgba(255, 255, 255, 0.1);
   border-radius: 12px;

@@ -1,4 +1,4 @@
-import { Card, Col, Row, Typography, Pagination, ConfigProvider } from "antd";
+import { Card, Col, Row, Typography, Pagination } from "antd";
 import { useState, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
 import { paginate } from "../../utils/paginate";
@@ -24,7 +24,7 @@ function AlbumSection(props) {
   // --- TRƯỜNG HỢP 1: HIỂN THỊ DẠNG SLIDE (Dùng cho trang Home) ---
   if (isSlider) {
     return (
-      <div className="album-section-slider">
+      <div className="section-slider">
         {title && <Title level={4} style={{ color: "#fff", marginBottom: 25 }}>{title}</Title>}
         <Swiper
           modules={[Navigation, FreeMode, Autoplay]} // Thêm Autoplay vào đây
@@ -89,29 +89,14 @@ function AlbumSection(props) {
 
       {paginationData.totalPage > 1 && (
         <div style={{ marginTop: "40px", display: "flex", justifyContent: "center" }}>
-          <ConfigProvider
-                theme={{
-                    components: {
-                    Pagination: {
-                        colorText: '#9CA3A1', 
-                        colorTextDisabled: '#444',
-                        colorPrimary: '#FE2851', 
-                        colorPrimaryHover: '#ff4d6d',
-                        colorTextPlaceholder: '#fff',
-                        itemBg: 'transparent',
-                        controlItemBgActive: 'rgba(254, 40, 81, 0.1)', 
-                    },
-                    },
-                }}
-            >
-            <Pagination
-              current={currentPage}
-              total={paginationData.quantityItem}
-              pageSize={pageSize}
-              onChange={(page) => setCurrentPage(page)}
-              showSizeChanger={false}
-            />
-          </ConfigProvider>
+          <Pagination
+            current={currentPage}
+            total={paginationData.quantityItem}
+            pageSize={pageSize}
+            onChange={(page) => setCurrentPage(page)}
+            showSizeChanger={false}
+            className="custom-pagination"
+          />
         </div>
       )}
     </div>

@@ -8,9 +8,10 @@ import { MusicContext } from '../../../Context/MusicContext';
 import { AuthContext } from '../../../Context/AuthProvider'; 
 import { formatDate } from '../../../utils/formatTime';
 import AlbumSection from '../../../components/Album/AlbumSection';
-import './Album.scss';
 import { toggleFavorite } from '../../../services/authService';
 import { useTranslation } from 'react-i18next';
+import './Album.scss';
+import useTitle from '../../../hooks/useTitle';
 
 const { Title, Text } = Typography;
 
@@ -25,9 +26,14 @@ function Album() {
   const currentAlbum = useMemo(() => albums.find(item => item._id === id), [albums, id]);
   const albumSongs = useMemo(() => songs.filter(song => song.albumId === id), [songs, id]);
 
+  useTitle(t('menu.albums'));
+
+  const otherAlbums = useMemo(() => {
+    return albums.filter(item => item._id !== id);
+  }, [albums, id]);
+
   const handleToggleFavorite = async (type, itemId, e) => {
     if (e) e.stopPropagation(); 
-    
     if (!user) {
         message.error(t('auth.login_required'));
         return;
@@ -43,10 +49,7 @@ function Album() {
       if (response.success) {
         setUser({
           ...user,
-          favorites: {
-            ...user.favorites,
-            [type]: response.updatedFavorites
-          }
+          favorites: { ...user.favorites, [type]: response.updatedFavorites }
         });
         message.success(response.updatedFavorites.includes(itemId) ? t('common.added_favorite') : t('common.removed_favorite'));
       }
@@ -85,7 +88,6 @@ function Album() {
                   {t('common.play_all')}
                 </Button>
                 
-                {/* NÚT LIKE ALBUM: Tự động đổi màu hồng và viền hồng khi đã like */}
                 <Button 
                   ghost 
                   shape="circle" 
@@ -126,7 +128,6 @@ function Album() {
                       </Flex>
                     </Col>
                     <Col span={4}>
-                      {/* NÚT LIKE SONG: Chuyển màu hồng khi bài hát đã trong favorites */}
                       <div onClick={(e) => handleToggleFavorite('songs', song._id, e)}>
                         {user?.favorites?.songs?.includes(song._id) ? (
                             <HeartFilled style={{ color: '#FE2851', fontSize: '18px', cursor: 'pointer' }} />
@@ -146,8 +147,12 @@ function Album() {
         </div>
       )}
 
-      <section className="mb-12">
-        <AlbumSection albums={albums} title={!id ? t('album.all_albums') : t('album.other_albums')} />
+      <section className="album-list-section" style={{ marginTop: '40px' }}>
+        <AlbumSection 
+          albums={id ? otherAlbums : albums} 
+          title={id ? t('album.other_albums') : t('album.all_albums')} 
+          isSlider={!!id}
+        />
       </section>
     </div>
   );

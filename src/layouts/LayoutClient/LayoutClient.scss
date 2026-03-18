@@ -1,6 +1,6 @@
 .layout-client {
     color: #fff;
-    background-color: #170F23; // Màu nền chủ đạo của app
+    background-color: #170F23;
     min-height: 100vh;
 }
 
@@ -113,15 +113,11 @@
     overflow-y: auto;
 }
 
-input::placeholder {
-    color: #fff !important;
-}
-
 .ant-menu-dark {
 
     &.ant-menu-inline .ant-menu-item-selected,
     &.ant-menu-vertical .ant-menu-item-selected {
-        background-color: #393243 !important; // Màu hồng Muzia
+        background-color: #393243 !important;
         color: #fff !important;
         border-radius: 8px;
         width: calc(100% - 16px);
@@ -222,7 +218,6 @@ input::placeholder {
     .ai-chat-footer {
         padding: 10px 15px;
 
-        // Nút Mic nhấp nháy đỏ
         .mic-active {
             animation: pulse-red 1.5s infinite;
         }
@@ -232,7 +227,6 @@ input::placeholder {
             align-items: center;
         }
 
-        // Hiệu ứng sóng âm
         .voice-waves {
             position: absolute;
             left: 10px;
@@ -278,12 +272,12 @@ input::placeholder {
             }
 
             .ant-select-arrow {
-                display: none; // Ẩn mũi tên để tiết kiệm diện tích ở footer
+                display: none;
             }
         }
 
         .voice-waves {
-            left: 5px; // Căn chỉnh lại vị trí sóng âm
+            left: 5px;
         }
     }
 
@@ -294,11 +288,11 @@ input::placeholder {
     }
 }
 
-.lang-dropdown-custom {
-    z-index: 10001 !important; 
-    background-color: #170F23 !important;
-    border: 1px solid #FE2851;
-}
+// .lang-dropdown-custom {
+//     z-index: 10001 !important; 
+//     background-color: #170F23 !important;
+//     border: 1px solid #FE2851;
+// }
 
 @keyframes wave-animation {
 
@@ -312,7 +306,6 @@ input::placeholder {
     }
 }
 
-// Keyframes cho nút Mic tỏa sáng
 @keyframes pulse-red {
     0% {
         box-shadow: 0 0 0 0 rgba(254, 40, 81, 0.7);
@@ -464,5 +457,182 @@ input::placeholder {
 
     to {
         transform: rotate(360deg);
+    }
+}
+
+.custom-pagination {
+    display: flex;
+    justify-content: center;
+
+    .ant-pagination-item,
+    .ant-pagination-prev,
+    .ant-pagination-next {
+        min-width: 32px;
+        height: 32px;
+        line-height: 30px;
+        border-radius: 50%;
+        background: transparent;
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        transition: all 0.3s ease;
+
+        a {
+            color: rgba(255, 255, 255, 0.6);
+            font-size: 14px;
+            transition: all 0.3s ease;
+        }
+
+        &:hover {
+            background: #FE2851;
+            border-color: #FE2851;
+
+            a {
+                color: #fff !important;
+            }
+
+            .ant-pagination-item-link {
+                color: #fff !important;
+            }
+        }
+    }
+
+    .ant-pagination-item-active {
+        background: #FE2851;
+        border-color: #FE2851;
+
+        a {
+            color: #fff !important;
+        }
+    }
+
+    .ant-pagination-prev,
+    .ant-pagination-next {
+        border: 1px solid rgba(255, 255, 255, 0.1);
+
+        .ant-pagination-item-link {
+            background: transparent;
+            color: rgba(255, 255, 255, 0.6);
+            border: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        &:not(.ant-pagination-disabled):hover {
+            background: #FE2851;
+            border-color: #FE2851;
+
+            .ant-pagination-item-link {
+                color: #fff;
+            }
+        }
+    }
+
+    .ant-pagination-disabled {
+        opacity: 0.3;
+        cursor: not-allowed;
+
+        &:hover {
+            background: transparent !important;
+            border-color: rgba(255, 255, 255, 0.1) !important;
+        }
+    }
+
+    .ant-pagination-jump-prev,
+    .ant-pagination-jump-next {
+        .ant-pagination-item-link-icon {
+            color: #FE2851;
+        }
+
+        .ant-pagination-item-ellipsis {
+            color: rgba(255, 255, 255, 0.5);
+        }
+    }
+}
+
+input {
+    background-color: transparent !important;
+    color: #fff !important;
+
+    &::placeholder {
+        color: rgba(255, 255, 255, 0.4) !important;
+    }
+}
+
+.section-slider {
+    position: relative;
+
+    .swiper-button-next,
+    .swiper-button-prev {
+        width: 32px;
+        height: 32px;
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        padding: 8px;
+        border-radius: 50%;
+        color: #fff;
+        transition: all 0.3s ease;
+
+        &::after {
+            font-size: 14px;
+            font-weight: bold;
+        }
+
+        &:hover {
+            background: #FE2851;
+            border-color: #FE2851;
+            color: #fff;
+        }
+    }
+
+    .swiper-button-prev {
+        left: -10px;
+    }
+
+    .swiper-button-next {
+        right: -10px;
+    }
+
+    @media (max-width: 768px) {
+
+        .swiper-button-next,
+        .swiper-button-prev {
+            display: none;
+        }
+    }
+}
+
+
+.glass-card-global {
+    background: rgba(255, 255, 255, 0.05) !important;
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.1) !important;
+    border-radius: 12px;
+
+    .album-img-container {
+        padding: 12px;
+
+        img {
+            border-radius: 8px;
+            width: 100%;
+            aspect-ratio: 1/1;
+            object-fit: cover;
+        }
+    }
+}
+
+.section-title-container {
+    margin-bottom: 20px;
+
+    .section-title {
+        color: #fff !important;
+        margin: 0;
+    }
+
+    .see-all {
+        color: #9CA3A1;
+        font-size: 12px;
+
+        &:hover {
+            color: #1890ff;
+        }
     }
 }

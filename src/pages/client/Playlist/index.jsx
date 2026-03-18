@@ -13,6 +13,7 @@ import PlaylistSection from '../../../components/Playlist/PlaylistSection';
 import './Playlist.scss';
 import { toggleFavorite } from '../../../services/authService'; // Thêm service
 import { useTranslation } from 'react-i18next';
+import useTitle from '../../../hooks/useTitle';
 
 const { Title, Text } = Typography;
 
@@ -23,6 +24,8 @@ function Playlist() {
   const { playlists, loading: playlistLoading } = useContext(PlaylistContext);
   const { loading: songLoading } = useContext(SongContext);
   const { playSong, formatTime } = useContext(MusicContext);
+
+  useTitle(t('menu.playlists'));
 
   const currentPlaylist = useMemo(() => {
     return playlists.find(item => item._id === id);

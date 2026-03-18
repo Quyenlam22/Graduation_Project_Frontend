@@ -131,8 +131,13 @@
       "found_album": "Album Tìm Thấy",
       "found_artist": "Nghệ Sĩ Tìm Thấy",
       "suggested_playlist": "Playlist Gợi Ý",
-      "hot_song": "Bài Hát Hot",
-      "see_all": "Xem tất cả kết quả"
+      "songs": "Bài Hát",
+      "see_all": "Xem tất cả kết quả",
+      "no_result_db": "Không tìm thấy kết quả",
+      "result_for": "Kết quả cho",
+      "found_count": "Tìm thấy {{count}} kết quả",
+      "no_results": "Không tìm thấy kết quả nào phù hợp",
+      "search_result": "Kết quả tìm kiếm"
     },
     "user": {
       "page_title": "Thiết lập cá nhân",

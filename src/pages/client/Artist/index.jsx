@@ -12,6 +12,7 @@ import ArtistSection from '../../../components/Artist/ArtistSection';
 import './Artist.scss';
 import { toggleFavorite } from '../../../services/authService'; // Thêm service
 import { useTranslation } from 'react-i18next';
+import useTitle from '../../../hooks/useTitle';
 
 const { Title, Text } = Typography;
 
@@ -25,6 +26,8 @@ function Artist() {
   const { playSong, formatTime } = useContext(MusicContext);
 
   const { t } = useTranslation();
+
+  useTitle(t('menu.artists'));
 
   const currentArtist = useMemo(() => artists.find(a => a._id === id), [artists, id]);
 

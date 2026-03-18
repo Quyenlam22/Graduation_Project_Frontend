@@ -1,4 +1,4 @@
-import { Card, Col, ConfigProvider, Pagination, Row, Typography } from "antd";
+import { Card, Col, Pagination, Row, Typography } from "antd";
 import { PlayCircleFilled } from "@ant-design/icons";
 import { useLocation, useNavigate } from "react-router-dom";
 import { Swiper, SwiperSlide } from 'swiper/react';
@@ -72,7 +72,7 @@ function PlaylistSection(props) {
   // --- TRƯỜNG HỢP 1: SLIDE (Dùng ở Home) ---
   if (isSlider) {
     return (
-      <div className="playlist-section-slider">
+      <div className="section-slider">
         <Swiper
           modules={[Navigation, FreeMode, Autoplay]}
           spaceBetween={24}
@@ -111,33 +111,18 @@ function PlaylistSection(props) {
       {/* Điều khiển phân trang */}
       {paginationData.totalPage > 1 && (
         <div style={{ marginTop: "40px", display: "flex", justifyContent: "center" }}>
-          <ConfigProvider
-            theme={{
-              components: {
-                Pagination: {
-                  colorText: '#9CA3A1', 
-                  colorTextDisabled: '#444',
-                  colorPrimary: '#FE2851', 
-                  colorPrimaryHover: '#ff4d6d',
-                  colorTextPlaceholder: '#fff',
-                  itemBg: 'transparent',
-                  controlItemBgActive: 'rgba(254, 40, 81, 0.1)', 
-                },
-              },
+          <Pagination
+            current={currentPage}
+            total={paginationData.quantityItem}
+            pageSize={pageSize}
+            onChange={(page) => {
+              setCurrentPage(page);
+              // Cuộn lên đầu khi chuyển trang để có trải nghiệm tốt hơn
+              window.scrollTo({ top: 0, behavior: 'smooth' });
             }}
-          >
-            <Pagination
-              current={currentPage}
-              total={paginationData.quantityItem}
-              pageSize={pageSize}
-              onChange={(page) => {
-                setCurrentPage(page);
-                // Cuộn lên đầu khi chuyển trang để có trải nghiệm tốt hơn
-                window.scrollTo({ top: 0, behavior: 'smooth' });
-              }}
-              showSizeChanger={false}
-            />
-          </ConfigProvider>
+            showSizeChanger={false}
+            className="custom-pagination"
+          />
         </div>
       )}
     </div>
