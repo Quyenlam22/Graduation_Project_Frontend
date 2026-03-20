@@ -87,6 +87,16 @@ export const MusicProvider = ({ children }) => {
     playSong(queue[nextIndex], queue);
   };
 
+  const handlePrev = () => {
+    const queue = playQueueRef.current;
+    const idx = currentIndexRef.current;
+    if (queue.length === 0) return;
+    // Nếu đang ở bài đầu tiên, quay lại bài cuối cùng. Ngược lại lùi 1 index.
+    let prevIndex = (idx - 1 + queue.length) % queue.length;
+    // Gọi playSong với bài hát ở vị trí mới
+    playSong(queue[prevIndex], queue);
+  };
+
   const playSong = async (song, list = [], title = "") => {
     if (title) {
         setQueueTitle(title);
@@ -156,7 +166,6 @@ export const MusicProvider = ({ children }) => {
   const togglePlay = () => { if (playerRef.current) playerRef.current.playing() ? playerRef.current.pause() : playerRef.current.play(); };
   const toggleLoop = () => setIsLoop(!isLoop);
   const toggleShuffle = () => setIsShuffle(!isShuffle);
-  const handlePrev = () => { /* Logic tương tự handleNext */ };
   const formatTime = (seconds) => {
     const mins = Math.floor(seconds / 60);
     const secs = Math.floor(seconds % 60);

@@ -82,7 +82,11 @@ function MusicPlayer() {
         <Flex align="center" className="song-info">
             <Avatar shape="circle" size={60} src={currentSong.cover || currentSong.avatar} className={isPlaying ? "spinning" : ""} style={{ border: '2px solid #FE2851', padding: '2px' }} />
             <div className="song-detail">
-                <h5 className="song-name">{currentSong.title}</h5>
+                <div className="song-name-wrapper">
+                  <h5 className="song-name">
+                    {currentSong.title}
+                  </h5>
+                </div>
                 <p className="artist-name" style={{ color: '#9CA3A1' }}>{currentSong.artistName}</p>
                 {queueTitle && (
                   <p className="queue-source" style={{ 
@@ -100,13 +104,15 @@ function MusicPlayer() {
               )}
             </div>
             
-            <div onClick={handleToggleFavorite} style={{ marginLeft: '20px', cursor: 'pointer', fontSize: '20px' }}>
+            {/* {currentSong.source !== 'deezer' && ( */}
+              <div onClick={handleToggleFavorite} style={{ marginLeft: '20px', cursor: 'pointer', fontSize: '20px' }}>
                 {user?.favorites?.songs?.includes(currentSong._id) ? (
-                    <HeartFilled style={{ color: '#FE2851' }} />
+                  <HeartFilled style={{ color: '#FE2851' }} />
                 ) : (
-                    <HeartOutlined style={{ color: '#fff' }} className="heart-hover" />
+                  <HeartOutlined style={{ color: '#fff' }} className="heart-hover" />
                 )}
-            </div>
+              </div>
+            {/* )} */}
         </Flex>
 
         <Flex vertical align="center" className="player-controls">
@@ -134,7 +140,7 @@ function MusicPlayer() {
             <div className="volume-slider">
                 <Slider value={volume * 100} onChange={handleVolumeChange} size="small" tooltip={{ open: false }} />
             </div>
-            <ExpandOutlined className="control-icon-small" style={{ fontSize: '18px', cursor: 'pointer' }} />
+            {/* {currentSong.source !== 'deezer' && <ExpandOutlined className="control-icon-small" style={{ fontSize: '18px', cursor: 'pointer' }} /> } */}
         </Flex>
     </footer>
   );

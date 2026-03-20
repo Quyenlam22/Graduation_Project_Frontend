@@ -5,18 +5,29 @@ import SearchPreview from "./SearchPreview";
 import "./Search.scss";
 import { useTranslation } from "react-i18next";
 import { useDebounce } from "../../hooks/useDebounce"; 
-import { useNavigate } from "react-router";
+import { useNavigate, useSearchParams } from "react-router";
 
 function Search() {
   const { t } = useTranslation();
-  const [isFocus, setIsFocus] = useState(false);
-  const [keyword, setKeyword] = useState("");
-  const searchRef = useRef(null);
   const navigate = useNavigate();
-  
-  // Sử dụng debounce 500ms để tránh gọi API liên tục
+  const [searchParams] = useSearchParams();
+  const searchRef = useRef(null);
+
+  // 1. Lấy keyword từ URL ngay khi khởi tạo để giữ chữ khi reload trang
+  const queryFromUrl = searchParams.get('q') || "";
+  const [keyword, setKeyword] = useState(queryFromUrl);
+  const [isFocus, setIsFocus] = useState(false);
+
+  // 2. Cập nhật lại ô Input khi người dùng nhấn Back/Forward hoặc thay đổi URL từ nơi khác
+  useEffect(() => {
+    const q = searchParams.get('q') || "";
+    setKeyword(q);
+  }, [searchParams]);
+
+  // 3. Sử dụng debounce cho Search Preview (gợi ý kết quả nhanh)
   const debouncedKeyword = useDebounce(keyword, 500);
 
+  // 4. Xử lý đóng Preview khi click ra ngoài
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (searchRef.current && !searchRef.current.contains(event.target)) {
@@ -26,11 +37,14 @@ function Search() {
     document.addEventListener("mousedown", handleClickOutside);
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
-  
+
+  // 5. Hàm thực hiện tìm kiếm chính thức (chuyển sang trang kết quả)
   const handleSearchSubmit = () => {
-    if (keyword.trim()) {
+    const trimmedKeyword = keyword.trim();
+    if (trimmedKeyword) {
       setIsFocus(false);
-      navigate(`/search-all?q=${encodeURIComponent(keyword.trim())}`);
+      // Bạn hãy kiểm tra route của mình là /search hay /search-all để khớp với SearchResult
+      navigate(`/search-all?q=${encodeURIComponent(trimmedKeyword)}`);
     }
   };
 
@@ -39,7 +53,12 @@ function Search() {
       <Input 
         placeholder={t('search.placeholder')} 
         prefix={<SearchOutlined style={{ color: 'rgba(255,255,255,0.5)' }} />} 
-        suffix={<SearchOutlined onClick={handleSearchSubmit} style={{ cursor: 'pointer', color: '#FE2851' }} />} 
+        suffix={
+          <SearchOutlined 
+            onClick={handleSearchSubmit} 
+            style={{ cursor: 'pointer', color: '#FE2851' }} 
+          />
+        } 
         onPressEnter={handleSearchSubmit}
         variant="filled"
         value={keyword}

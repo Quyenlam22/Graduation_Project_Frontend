@@ -1,7 +1,7 @@
-import { useContext, useEffect, useState, useRef } from "react";
-import { Typography, Tabs, Row, Col, Avatar, Flex, Button, Spin, message } from 'antd';
+import { useContext, useEffect, useState, useRef, useMemo } from "react";
+import { Typography, Tabs, Row, Col, Avatar, Flex, Button, Spin, message, Tag } from 'antd'; // Thêm Tag nếu muốn dùng Tag của Antd
 import { PlayCircleFilled, HeartFilled, ClockCircleOutlined } from '@ant-design/icons';
-import { useNavigate } from 'react-router';
+import { useNavigate } from 'react-router-dom';
 import './MyFavorite.scss';
 import useTitle from '../../../hooks/useTitle';
 import { AuthContext } from "../../../Context/AuthProvider";
@@ -15,24 +15,34 @@ import { useTranslation } from "react-i18next";
 
 const { Text } = Typography;
 
+const EmptyState = ({ message, navigate, t }) => (
+  <div className="favorite__empty">
+    <div className="favorite__empty-icon">
+      <img src="https://zmp3-static.zmdcdn.me/skins/zmp3-v6.1/images/icons/empty-fav-song-dark.png" alt="Empty" />
+    </div>
+    <p className="favorite__empty-text">{message}</p>
+    <Button className="favorite__empty-btn" type="primary" shape="round" onClick={() => navigate("/")}>
+      {t('common.discover_now')}
+    </Button>
+  </div>
+);
+
 function MyFavorite() {
   const { t } = useTranslation();
   const navigate = useNavigate();
   const { user, setUser } = useContext(AuthContext);
-  const { playSong, isPlaying, currentSong, formatTime } = useContext(MusicContext);
+  const { playSong, currentSong, formatTime } = useContext(MusicContext);
   
   const [data, setData] = useState({ songs: [], albums: [], playlists: [], artists: [] });
   const [loading, setLoading] = useState(false);
-  
   const isFirstLoad = useRef(true);
 
   useTitle(t('sidebar.library'));
 
   useEffect(() => {
     const fetchAllFavorites = async () => {
-      if (isFirstLoad.current) {
-        setLoading(true);
-      }
+      if (!user) return;
+      if (isFirstLoad.current) setLoading(true);
 
       try {
         const [songRes, albumRes, playlistRes, artistRes] = await Promise.all([
@@ -56,10 +66,13 @@ function MyFavorite() {
       }
     };
 
-    if (user) {
-      fetchAllFavorites();
-    }
-  }, [user?.favorites?.songs?.length, user?.favorites?.albums?.length, user?.favorites?.playlists?.length, user?.favorites?.artists?.length]);
+    fetchAllFavorites();
+  }, [
+    user?.favorites?.songs?.length, 
+    user?.favorites?.albums?.length, 
+    user?.favorites?.playlists?.length, 
+    user?.favorites?.artists?.length
+  ]);
 
   const handleRemoveFavorite = async (e, id, type) => {
     e.stopPropagation();
@@ -67,20 +80,22 @@ function MyFavorite() {
       const response = await toggleFavorite({ uid: user.uid, type, itemId: id });
       if (response.success) {
         setUser({ ...user, favorites: { ...user.favorites, [type]: response.updatedFavorites } });
-        message.success(t('common.removed_favorite')); // Dùng đa ngôn ngữ
+        message.success(t('common.removed_favorite'));
       }
     } catch (error) { 
         message.error(t('common.error_occurred')); 
     }
   };
 
-  const SongList = () => (
+  // Cập nhật useMemo render List để thêm cột Source
+  const songListContent = useMemo(() => (
     <div className="playlist-tracks">
       <div className="tracklist-header">
         <Row align="middle">
           <Col span={1}><Text className="header-text">#</Text></Col>
-          <Col span={14}><Text className="header-text">{t('common.songs_list')}</Text></Col>
+          <Col span={12}><Text className="header-text">{t('common.songs_list')}</Text></Col>
           <Col span={6}><Text className="header-text">{t('album.title_prefix')}</Text></Col>
+          <Col span={2} style={{ textAlign: 'center' }}><Text className="header-text">{t('common.source')}</Text></Col>
           <Col span={3} style={{ textAlign: 'right' }}><ClockCircleOutlined className="header-text" /></Col>
         </Row>
       </div>
@@ -88,12 +103,12 @@ function MyFavorite() {
         {data.songs.map((song, index) => (
           <div 
             className={`track-item ${currentSong?._id === song._id ? 'active' : ''}`} 
-            key={song._id} 
+            key={`${song._id}-${index}`} 
             onClick={() => playSong(song, data.songs, t('sidebar.library'))}
           >
             <Row align="middle" style={{ width: '100%' }}>
               <Col span={1}><Text className="track-index">{index + 1}</Text></Col>
-              <Col span={14}>
+              <Col span={12}>
                 <Flex align="center" gap={15}>
                   <Avatar shape="square" size={40} src={song.cover || song.avatar} />
                   <div className="track-meta">
@@ -103,6 +118,14 @@ function MyFavorite() {
                 </Flex>
               </Col>
               <Col span={6}><Text className="album-text">{song.albumName || t('common.single')}</Text></Col>
+              
+              {/* CỘT HIỂN THỊ NGUỒN NHẠC */}
+              <Col span={2} style={{ textAlign: 'center' }}>
+                <div className={`source-badge ${song.source || 'local'}`}>
+                  {song.source === 'deezer' ? 'Deezer' : 'Muzia'}
+                </div>
+              </Col>
+
               <Col span={3} className="track-actions">
                 <HeartFilled className="heart-active" onClick={(e) => handleRemoveFavorite(e, song._id, 'songs')} />
                 <Text className="track-duration">{formatTime(song.duration)}</Text>
@@ -112,23 +135,23 @@ function MyFavorite() {
         ))}
       </div>
     </div>
-  );
+  ), [data.songs, currentSong?._id, t]);
 
-  const GridView = ({ items, type, emptyMsg }) => {
-    if (items.length === 0) return <EmptyState message={emptyMsg} />;
+  const renderGridView = (items, type, emptyMsg) => {
+    if (items.length === 0) return <EmptyState message={emptyMsg} navigate={navigate} t={t} />;
     return (
       <Row gutter={[20, 25]} style={{ marginTop: '20px' }}>
         {items.map(item => (
           <Col xxl={4} xl={4} lg={6} md={8} sm={12} xs={12} key={item._id}>
             <div className="favorite-card" onClick={() => navigate(`/${type}/${item._id}`)}>
               <div className={`card-image ${type === 'artists' ? 'circle' : ''}`}>
-                <img src={item.cover || item.avatar} alt={item.title} />
+                <img src={item.cover || item.avatar} alt={item.title || item.name} />
                 <div className="overlay"><PlayCircleFilled className="play-icon" /></div>
                 <HeartFilled className="btn-unfav" onClick={(e) => handleRemoveFavorite(e, item._id, type)} />
               </div>
               <div className="card-info">
                 <Text strong className="title">{item.title || item.name}</Text>
-                <Text className="subtitle">{type === 'artists' ? t('common.artist') : item.artistName || 'Muzia User'}</Text>
+                <Text className="subtitle">{type === 'artists' ? t('common.artist') : item.artistName || 'Muzia'}</Text>
               </div>
             </div>
           </Col>
@@ -137,23 +160,11 @@ function MyFavorite() {
     );
   };
 
-  const EmptyState = ({ message }) => (
-    <div className="favorite__empty">
-      <div className="favorite__empty-icon">
-        <img src="https://zmp3-static.zmdcdn.me/skins/zmp3-v6.1/images/icons/empty-fav-song-dark.png" alt="Empty" />
-      </div>
-      <p className="favorite__empty-text">{message}</p>
-      <Button className="favorite__empty-btn" type="primary" shape="round" onClick={() => navigate("/")}>
-        {t('common.discover_now')}
-      </Button>
-    </div>
-  );
-
   const tabItems = [
-    { key: 'songs', label: t('sidebar.songs'), children: data.songs.length > 0 ? <SongList /> : <EmptyState message={t('library.empty_songs')} /> },
-    { key: 'albums', label: t('sidebar.albums'), children: <GridView items={data.albums} type="albums" emptyMsg={t('library.empty_albums')} /> },
-    { key: 'playlists', label: t('sidebar.playlists'), children: <GridView items={data.playlists} type="playlists" emptyMsg={t('library.empty_playlists')} /> },
-    { key: 'artists', label: t('sidebar.artists'), children: <GridView items={data.artists} type="artists" emptyMsg={t('library.empty_artists')} /> },
+    { key: 'songs', label: t('sidebar.songs'), children: data.songs.length > 0 ? songListContent : <EmptyState message={t('library.empty_songs')} navigate={navigate} t={t} /> },
+    { key: 'albums', label: t('sidebar.albums'), children: renderGridView(data.albums, 'albums', t('library.empty_albums')) },
+    { key: 'playlists', label: t('sidebar.playlists'), children: renderGridView(data.playlists, 'playlists', t('library.empty_playlists')) },
+    { key: 'artists', label: t('sidebar.artists'), children: renderGridView(data.artists, 'artists', t('library.empty_artists')) },
   ];
 
   return (
@@ -166,7 +177,8 @@ function MyFavorite() {
       </div>
       {loading ? (
         <Flex justify="center" align="center" style={{ padding: '100px' }}>
-          <Spin size="large" tip={t('common.loading')} />
+          <Spin size="large" />
+          <Text style={{ marginLeft: 10 }}>{t('common.loading')}</Text>
         </Flex>
       ) : (
         <Tabs defaultActiveKey="songs" items={tabItems} className="favorite__tabs" />

@@ -63,7 +63,8 @@
       "loading": "Đang tải...",
       "discover_now": "KHÁM PHÁ NGAY",
       "single": "Đĩa đơn",
-      "artist": "Nghệ sĩ"
+      "artist": "Nghệ sĩ",
+      "source": "Nguồn"
     },
     "chat": {
       "welcome_msg": "Muzia AI Assistant sẵn sàng phục vụ!",

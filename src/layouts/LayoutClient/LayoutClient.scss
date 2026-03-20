@@ -288,38 +288,6 @@
     }
 }
 
-// .lang-dropdown-custom {
-//     z-index: 10001 !important; 
-//     background-color: #170F23 !important;
-//     border: 1px solid #FE2851;
-// }
-
-@keyframes wave-animation {
-
-    0%,
-    100% {
-        transform: scaleY(1);
-    }
-
-    50% {
-        transform: scaleY(2.5);
-    }
-}
-
-@keyframes pulse-red {
-    0% {
-        box-shadow: 0 0 0 0 rgba(254, 40, 81, 0.7);
-    }
-
-    70% {
-        box-shadow: 0 0 0 10px rgba(254, 40, 81, 0);
-    }
-
-    100% {
-        box-shadow: 0 0 0 0 rgba(254, 40, 81, 0);
-    }
-}
-
 .music-footer {
     position: fixed;
     bottom: 0;
@@ -338,26 +306,52 @@
 
     .song-info {
         width: 30%;
-        margin-right: 64px;
+        min-width: 0;
+        display: flex;
+        align-items: center;
 
         .song-detail {
             margin-left: 12px;
+            min-width: 0; 
+            flex: 0.75;
+            overflow: hidden;
 
-            .song-name {
-                font-size: 16px;
-                margin: 0;
+            .song-name-wrapper {
+                width: 100%;
+                overflow: hidden;
+                white-space: nowrap;
+                position: relative;
+
+                .song-name {
+                    display: inline-block;
+                    font-size: 16px;
+                    font-weight: 500;
+                    color: #fff;
+                    margin: 0;
+                    
+                    animation: marquee 6s linear infinite;
+                    padding-left: 100%;
+                }
             }
 
             .artist-name {
-                font-size: 14px;
+                font-size: 13px;
+                color: #9CA3A1;
                 margin: 0;
+                white-space: nowrap;
+                overflow: hidden;
+                text-overflow: ellipsis;
             }
+        }
+
+        .ant-avatar {
+            flex-shrink: 0; 
         }
     }
 
     .player-controls {
         width: 40%;
-        flex-direction: column;
+        min-width: 300px;
 
         .control-buttons {
             color: #fff;
@@ -381,6 +375,7 @@
     .extra-controls {
         width: 30%;
         color: #fff;
+        min-width: 150px;
 
         .volume-slider {
             width: 100px;
@@ -600,7 +595,6 @@ input {
     }
 }
 
-
 .glass-card-global {
     background: rgba(255, 255, 255, 0.05) !important;
     backdrop-filter: blur(10px);
@@ -634,5 +628,60 @@ input {
         &:hover {
             color: #1890ff;
         }
+    }
+}
+
+.source-badge {
+    font-size: 10px;
+    padding: 2px 8px;
+    border-radius: 10px;
+    font-weight: bold;
+    text-transform: uppercase;
+
+    &.local {
+    background: rgba(254, 40, 81, 0.1);
+    color: #FE2851;
+    border: 1px solid rgba(254, 40, 81, 0.3);
+    }
+
+    &.deezer {
+    background: rgba(24, 144, 255, 0.1);
+    color: #1890ff;
+    border: 1px solid rgba(24, 144, 255, 0.3);
+    }
+}
+
+@keyframes marquee {
+  0% {
+    transform: translateX(-100%);
+  }
+  100% {
+    transform: translateX(0);
+  }
+}
+
+@keyframes wave-animation {
+
+    0%,
+    100% {
+        transform: scaleY(1);
+    }
+
+    50% {
+        transform: scaleY(2.5);
+    }
+}
+
+@keyframes pulse-red {
+    0% {
+        box-shadow: 0 0 0 0 rgba(254, 40, 81, 0.7);
+    }
+
+    70% {
+        box-shadow: 0 0 0 10px rgba(254, 40, 81, 0);
+    }
+
+    100% {
+        box-shadow: 0 0 0 0 rgba(254, 40, 81, 0);
     }
 }

@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect, useContext } from 'react';
-import { Button, Input, Flex, Typography, Spin, Select } from 'antd';
+import { Button, Input, Flex, Typography, Spin } from 'antd';
 import { 
     RobotOutlined, SendOutlined, CloseOutlined, 
     MessageFilled, AudioOutlined, AudioMutedOutlined,
@@ -10,7 +10,6 @@ import { MusicContext } from '../../Context/MusicContext';
 import { useTranslation } from 'react-i18next'; // IMPORT i18n
 
 const { Text } = Typography;
-const { Option } = Select;
 
 function AIChat() {
     const { t, i18n } = useTranslation(); // Khai báo i18n
@@ -30,6 +29,31 @@ function AIChat() {
 
     const scrollRef = useRef(null);
     const recognitionRef = useRef(null);
+
+    // --- HÀM BẬT/TẮT TIẾNG TỨC THÌ ---
+    const handleToggleMuteChat = () => {
+        const nextMuteState = !isChatMuted;
+        setIsChatMuted(nextMuteState);
+        
+        if (nextMuteState) {
+            // TRƯỜNG HỢP TẮT TIẾNG: Ngắt âm thanh ngay lập tức
+            if (window.speechSynthesis) {
+                window.speechSynthesis.cancel();
+            }
+        } else {
+            // TRƯỜNG HỢP BẬT TIẾNG LẠI: 
+            // Tìm tin nhắn cuối cùng của AI trong danh sách để đọc lại ngay
+            const lastMessage = [...messages].reverse().find(msg => msg.role === 'model');
+            if (lastMessage && lastMessage.text) {
+                // Chúng ta gọi hàm speakText nhưng bỏ qua check isChatMuted tạm thời 
+                // vì state isChatMuted có thể chưa cập nhật kịp (Async)
+                const utterance = new SpeechSynthesisUtterance(lastMessage.text);
+                utterance.lang = chatLang;
+                window.speechSynthesis.cancel(); // Clear mọi thứ trước đó
+                window.speechSynthesis.speak(utterance);
+            }
+        }
+    };
 
     // Tự động cập nhật chatLang khi người dùng đổi ngôn ngữ ở Header
     useEffect(() => {
@@ -192,7 +216,7 @@ function AIChat() {
                             <Button 
                                 type="text" 
                                 icon={isChatMuted ? <MutedOutlined style={{color:'#9CA3A1'}}/> : <SoundOutlined style={{color:'#fff'}}/>} 
-                                onClick={() => setIsChatMuted(!isChatMuted)} 
+                                onClick={handleToggleMuteChat} 
                             />
                             <Button type="text" onClick={clearHistory} style={{ color: '#9CA3A1', fontSize: '11px', padding: 0 }}>{t('chat.clear')}</Button>
                             <Button type="text" icon={<CloseOutlined style={{color:'#fff'}}/>} onClick={() => setIsOpen(false)} />

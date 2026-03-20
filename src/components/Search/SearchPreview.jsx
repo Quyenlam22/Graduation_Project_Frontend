@@ -83,7 +83,7 @@ function SearchPreview({ visible, keyword }) {
         ))
       ) : (
         <div style={{ padding: '20px', textAlign: 'center' }}>
-          <Text type="secondary">{t('search.no_result_db')}</Text>
+          <Text type="secondary" style={{color: "rgba(255,255,255,0.5)"}}>{t('search.no_result_db')}</Text>
         </div>
       )}
 

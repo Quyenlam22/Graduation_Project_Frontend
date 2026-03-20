@@ -82,26 +82,6 @@
         font-size: 12px;
       }
     }
-
-    .source-badge {
-      font-size: 10px;
-      padding: 2px 8px;
-      border-radius: 10px;
-      font-weight: bold;
-      text-transform: uppercase;
-
-      &.local {
-        background: rgba(254, 40, 81, 0.1);
-        color: #FE2851;
-        border: 1px solid rgba(254, 40, 81, 0.3);
-      }
-
-      &.deezer {
-        background: rgba(24, 144, 255, 0.1);
-        color: #1890ff;
-        border: 1px solid rgba(24, 144, 255, 0.3);
-      }
-    }
   }
 
   .glass-card {

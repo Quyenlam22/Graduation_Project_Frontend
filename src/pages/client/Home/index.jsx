@@ -62,7 +62,7 @@ function Home() {
                         icon={<PlayCircleFilled />} 
                         shape="round" 
                         className="btn-play"
-                        onClick={() => newReleases.length > 0 && playSong(newReleases[0], newReleases, t('home.new_releases'))}
+                        onClick={() => newReleases.length > 0 && playSong(newReleases[0], songs, t('home.new_releases'))}
                     >
                         {t('home.btn_start')}
                     </Button>

@@ -1,12 +1,15 @@
 import { useEffect, useState, useContext, useMemo } from 'react';
 import { useSearchParams, useNavigate } from 'react-router-dom';
-import { Tabs, Spin, Typography, Row, Col, Empty, Flex, Pagination, Card } from 'antd'; 
+import { Tabs, Spin, Typography, Row, Col, Empty, Flex, Pagination, Card, message } from 'antd'; 
+import { HeartOutlined, HeartFilled } from '@ant-design/icons'; // Thêm icon
 import { SongContext } from '../../../Context/SongContext';
 import { AlbumContext } from '../../../Context/AlbumContext';
 import { ArtistContext } from '../../../Context/ArtistContext';
 import { PlaylistContext } from '../../../Context/PlaylistContext';
 import { MusicContext } from '../../../Context/MusicContext';
+import { AuthContext } from '../../../Context/AuthProvider'; // Thêm AuthContext
 import { searchDeezer } from '../../../services/dezzerService';
+import { toggleFavorite } from '../../../services/authService'; // Thêm service toggle
 import { useTranslation } from 'react-i18next';
 import { paginate } from '../../../utils/paginate'; 
 import './SearchResult.scss';
@@ -19,6 +22,7 @@ function SearchResult() {
   const [searchParams] = useSearchParams();
   const query = searchParams.get('q'); 
 
+  const { user, setUser } = useContext(AuthContext); // Lấy user từ Context
   const { songs: dbSongs } = useContext(SongContext);
   const { albums: dbAlbums } = useContext(AlbumContext);
   const { artists: dbArtists } = useContext(ArtistContext);
@@ -28,16 +32,47 @@ function SearchResult() {
   const [deezerSongs, setDeezerSongs] = useState([]);
   const [loading, setLoading] = useState(false);
 
-  // Quản lý trang riêng cho từng Tab để tránh xung đột
   const [songPage, setSongPage] = useState(1);
   const [albumPage, setAlbumPage] = useState(1);
   const [artistPage, setArtistPage] = useState(1);
   const [playlistPage, setPlaylistPage] = useState(1);
   
   const limitItems = 10;
-  const gridLimit = 12; // Grid thường hiện nhiều hơn (ví dụ 2 hàng 6 cột)
+  const gridLimit = 12;
 
-  // Reset tất cả trang khi query tìm kiếm thay đổi
+  // --- HÀM XỬ LÝ SỰ KIỆN TIM ---
+  const handleToggleFavorite = async (e, song) => {
+    e.stopPropagation(); // Ngăn sự kiện click lan ra div cha (tránh tự động phát nhạc)
+    
+    if (!user) {
+      message.error(t('auth.login_required'));
+      return;
+    }
+
+    try {
+      const response = await toggleFavorite({
+        uid: user.uid,
+        type: 'songs',
+        itemId: song._id
+      });
+
+      if (response.success) {
+        setUser({
+          ...user,
+          favorites: {
+            ...user.favorites,
+            songs: response.updatedFavorites
+          }
+        });
+        
+        const isAdded = response.updatedFavorites.includes(song._id);
+        message.success(isAdded ? t('common.added_favorite') : t('common.removed_favorite'));
+      }
+    } catch (error) {
+      message.error(t('common.error_occurred'));
+    }
+  };
+
   useEffect(() => { 
     setSongPage(1); 
     setAlbumPage(1);
@@ -60,15 +95,21 @@ function SearchResult() {
 
   const lowQuery = query?.toLowerCase() || "";
 
-  // 1. Logic lọc
   const mergedSongs = useMemo(() => {
     const localMatches = dbSongs.filter(s => s.title.toLowerCase().includes(lowQuery) || s.artistName?.toLowerCase().includes(lowQuery))
       .map(s => ({ ...s, source: 'local', fingerprint: `${s.title.toLowerCase().trim()}|${s.artistName?.toLowerCase().trim()}` }));
     const localFingerprints = new Set(localMatches.map(s => s.fingerprint));
     const externalMatches = deezerSongs.map(s => ({
-        _id: `dz_${s.id}`, title: s.title, artistName: s.artist.name, cover: s.album.cover_medium, duration: s.duration, src: s.preview, source: 'deezer',
-        fingerprint: `${s.title.toLowerCase().trim()}|${s.artist.name.toLowerCase().trim()}`
-      })).filter(s => !localFingerprints.has(s.fingerprint));
+      _id: `dz_${s.id}`,
+      deezerId: s.id,
+      title: s.title,
+      artistName: s.artist.name,
+      cover: s.album.cover_medium,
+      duration: s.duration,
+      src: s.preview,
+      source: 'deezer',
+      fingerprint: `${s.title.toLowerCase().trim()}|${s.artist.name.toLowerCase().trim()}`
+    })).filter(s => !localFingerprints.has(s.fingerprint));
     return [...localMatches, ...externalMatches];
   }, [lowQuery, dbSongs, deezerSongs]);
 
@@ -76,13 +117,10 @@ function SearchResult() {
   const filteredArtists = useMemo(() => dbArtists.filter(a => a.name.toLowerCase().includes(lowQuery)), [lowQuery, dbArtists]);
   const filteredPlaylists = useMemo(() => dbPlaylists.filter(p => p.title.toLowerCase().includes(lowQuery)), [lowQuery, dbPlaylists]);
 
-  // Dữ liệu phân trang cho bài hát
   const songPagination = useMemo(() => paginate(mergedSongs, songPage, limitItems), [mergedSongs, songPage]);
 
-  // --- RENDER HELPER CHO GRID (ALBUM/ARTIST/PLAYLIST)
   const renderGridWithPagination = (data, type, currentPage, setPage) => {
     const pData = paginate(data, currentPage, gridLimit);
-    
     return (
       <div className="grid-container" style={{ marginTop: '20px' }}>
         <Row gutter={[20, 20]}>
@@ -95,11 +133,7 @@ function SearchResult() {
                   onClick={() => navigate(`/${type}/${item._id}`)}
                   cover={
                     <div className="album-img-container">
-                      <img
-                        alt={item.title || item.name}
-                        src={item.avatar || item.cover}
-                        className={type === 'artists' ? 'artist-img' : ''}
-                      />
+                      <img alt={item.title || item.name} src={item.avatar || item.cover} className={type === 'artists' ? 'artist-img' : ''} />
                     </div>
                   }
                 >
@@ -111,20 +145,12 @@ function SearchResult() {
               </Col>
             ))
           ) : (
-            <Col span={24}><Empty description={t('search.no_results')} /></Col>
+            <Col span={24}><Empty description={<span style={{ color: '#9CA3A1' }}>{t('search.no_results')}</span>} /></Col>
           )}
         </Row>
-        
         {pData.totalPage > 1 && (
           <Flex justify="center" style={{ marginTop: '30px' }}>
-            <Pagination 
-              showSizeChanger={false} 
-              current={currentPage} 
-              total={data.length} 
-              pageSize={gridLimit} 
-              onChange={setPage} 
-              className="custom-pagination" 
-            />
+            <Pagination showSizeChanger={false} current={currentPage} total={data.length} pageSize={gridLimit} onChange={setPage} className="custom-pagination" />
           </Flex>
         )}
       </div>
@@ -139,23 +165,45 @@ function SearchResult() {
         loading ? <Flex justify="center" p={50}><Spin size="large" /></Flex> : (
             <div className="song-grid">
               <Row gutter={[16, 16]}>
-                {songPagination.currentItems.map((song, index) => (
-                  <Col span={24} key={song._id}>
-                    <div className="search-song-item" onClick={() => playSong(song, mergedSongs, `${t('common.search_result')}: ${query}`)}>
-                      <Flex align="center" justify="space-between">
-                        <Flex align="center" gap={15}>
-                          <Text className="index">{(songPage - 1) * limitItems + index + 1}</Text>
-                          <img src={song.cover || song.avatar} alt={song.title} className="song-cover" />
-                          <div className="info">
-                            <Text strong className="title" style={{ color: '#fff' }}>{song.title}</Text><br />
-                            <Text className="artist" style={{ color: '#9CA3A1' }}>{song.artistName}</Text>
-                          </div>
+                {songPagination.currentItems.map((song, index) => {
+                  const isLiked = user?.favorites?.songs?.includes(song._id);
+
+                  return (
+                    <Col span={24} key={song._id}>
+                      <div className="search-song-item" onClick={() => playSong(song, mergedSongs, `${t('search.result_for')}: ${query}`)}>
+                        <Flex align="center" justify="space-between">
+                          <Flex align="center" gap={15}>
+                            <Text className="index">{(songPage - 1) * limitItems + index + 1}</Text>
+                            <img src={song.cover || song.avatar} alt={song.title} className="song-cover" />
+                            <div className="info">
+                              <Text strong className="title" style={{ color: '#fff' }}>{song.title}</Text><br />
+                              <Text className="artist" style={{ color: '#9CA3A1' }}>{song.artistName}</Text>
+                            </div>
+                          </Flex>
+                          
+                          <Flex align="center" gap={20}>
+                            {/* NÚT TIM */}
+                            <div 
+                              className="heart-icon-wrapper" 
+                              onClick={(e) => handleToggleFavorite(e, song)}
+                              style={{ cursor: 'pointer', fontSize: '18px' }}
+                            >
+                              {isLiked ? (
+                                <HeartFilled style={{ color: '#FE2851' }} />
+                              ) : (
+                                <HeartOutlined style={{ color: '#9CA3A1' }} className="heart-hover" />
+                              )}
+                            </div>
+
+                            <div className={`source-badge ${song.source}`}>
+                              {song.source === 'local' ? 'Muzia' : 'Deezer'}
+                            </div>
+                          </Flex>
                         </Flex>
-                        <div className={`source-badge ${song.source}`}>{song.source === 'local' ? 'Muzia' : 'Deezer'}</div>
-                      </Flex>
-                    </div>
-                  </Col>
-                ))}
+                      </div>
+                    </Col>
+                  );
+                })}
               </Row>
               <Pagination showSizeChanger={false} current={songPage} total={mergedSongs.length} pageSize={limitItems} onChange={setSongPage} className="custom-pagination" style={{ marginTop: 20, textAlign: 'center' }} />
             </div>

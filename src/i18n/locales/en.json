@@ -63,7 +63,8 @@
       "loading": "Loading...",
       "discover_now": "DISCOVER NOW",
       "single": "Single",
-      "artist": "Artist"
+      "artist": "Artist",
+      "source": "Source"
     },
     "chat": {
       "welcome_msg": "Muzia AI Assistant is ready to help!",
