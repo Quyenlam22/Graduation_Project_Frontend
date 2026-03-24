@@ -106,10 +106,10 @@ function Album() {
           <div className="album-right">
             <div className="tracklist-header">
               <Row align="middle">
-                <Col span={1}><Text type="secondary" style={{ color: '#9CA3A1' }}>#</Text></Col>
-                <Col span={16}><Text type="secondary" style={{ color: '#9CA3A1' }}>{t('common.songs_list')}</Text></Col>
-                <Col span={4}><Text type="secondary" style={{ color: '#9CA3A1' }}>{t('common.like')}</Text></Col>
-                <Col span={3}><ClockCircleOutlined style={{ color: '#9CA3A1' }} /></Col>
+                <Col xs={3} sm={2} md={1}><Text type="secondary" style={{ color: '#9CA3A1' }}>#</Text></Col>
+                <Col xs={15} sm={16} md={16}><Text type="secondary" style={{ color: '#9CA3A1' }}>{t('common.songs_list')}</Text></Col>
+                <Col xs={0} sm={3} md={4}><Text type="secondary" style={{ color: '#9CA3A1' }}>{t('common.like')}</Text></Col>
+                <Col xs={6} sm={3} md={3} className="text-right"><ClockCircleOutlined style={{ color: '#9CA3A1' }} /></Col>
               </Row>
             </div>
             
@@ -117,26 +117,26 @@ function Album() {
               {albumSongs.map((song, index) => (
                 <div className="track-item" key={song._id} onClick={() => handlePlaySong(song)}>
                   <Row align="middle" className="w-full">
-                    <Col span={1}><Text className="track-index">{index + 1}</Text></Col>
-                    <Col span={16}>
+                    <Col xs={3} sm={2} md={1}><Text className="track-index">{index + 1}</Text></Col>
+                    <Col xs={15} sm={16} md={16}>
                       <Flex align="center" gap={15}>
                         <Avatar shape="square" size={40} src={song.cover} />
-                        <div className="track-meta">
-                          <Text strong className="song-name">{song.title}</Text>
-                          <Text className="artist-name">{song.artistName}</Text>
+                        <div className="track-meta" style={{ overflow: 'hidden' }}>
+                          <Text strong className="song-name" ellipsis>{song.title}</Text>
+                          <Text className="artist-name" ellipsis>{song.artistName}</Text>
                         </div>
                       </Flex>
                     </Col>
-                    <Col span={4}>
+                    <Col xs={0} sm={3} md={4}>
                       <div onClick={(e) => handleToggleFavorite('songs', song._id, e)}>
                         {user?.favorites?.songs?.includes(song._id) ? (
-                            <HeartFilled style={{ color: '#FE2851', fontSize: '18px', cursor: 'pointer' }} />
+                          <HeartFilled style={{ color: '#FE2851', fontSize: '18px', cursor: 'pointer' }} />
                         ) : (
-                            <HeartOutlined style={{ fontSize: '18px', cursor: 'pointer', color: '#9CA3A1' }} />
+                          <HeartOutlined style={{ fontSize: '18px', cursor: 'pointer', color: '#9CA3A1' }} />
                         )}
                       </div>
                     </Col>
-                    <Col span={3} className="text-right">
+                    <Col xs={6} sm={3} md={3} className="text-right">
                       <Text className="track-duration">{formatTime(song.duration || 0)}</Text>
                     </Col>
                   </Row>
@@ -147,7 +147,7 @@ function Album() {
         </div>
       )}
 
-      <section className="album-list-section" style={{ marginTop: '40px' }}>
+      <section className="album-list-section">
         <AlbumSection 
           albums={id ? otherAlbums : albums} 
           title={id ? t('album.other_albums') : t('album.all_albums')} 

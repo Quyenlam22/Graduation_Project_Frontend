@@ -1,9 +1,9 @@
-import { Button, Dropdown, Flex, Image, Layout } from "antd";
+import { Button, Dropdown, Image, Layout } from "antd";
 import { Content } from "antd/es/layout/layout";
 import Sider from "antd/es/layout/Sider";
 import './LayoutAdmin.scss';
 import logo from "../../assets/images/logo.png";
-import { MenuFoldOutlined, MenuUnfoldOutlined, SearchOutlined, UserOutlined } from '@ant-design/icons'
+import { MenuFoldOutlined, MenuUnfoldOutlined, UserOutlined } from '@ant-design/icons'
 import { useContext, useState } from "react";
 import Notice from "../../components/Notice";
 import { NavLink, Outlet, useNavigate } from "react-router-dom";
@@ -28,7 +28,7 @@ function LayoutAdmin () {
         }
         localStorage.removeItem("accessToken");
         await signOut(auth);
-        navigate("/auth");
+        navigate("/admin/login");
     };
 
     const login = [

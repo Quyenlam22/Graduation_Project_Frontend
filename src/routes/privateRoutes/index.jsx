@@ -5,6 +5,7 @@ import withSuspense from "../../utils/withSuspense";
 import LayoutAdmin from "../../layouts/LayoutAdmin";
 import LayoutClient from "../../layouts/LayoutClient";
 import PrivateRouteClient from "../../components/PrivateRoute/client";
+import PrivateRouteAdmin from "../../components/PrivateRoute/admin";
 
 // Client Pages
 const Home = lazy(() => import("../../pages/client/Home"));
@@ -53,14 +54,19 @@ export const privateRoutes = [
         path: "/admin",
         element: <LayoutAdmin />,
         children: [
-            { index: true, element: withSuspense(Dashboard) },
-            { path: "dashboard", element: withSuspense(Dashboard) },
-            { path: "albums", element: withSuspense(AlbumManagement) },
-            { path: "playlists", element: withSuspense(PlaylistManagement) },
-            { path: "artists", element: withSuspense(ArtistManagement) },
-            { path: "songs", element: withSuspense(SongManagement) },
-            { path: "users", element: withSuspense(UserManagement) },
-            { path: "*", element: withSuspense(Error404) },
+            {
+                element: <PrivateRouteAdmin />,
+                children: [
+                    { index: true, element: withSuspense(Dashboard) },
+                    { path: "dashboard", element: withSuspense(Dashboard) },
+                    { path: "albums", element: withSuspense(AlbumManagement) },
+                    { path: "playlists", element: withSuspense(PlaylistManagement) },
+                    { path: "artists", element: withSuspense(ArtistManagement) },
+                    { path: "songs", element: withSuspense(SongManagement) },
+                    { path: "users", element: withSuspense(UserManagement) },
+                    { path: "*", element: withSuspense(Error404) },
+                ]
+            }   
         ]
     },
 ];

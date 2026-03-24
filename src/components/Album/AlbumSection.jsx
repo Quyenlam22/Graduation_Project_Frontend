@@ -25,7 +25,7 @@ function AlbumSection(props) {
   if (isSlider) {
     return (
       <div className="section-slider">
-        {title && <Title level={4} style={{ color: "#fff", marginBottom: 25 }}>{title}</Title>}
+        {title && <Title level={3} style={{ color: "#fff" }}>{title}</Title>}
         <Swiper
           modules={[Navigation, FreeMode, Autoplay]} // Thêm Autoplay vào đây
           spaceBetween={24}
@@ -38,9 +38,10 @@ function AlbumSection(props) {
             disableOnInteraction: false,
           }}
           breakpoints={{
-            640: { slidesPerView: 3 },
-            768: { slidesPerView: 4 },
-            1024: { slidesPerView: 6 },
+            768: { slidesPerView: 3 },
+            992: { slidesPerView: 4 },
+            1200: { slidesPerView: 4 },
+            1400: { slidesPerView: 6 },
           }}
         >
           {albums.map((album) => (
@@ -54,7 +55,7 @@ function AlbumSection(props) {
               >
                 <Card.Meta 
                   title={<Title level={5} style={{ color: "#fff", margin: 0, fontSize: '14px' }}>{album.title}</Title>}
-                  description={<Text type="secondary" style={{ fontSize: "12px", color: '#9CA3A1' }}>{album.artistName}</Text>}
+                  description={<Text type="secondary" style={{ fontSize: "12px", color: '#9CA3A1', overflow: "hidden", textWrap: "nowrap" }}>{album.artistName}</Text>}
                 />
               </Card>
             </SwiperSlide>
@@ -67,10 +68,10 @@ function AlbumSection(props) {
   // --- TRƯỜNG HỢP 2: HIỂN THỊ DẠNG LƯỚI + PHÂN TRANG (Dùng cho trang /albums) ---
   return (
     <div className="album-section-grid">
-      {title && <Title level={4} style={{ color: "#fff", marginBottom: 25 }}>{title}</Title>}
+      {title && <Title level={2} style={{ color: "#fff" }}>{title}</Title>}
       <Row gutter={[24, 24]}>
         {paginationData.currentItems.map((album) => (
-          <Col xs={12} sm={8} md={6} lg={4} key={album._id}>
+          <Col xs={12} sm={12} md={8} lg={6} xl={4} key={album._id}>
             <Card
               hoverable
               className="glass-card"

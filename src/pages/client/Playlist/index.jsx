@@ -8,10 +8,10 @@ import {
 import { PlaylistContext } from '../../../Context/PlaylistContext';
 import { SongContext } from '../../../Context/SongContext';
 import { MusicContext } from '../../../Context/MusicContext'; 
-import { AuthContext } from '../../../Context/AuthProvider'; // Thêm AuthContext
+import { AuthContext } from '../../../Context/AuthProvider';
 import PlaylistSection from '../../../components/Playlist/PlaylistSection';
 import './Playlist.scss';
-import { toggleFavorite } from '../../../services/authService'; // Thêm service
+import { toggleFavorite } from '../../../services/authService';
 import { useTranslation } from 'react-i18next';
 import useTitle from '../../../hooks/useTitle';
 
@@ -58,7 +58,7 @@ function Playlist() {
     try {
       const response = await toggleFavorite({
         uid: user.uid,
-        type: type, // 'playlists' hoặc 'songs'
+        type: type,
         itemId: itemId
       });
       
@@ -97,7 +97,7 @@ function Playlist() {
             <img className="playlist-avatar" src={currentPlaylist.avatar} alt={currentPlaylist.title} />
             <Flex vertical className="playlist-info-text">
               <Text className="label-playlist">{t('playlist.label_upper')}</Text>
-              <Title level={1} style={{ color: '#fff', margin: '5px 0' }}>{currentPlaylist.title}</Title>
+              <Title className="title-playlist" level={1} style={{ color: '#fff', margin: '5px 0' }}>{currentPlaylist.title}</Title>
               <Text style={{ color: '#9CA3A1', display: 'block', marginBottom: '15px' }}>
                 {currentPlaylist.description || t('playlist.no_description')}
               </Text>
@@ -137,10 +137,10 @@ function Playlist() {
         <div className="playlist-tracks">
           <div className="tracklist-header">
             <Row align="middle">
-              <Col span={1}><Text type="secondary" style={{ color: '#9CA3A1' }}>#</Text></Col>
-              <Col span={14}><Text type="secondary" style={{ color: '#9CA3A1' }}>{t('common.songs_list')}</Text></Col>
-              <Col span={6}><Text type="secondary" style={{ color: '#9CA3A1' }}>{t('common.like')}</Text></Col>
-              <Col span={3} style={{ textAlign: 'right' }}><ClockCircleOutlined style={{ color: '#9CA3A1' }} /></Col>
+              <Col xs={3} sm={2} md={1}><Text type="secondary">#</Text></Col>
+              <Col xs={15} sm={16} md={14}><Text type="secondary">{t('common.songs_list')}</Text></Col>
+              <Col xs={0} sm={3} md={6}><Text type="secondary">{t('common.like')}</Text></Col>
+              <Col xs={6} sm={3} md={3} style={{ textAlign: 'right' }}><ClockCircleOutlined /></Col>
             </Row>
           </div>
 
@@ -153,18 +153,17 @@ function Playlist() {
                 style={{ cursor: 'pointer' }}
               >
                 <Row align="middle" style={{ width: '100%' }}>
-                  <Col span={1}><Text className="track-index" style={{ color: '#9CA3A1' }}>{index + 1}</Text></Col>
-                  <Col span={14}>
+                  <Col xs={3} sm={2} md={1}><Text className="track-index">{index + 1}</Text></Col>
+                  <Col xs={15} sm={16} md={14}>
                     <Flex align="center" gap={15}>
                       <Avatar shape="square" size={40} src={song.cover} />
-                      <div className="track-meta">
-                        <Title level={5} className="song-name" style={{ color: '#fff', margin: 0, fontSize: '14px' }}>{song.title}</Title>
-                        <Text className="artist-name" style={{ color: '#9CA3A1' }}>{song.artistName}</Text>
+                      <div className="track-meta" style={{ overflow: 'hidden' }}>
+                        <Title level={5} className="song-name" ellipsis={{ tooltip: song.title }}>{song.title}</Title>
+                        <Text className="artist-name" ellipsis>{song.artistName}</Text>
                       </div>
                     </Flex>
                   </Col>
-                  <Col span={6}>
-                    {/* NÚT LIKE BÀI HÁT TRONG PLAYLIST */}
+                  <Col xs={0} sm={3} md={6}>
                     <div onClick={(e) => handleToggleFavorite('songs', song._id, e)}>
                         {user?.favorites?.songs?.includes(song._id) ? (
                             <HeartFilled style={{ color: '#FE2851', fontSize: '18px', cursor: 'pointer' }} />
@@ -173,7 +172,7 @@ function Playlist() {
                         )}
                     </div>
                   </Col>
-                  <Col span={3} style={{ textAlign: 'right', display: 'flex', justifyContent: 'flex-end' }}>
+                  <Col xs={6} sm={3} md={3} style={{ textAlign: 'right' }}>
                     <Text className="track-duration" style={{ color: '#9CA3A1' }}>{formatTime(song.duration || 0)}</Text>
                   </Col>
                 </Row>

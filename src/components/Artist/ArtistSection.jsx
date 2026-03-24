@@ -21,8 +21,6 @@ function ArtistSection(props) {
     return paginate(artists || [], currentPage, pageSize);
   }, [artists, currentPage]);
 
-  const lgValue = pathname === "/artists" ? 4 : 4; // image_fab601 cho thấy 6 cột trên màn hình lớn
-
   const renderArtistItem = (artist) => (
     <Flex 
       vertical 
@@ -78,7 +76,7 @@ function ArtistSection(props) {
     <div className="artist-grid-container">
       <Row gutter={[24, 40]}>
         {paginationData.currentItems.map((artist) => (
-          <Col xs={12} sm={8} md={6} lg={lgValue} key={artist._id}>
+          <Col xs={12} sm={12} md={8} xl={4} lg={6} key={artist._id}>
             {renderArtistItem(artist)}
           </Col>
         ))}

@@ -150,39 +150,31 @@ function Artist() {
             </div>
           </div>
 
-          <Row gutter={40} className="artist-content" style={{ padding: '24px' }}>
-            <Col span={16}>
+          <Row gutter={[40, 40]} className="artist-content" style={{ padding: '24px' }}>
+            <Col xs={24} lg={16}>
               <Title level={4} className="section-title">{t('artist.popular')}</Title>
               <div className="track-list">
                 {popularSongs.map((song, i) => (
-                  <div 
-                    className="track-item" 
-                    key={song._id}
-                    onClick={() => handlePlaySong(song)} 
-                    style={{ cursor: 'pointer' }}
-                  >
-                    <Row align="middle" style={{ width: '100%' }}>
-                      <Col span={1}><Text className="track-index">{i + 1}</Text></Col>
-                      <Col span={18}>
+                  <div className="track-item" key={song._id} onClick={() => handlePlaySong(song)}>
+                    <Row align="middle" gutter={10}>
+                      <Col span={2}><Text className="track-index">{i + 1}</Text></Col>
+                      <Col xs={14} sm={16}>
                         <Flex align="center" gap={15}>
                           <Avatar shape="square" size={40} src={song.cover} />
-                          <Text strong style={{ color: '#fff' }}>{song.title}</Text>
+                          <Text strong style={{ color: '#fff' }} ellipsis>{song.title}</Text>
                         </Flex>
                       </Col>
-                      <Col span={2}>
-                        {/* NÚT LIKE BÀI HÁT PHỔ BIẾN CỦA NGHỆ SĨ */}
+                      <Col xs={2} sm={4}>
                         <div onClick={(e) => handleToggleFavorite('songs', song._id, e)}>
-                            {user?.favorites?.songs?.includes(song._id) ? (
-                                <HeartFilled style={{ color: '#FE2851', fontSize: '18px', cursor: 'pointer' }} />
-                            ) : (
-                                <HeartOutlined style={{ fontSize: '18px', cursor: 'pointer', color: '#9CA3A1' }} />
-                            )}
+                          {user?.favorites?.songs?.includes(song._id) ? (
+                            <HeartFilled style={{ color: '#FE2851', fontSize: '18px' }} />
+                          ) : (
+                            <HeartOutlined style={{ fontSize: '18px', color: '#9CA3A1' }} />
+                          )}
                         </div>
                       </Col>
-                      <Col span={3} style={{ textAlign: 'right' }}>
-                        <Text style={{ color: '#9CA3A1' }}>
-                          {formatTime(song.duration || 0)} 
-                        </Text>
+                      <Col xs={6} sm={2} style={{ textAlign: 'right' }}>
+                        <Text style={{ color: '#9CA3A1' }}>{formatTime(song.duration || 0)}</Text>
                       </Col>
                     </Row>
                   </div>
@@ -190,9 +182,9 @@ function Artist() {
               </div>
             </Col>
 
-            <Col span={8}>
+            <Col xs={24} lg={8}>
               <Title level={4} className="section-title">{t('artist.introduction')}</Title>
-              <div className="about-card" style={{ background: 'rgba(255,255,255,0.05)', padding: '20px', borderRadius: '8px' }}>
+              <div className="about-card">
                 <Text style={{ color: '#9CA3A1', display: 'block', marginBottom: '15px' }}>
                   {currentArtist.description || t('artist.no_description', { name: currentArtist.name })}
                 </Text>
@@ -210,7 +202,7 @@ function Artist() {
           </section>
         </>
       ) : (
-        <section style={{ padding: '40px 24px' }}>
+        <section>
           <Title level={2} style={{ color: '#fff', marginBottom: '30px' }}>{t('artist.all_artists')}</Title>
           <ArtistSection artists={artists} isSlider={false} />
         </section>

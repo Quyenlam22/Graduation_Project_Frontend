@@ -26,23 +26,14 @@ function PlaylistSection(props) {
   }, [playlists, currentPage]);
   
   // Logic hiển thị cột dựa trên đường dẫn
-  let lgValue;
-  let breakpoints;
-  if (pathname.includes("/playlists")) {
-    lgValue = 4; // 6 cột khi ở trang danh sách tổng
-    breakpoints = {
-      640: { slidesPerView: 3 },
-      768: { slidesPerView: 4 },
-      1024: { slidesPerView: 6 },
-    };
-  } else {
-    lgValue = 6; // 4 cột khi ở các mục Suggested/Home
-    breakpoints = {
-      640: { slidesPerView: 3 },
-      768: { slidesPerView: 4 },
-      1024: { slidesPerView: 4 },
-    };
-  }
+  let xlValue = pathname.includes("/playlists") ? 4 : 6;
+  
+  // Tối ưu Breakpoints cho Swiper (Mobile hiện 2, Tablet 3-4, Desktop 4-6)
+  const breakpoints = {
+    320: { slidesPerView: 2, spaceBetween: 15 },
+    640: { slidesPerView: 3, spaceBetween: 20 },
+    1024: { slidesPerView: pathname.includes("/playlists") ? 6 : 4, spaceBetween: 24 },
+  };
 
   const renderCard = (playlist) => (
     <Card
@@ -99,10 +90,10 @@ function PlaylistSection(props) {
   // --- TRƯỜNG HỢP 2: LƯỚI + PHÂN TRANG (Dùng ở /playlists) ---
   return (
     <div className="playlist-section-grid">
-      <Row gutter={[24, 24]}>
+      <Row gutter={[16, 24]}>
         {/* SỬA TẠI ĐÂY: Dùng paginationData.currentItems thay vì playlists */}
         {paginationData.currentItems.map((item) => (
-          <Col xs={12} sm={8} md={6} lg={lgValue} key={item._id}>
+          <Col xs={12} sm={12} md={8} lg={6} xl={xlValue} key={item._id}>
             {renderCard(item)}
           </Col>
         ))}

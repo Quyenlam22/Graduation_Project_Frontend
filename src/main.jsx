@@ -9,6 +9,7 @@ import ArtistProvider from './Context/ArtistContext';
 import AlbumProvider from './Context/AlbumContext';
 import PlaylistProvider from './Context/PlaylistContext';
 import { MusicProvider } from './Context/MusicContext'; 
+import DashboardProvider from './Context/DashboardContext'; 
 
 createRoot(document.getElementById('root')).render(
   <BrowserRouter>
@@ -20,7 +21,9 @@ createRoot(document.getElementById('root')).render(
               <SongProvider>
                 <MusicProvider>
                   <PlaylistProvider>
-                    <App />
+                    <DashboardProvider>
+                      <App />
+                    </DashboardProvider>
                   </PlaylistProvider>
                 </MusicProvider>
               </SongProvider>

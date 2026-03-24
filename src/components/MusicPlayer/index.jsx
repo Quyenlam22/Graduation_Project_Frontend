@@ -104,15 +104,17 @@ function MusicPlayer() {
               )}
             </div>
             
-            {/* {currentSong.source !== 'deezer' && ( */}
-              <div onClick={handleToggleFavorite} style={{ marginLeft: '20px', cursor: 'pointer', fontSize: '20px' }}>
+              <div 
+                onClick={handleToggleFavorite} 
+                className="favorite-btn-wrapper" // Thêm class này
+                style={{ marginLeft: '20px', cursor: 'pointer', fontSize: '20px' }}
+              >
                 {user?.favorites?.songs?.includes(currentSong._id) ? (
                   <HeartFilled style={{ color: '#FE2851' }} />
                 ) : (
                   <HeartOutlined style={{ color: '#fff' }} className="heart-hover" />
                 )}
               </div>
-            {/* )} */}
         </Flex>
 
         <Flex vertical align="center" className="player-controls">
@@ -140,7 +142,6 @@ function MusicPlayer() {
             <div className="volume-slider">
                 <Slider value={volume * 100} onChange={handleVolumeChange} size="small" tooltip={{ open: false }} />
             </div>
-            {/* {currentSong.source !== 'deezer' && <ExpandOutlined className="control-icon-small" style={{ fontSize: '18px', cursor: 'pointer' }} /> } */}
         </Flex>
     </footer>
   );

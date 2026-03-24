@@ -15,7 +15,7 @@ import { deletePlaylists } from '../../../services/playlistService';
 import { paginate } from '../../../utils/paginate';
 import FilterBar from '../../../components/Search/FilterBar';
 
-const { Text, Title } = Typography;
+const { Text, Title, Paragraph } = Typography;
 
 function PlaylistManagement() {
   const { playlists, loading, refreshPlaylists } = useContext(PlaylistContext);
@@ -75,9 +75,9 @@ function PlaylistManagement() {
           <Image src={record.avatar} width={50} height={50} style={{ borderRadius: 4, objectFit: 'cover' }} fallback="https://via.placeholder.com/50" />
           <div style={{ display: 'flex', flexDirection: 'column', maxWidth: 220 }}>
             <Text strong>{record.title}</Text>
-            <Text type="secondary" style={{ fontSize: '12px', whiteSpace: 'normal', wordBreak: 'break-word' }} ellipsis={{ rows: 2, tooltip: record.description }}>
+            <Paragraph type="secondary" style={{ fontSize: '12px', whiteSpace: 'normal', wordBreak: 'break-word' }} ellipsis={{ rows: 2, tooltip: record.description }}>
               {record.description || 'No description'}
-            </Text>
+            </Paragraph>
           </div>
         </Space>
       ),

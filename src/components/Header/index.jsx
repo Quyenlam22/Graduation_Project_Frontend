@@ -69,36 +69,33 @@ function HeaderClient (props) {
               </div>
 
               <div className="header-client__nav-right">
-                {/* PHẦN CHUYỂN NGÔN NGỮ */}
-                {!isMobile && (
-                    <Space size={2} className="header-client__lang-switch">
-                        <Button 
-                            type="text" 
-                            size="small" 
-                            style={{ 
-                                color: i18n.language === 'vi' ? '#FE2851' : '#9CA3A1', 
-                                fontWeight: i18n.language === 'vi' ? 'bold' : 'normal',
-                                padding: '0 4px'
-                            }}
-                            onClick={() => changeLanguage('vi')}
-                        >
-                            VI
-                        </Button>
-                        <span style={{ color: '#393243' }}>|</span>
-                        <Button 
-                            type="text" 
-                            size="small" 
-                            style={{ 
-                                color: i18n.language === 'en' ? '#FE2851' : '#9CA3A1', 
-                                fontWeight: i18n.language === 'en' ? 'bold' : 'normal',
-                                padding: '0 4px'
-                            }}
-                            onClick={() => changeLanguage('en')}
-                        >
-                            EN
-                        </Button>
-                    </Space>
-                )}
+                <Space size={2} className="header-client__lang-switch">
+                    <Button 
+                        type="text" 
+                        size="small" 
+                        style={{ 
+                            color: i18n.language === 'vi' ? '#FE2851' : '#9CA3A1', 
+                            fontWeight: i18n.language === 'vi' ? 'bold' : 'normal',
+                            padding: '0 4px'
+                        }}
+                        onClick={() => changeLanguage('vi')}
+                    >
+                        VI
+                    </Button>
+                    <span style={{ color: '#393243' }}>|</span>
+                    <Button 
+                        type="text" 
+                        size="small" 
+                        style={{ 
+                            color: i18n.language === 'en' ? '#FE2851' : '#9CA3A1', 
+                            fontWeight: i18n.language === 'en' ? 'bold' : 'normal',
+                            padding: '0 4px'
+                        }}
+                        onClick={() => changeLanguage('en')}
+                    >
+                        EN
+                    </Button>
+                </Space>
 
                 { user ? (
                     <>
@@ -130,7 +127,7 @@ function HeaderClient (props) {
                                 icon={<UserOutlined />} 
                                 onClick={() => navigate("/auth")}
                             >
-                                {t('auth.sign_in')}
+                                {!isMobile && t('auth.sign_in')}
                             </Button>
                         </div>
                     )

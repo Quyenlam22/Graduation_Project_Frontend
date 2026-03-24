@@ -121,7 +121,7 @@ function SongManagement() {
       title: 'Duration',
       dataIndex: 'duration',
       key: 'duration',
-      width: 100,
+      width: 120,
       sorter: (a, b) => (a.duration || 0) - (b.duration || 0),
       render: (val) => formatDuration(val)
     },
@@ -167,6 +167,7 @@ function SongManagement() {
       <FilterBar onFilterChange={handleFilterChange} />
       
       <Table 
+        rowKey="_id"
         loading={loading}
         columns={columns} 
         dataSource={currentDisplayData} 

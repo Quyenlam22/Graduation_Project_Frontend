@@ -94,8 +94,6 @@
     }
 
     .ant-card-cover {
-      padding: 12px;
-
       img {
         border-radius: 8px;
         width: 100%;
@@ -107,6 +105,10 @@
       .artist-img {
         border-radius: 50% !important;
       }
+    }
+
+    .ant-card-body {
+      padding: 12px !important;
     }
 
     .ant-card-meta-title {
