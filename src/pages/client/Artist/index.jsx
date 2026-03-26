@@ -1,7 +1,7 @@
 import { Typography, Row, Col, Avatar, Flex, Button, Space, Divider, Spin, message } from 'antd';
 import { PlayCircleFilled, HeartOutlined, HeartFilled, CheckCircleFilled } from '@ant-design/icons';
 import { useParams, Link } from 'react-router-dom';
-import { useContext, useMemo } from 'react';
+import { useContext, useEffect, useMemo } from 'react';
 import { ArtistContext } from '../../../Context/ArtistContext';
 import { AlbumContext } from '../../../Context/AlbumContext';
 import { SongContext } from '../../../Context/SongContext';
@@ -19,9 +19,15 @@ const { Title, Text } = Typography;
 function Artist() {
   const { id } = useParams();
   const { user, setUser } = useContext(AuthContext); // Lấy thông tin user
-  const { artists, loading: artistLoading } = useContext(ArtistContext);
-  const { albums } = useContext(AlbumContext);
-  const { songs } = useContext(SongContext);
+  const { artists, loading: artistLoading, refreshArtists } = useContext(ArtistContext);
+  const { albums, refreshAlbums } = useContext(AlbumContext);
+  const { songs, refreshSongs } = useContext(SongContext);
+
+  useEffect(() => {
+    refreshSongs();
+    refreshAlbums();
+    refreshArtists();
+  }, []);
   
   const { playSong, formatTime } = useContext(MusicContext);
 

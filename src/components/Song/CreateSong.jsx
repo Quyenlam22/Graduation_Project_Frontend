@@ -98,6 +98,9 @@ function CreateSong(props) {
         handleCancel();
         if (onSuccess) onSuccess(); 
       }
+      else {
+        messageApi.error(response.message);
+      }
     } catch (error) {
       messageApi.error("Operation failed!");
     } finally {

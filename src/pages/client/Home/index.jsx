@@ -1,11 +1,11 @@
-import { Button, Card, Avatar, Typography, Flex, Divider, Row, Col } from "antd";
+import { Button, Avatar, Typography, Flex, Divider, Row, Col } from "antd";
 import { PlayCircleFilled } from "@ant-design/icons";
 import { Link, useNavigate } from "react-router-dom";
 import useTitle from "../../../hooks/useTitle";
 import "./Home.scss"; 
 import AlbumSection from "../../../components/Album/AlbumSection";
 import PlaylistSection from "../../../components/Playlist/PlaylistSection";
-import { useContext, useMemo } from "react";
+import { useContext, useEffect, useMemo } from "react";
 import { AlbumContext } from "../../../Context/AlbumContext";
 import { PlaylistContext } from "../../../Context/PlaylistContext";
 import { SongContext } from "../../../Context/SongContext";
@@ -17,13 +17,20 @@ const { Title, Text } = Typography;
 
 function Home() {
     const { t } = useTranslation();
-    const { albums } = useContext(AlbumContext);
-    const { playlists } = useContext(PlaylistContext);
-    const { songs } = useContext(SongContext);
-    const { artists } = useContext(ArtistContext);
+    const { albums, refreshAlbums } = useContext(AlbumContext);
+    const { playlists, refreshPlaylists } = useContext(PlaylistContext);
+    const { songs, refreshSongs } = useContext(SongContext);
+    const { artists, refreshArtists } = useContext(ArtistContext);
     const { playSong } = useContext(MusicContext);
     const navigate = useNavigate();
     
+    useEffect(() => {
+        refreshSongs();
+        refreshAlbums();
+        refreshArtists();
+        refreshPlaylists();
+    }, []);
+
     useTitle("Muzia");
 
     const newReleases = useMemo(() => {

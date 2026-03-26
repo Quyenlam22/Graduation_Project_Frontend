@@ -1,4 +1,4 @@
-import { useContext, useMemo } from 'react';
+import { useContext, useEffect, useMemo } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { Typography, Row, Col, Avatar, Flex, Button, Space, Spin, message } from 'antd';
 import { 
@@ -21,9 +21,14 @@ function Playlist() {
   const { id } = useParams();
   const { t } = useTranslation();
   const { user, setUser } = useContext(AuthContext);
-  const { playlists, loading: playlistLoading } = useContext(PlaylistContext);
-  const { loading: songLoading } = useContext(SongContext);
+  const { playlists, loading: playlistLoading, refreshPlaylists } = useContext(PlaylistContext);
+  const { loading: songLoading, refreshSongs } = useContext(SongContext);
   const { playSong, formatTime } = useContext(MusicContext);
+
+  useEffect(() => {
+    refreshSongs();
+    refreshPlaylists();
+  }, []);
 
   useTitle(t('menu.playlists'));
 

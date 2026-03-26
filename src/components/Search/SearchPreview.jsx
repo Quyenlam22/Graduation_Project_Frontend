@@ -8,6 +8,7 @@ import { ArtistContext } from "../../Context/ArtistContext";
 import { PlaylistContext } from "../../Context/PlaylistContext";
 import { SongContext } from "../../Context/SongContext";
 import { MusicContext } from "../../Context/MusicContext";
+import { useEffect } from "react";
 
 const { Text } = Typography;
 
@@ -17,11 +18,18 @@ function SearchPreview({ visible, keyword }) {
   const navigate = useNavigate();
   const path = location.pathname;
 
-  const { songs } = useContext(SongContext);
-  const { albums } = useContext(AlbumContext);
-  const { artists } = useContext(ArtistContext);
-  const { playlists } = useContext(PlaylistContext);
+  const { songs, refreshSongs } = useContext(SongContext);
+  const { albums, refreshAlbums } = useContext(AlbumContext);
+  const { artists, refreshArtists } = useContext(ArtistContext);
+  const { playlists, refreshPlaylists } = useContext(PlaylistContext);
   const { playSong } = useContext(MusicContext);
+
+  useEffect(() => {
+    refreshSongs();
+    refreshAlbums();
+    refreshArtists();
+    refreshPlaylists();
+  }, []);
 
   const filteredData = useMemo(() => {
     if (!keyword) return { results: [], label: "", type: "" };

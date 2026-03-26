@@ -13,11 +13,13 @@ import CreateAlbum from '../../../components/Album/CreateAlbum';
 import { deleteAlbums } from '../../../services/albumService';
 import { paginate } from '../../../utils/paginate';
 import FilterBar from '../../../components/Search/FilterBar';
+import { SongContext } from '../../../Context/SongContext';
 
 const { Text, Title } = Typography;
 
 function AlbumManagement() {
   const { albums, loading, refreshAlbums } = useContext(AlbumContext);
+  const { refreshSongs } = useContext(SongContext);
   const { messageApi } = useContext(AppContext);
 
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -56,7 +58,8 @@ function AlbumManagement() {
       const response = await deleteAlbums(id);
       if (response.success) {
         messageApi.success(response.message || "Album deleted.");
-        refreshAlbums(); // GỌI REFRESH TỪ CONTEXT
+        refreshAlbums();
+        refreshSongs();
       }
     } catch (error) {
       messageApi.error("Error when deleting album");

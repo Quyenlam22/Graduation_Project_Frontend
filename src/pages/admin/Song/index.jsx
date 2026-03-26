@@ -15,12 +15,14 @@ import { deleteSongs } from '../../../services/songService';
 import { paginate } from '../../../utils/paginate';
 import FilterBar from '../../../components/Search/FilterBar';
 import { AlbumContext } from '../../../Context/AlbumContext';
+import { PlaylistContext } from '../../../Context/PlaylistContext';
 
 const { Text, Title } = Typography;
 
 function SongManagement() {
   const { songs, loading, refreshSongs } = useContext(SongContext);
   const { refreshAlbums } = useContext(AlbumContext);
+  const { refreshPlaylists } = useContext(PlaylistContext);
   const { messageApi } = useContext(AppContext);
 
   const [pageSize, setPageSize] = useState(6);
@@ -59,6 +61,7 @@ function SongManagement() {
   const onSuccess = () => {
     refreshSongs();
     refreshAlbums();
+    refreshPlaylists();
   }
 
   const handleDelete = async (uid) => {
@@ -103,7 +106,7 @@ function SongManagement() {
       key: 'album',
       responsive: ['md'],
       sorter: (a, b) => (a.albumName || "").localeCompare(b.albumName || ""),
-      render: (text) => <Text type="secondary">{text || 'Single'}</Text>
+      render: (text) => <Text type="secondary">{text || 'N/A'}</Text>
     },
     {
       title: 'Stats',

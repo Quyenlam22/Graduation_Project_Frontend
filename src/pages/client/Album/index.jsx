@@ -1,4 +1,4 @@
-import { useContext, useMemo } from 'react';
+import { useContext, useEffect, useMemo } from 'react';
 import { useParams } from 'react-router-dom';
 import { Typography, Row, Col, Avatar, Flex, Button, Space, Spin, message } from 'antd';
 import { PlayCircleFilled, HeartOutlined, HeartFilled, ClockCircleOutlined } from '@ant-design/icons';
@@ -19,9 +19,14 @@ function Album() {
   const { id } = useParams();
   const { t } = useTranslation();
   const { user, setUser } = useContext(AuthContext); 
-  const { albums, loading: albumLoading } = useContext(AlbumContext);
-  const { songs, loading: songLoading } = useContext(SongContext);
+  const { albums, loading: albumLoading, refreshAlbums } = useContext(AlbumContext);
+  const { songs, loading: songLoading, refreshSongs } = useContext(SongContext);
   const { playSong, formatTime } = useContext(MusicContext);
+
+  useEffect(() => {
+    refreshSongs();
+    refreshAlbums();
+  }, []);
 
   const currentAlbum = useMemo(() => albums.find(item => item._id === id), [albums, id]);
   const albumSongs = useMemo(() => songs.filter(song => song.albumId === id), [songs, id]);

@@ -54,6 +54,9 @@ function CreateArtist(props) {
         handleCancelInternal();
         if (onSuccess) onSuccess();
       }
+      else {
+        messageApi.error(response.message);
+      }
     } catch (error) {
       messageApi.error(error.response?.data?.message || "Operation failed!");
     } finally {

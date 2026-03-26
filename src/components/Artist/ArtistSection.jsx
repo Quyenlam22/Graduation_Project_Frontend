@@ -1,5 +1,5 @@
 import { Avatar, Col, Row, Typography, Flex, Pagination } from "antd";
-import { useNavigate, useLocation } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { useState, useMemo } from "react";
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { Navigation, FreeMode, Autoplay } from 'swiper/modules';
@@ -13,7 +13,6 @@ const { Text, Title } = Typography;
 function ArtistSection(props) {
   const { artists, title, isSlider = false } = props;
   const navigate = useNavigate();
-  const { pathname } = useLocation();
   const [currentPage, setCurrentPage] = useState(1);
   const pageSize = 12;
 

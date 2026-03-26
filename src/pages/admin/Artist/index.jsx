@@ -14,11 +14,17 @@ import CreateArtist from '../../../components/Artist/CreateArtist';
 import { deleteArtists } from '../../../services/artistService';
 import { paginate } from '../../../utils/paginate';
 import FilterBar from '../../../components/Search/FilterBar';
+import { SongContext } from '../../../Context/SongContext';
+import { AlbumContext } from '../../../Context/AlbumContext';
+import { PlaylistContext } from '../../../Context/PlaylistContext';
 
 const { Text, Title } = Typography;
 
 function ArtistManagement() {
   const { artists, loading, refreshArtists } = useContext(ArtistContext);
+  const { refreshSongs } = useContext(SongContext);
+  const { refreshAlbums } = useContext(AlbumContext);
+  const { refreshPlaylists } = useContext(PlaylistContext);
   const { messageApi } = useContext(AppContext);
 
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -55,7 +61,10 @@ function ArtistManagement() {
       const response = await deleteArtists(id);
       if (response.success) {
         messageApi.success(response.message || "Artist removed!");
-        refreshArtists(); // CẬP NHẬT LẠI CONTEXT
+        refreshArtists();
+        refreshAlbums();
+        refreshSongs();
+        refreshPlaylists();
       }
     } catch (error) {
       messageApi.error("Error when deleting artist!");

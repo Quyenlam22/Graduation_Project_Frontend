@@ -23,11 +23,18 @@ function SearchResult() {
   const query = searchParams.get('q'); 
 
   const { user, setUser } = useContext(AuthContext); // Lấy user từ Context
-  const { songs: dbSongs } = useContext(SongContext);
-  const { albums: dbAlbums } = useContext(AlbumContext);
-  const { artists: dbArtists } = useContext(ArtistContext);
-  const { playlists: dbPlaylists } = useContext(PlaylistContext);
+  const { songs: dbSongs, refreshSongs } = useContext(SongContext);
+  const { albums: dbAlbums, refreshAlbums } = useContext(AlbumContext);
+  const { artists: dbArtists, refreshArtists } = useContext(ArtistContext);
+  const { playlists: dbPlaylists, refreshPlaylists } = useContext(PlaylistContext);
   const { playSong } = useContext(MusicContext);
+
+  useEffect(() => {
+    refreshSongs();
+    refreshAlbums();
+    refreshArtists();
+    refreshPlaylists();
+  }, []);
   
   const [deezerSongs, setDeezerSongs] = useState([]);
   const [loading, setLoading] = useState(false);

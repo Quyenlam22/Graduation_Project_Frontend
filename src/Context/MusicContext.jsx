@@ -1,7 +1,6 @@
-import { createContext, useState, useRef, useEffect, useCallback, useContext } from "react";
+import { createContext, useState, useRef, useEffect, useCallback } from "react";
 import { Howl } from "howler";
 import { getPreview } from "../services/songService";
-import { AppContext } from '../Context/AppProvider';
 
 export const MusicContext = createContext();
 
@@ -31,8 +30,6 @@ export const MusicProvider = ({ children }) => {
   const playerRef = useRef(null);
   const timerRef = useRef(null);
   
-  const { messageApi } = useContext(AppContext);
-
   const isLoopRef = useRef(isLoop);
   const isShuffleRef = useRef(isShuffle);
   const playQueueRef = useRef(playQueue);
@@ -87,7 +84,7 @@ export const MusicProvider = ({ children }) => {
       },
       onplayerror: () => {
         setIsPlaying(false);
-        message.error("Music playback error. Trying to refresh the link...");
+        console.error("Music playback error. Trying to refresh the link...");
         // Tự động thử lại bằng cách fetch link mới
         if (currentSong) playSong(currentSong, playQueueRef.current);
       }
@@ -165,7 +162,7 @@ export const MusicProvider = ({ children }) => {
           setCurrentSong(updatedSong);
           initPlayer(result.preview, true);
       } else {
-          message.error("No music source found!");
+          console.error("No music source found!");
       }
     } catch (error) { 
         console.error(error);
