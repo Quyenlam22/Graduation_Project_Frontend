@@ -117,6 +117,7 @@
       border-radius: 12px;
       transition: all 0.3s;
       cursor: pointer;
+      margin: 8px 0;
 
       &:hover {
         background: rgba(255, 255, 255, 0.05);
@@ -138,6 +139,7 @@
       .song-name {
         color: #fff;
         display: block;
+        margin: 0;
       }
 
       .artist-name {

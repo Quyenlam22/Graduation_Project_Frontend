@@ -27,14 +27,14 @@ function Dashboard() {
   };
 
   // Chỉ hiển thị màn hình loading to nếu chưa có bất kỳ dữ liệu nào trong Context
-  if (loading && !stats) {
-    return (
-      <Flex justify="center" align="center" style={{ height: '80vh', flexDirection: 'column', gap: 10 }}>
-        <Spin size="large" />
-        <Text>Loading Dashboard Data...</Text>
-      </Flex>
-    );
-  }
+  // if (loading && !stats) {
+  //   return (
+  //     <Flex justify="center" align="center" style={{ height: '80vh', flexDirection: 'column', gap: 10 }}>
+  //       <Spin size="large" />
+  //       <Text>Loading Dashboard Data...</Text>
+  //     </Flex>
+  //   );
+  // }
 
   // Cấu hình Biểu đồ Cột (Content Distribution)
   const columnConfig = {

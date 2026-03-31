@@ -1,11 +1,11 @@
-import { useContext, useEffect, useMemo } from 'react';
+import { useContext, useMemo } from 'react';
 import { useParams } from 'react-router-dom';
 import { Typography, Row, Col, Avatar, Flex, Button, Space, Spin, message } from 'antd';
 import { PlayCircleFilled, HeartOutlined, HeartFilled, ClockCircleOutlined } from '@ant-design/icons';
 import { AlbumContext } from '../../../Context/AlbumContext';
 import { SongContext } from '../../../Context/SongContext';
-import { MusicContext } from '../../../Context/MusicContext'; 
-import { AuthContext } from '../../../Context/AuthProvider'; 
+import { MusicContext } from '../../../Context/MusicContext';
+import { AuthContext } from '../../../Context/AuthProvider';
 import { formatDate } from '../../../utils/formatTime';
 import AlbumSection from '../../../components/Album/AlbumSection';
 import { toggleFavorite } from '../../../services/authService';
@@ -18,15 +18,15 @@ const { Title, Text } = Typography;
 function Album() {
   const { id } = useParams();
   const { t } = useTranslation();
-  const { user, setUser } = useContext(AuthContext); 
-  const { albums, loading: albumLoading, refreshAlbums } = useContext(AlbumContext);
-  const { songs, loading: songLoading, refreshSongs } = useContext(SongContext);
+  const { user, setUser } = useContext(AuthContext);
+  const { albums, loading: albumLoading } = useContext(AlbumContext);
+  const { songs, loading: songLoading } = useContext(SongContext);
   const { playSong, formatTime } = useContext(MusicContext);
 
-  useEffect(() => {
-    refreshSongs();
-    refreshAlbums();
-  }, []);
+  // useEffect(() => {
+  //   refreshSongs();
+  //   refreshAlbums();
+  // }, []);
 
   const currentAlbum = useMemo(() => albums.find(item => item._id === id), [albums, id]);
   const albumSongs = useMemo(() => songs.filter(song => song.albumId === id), [songs, id]);
@@ -38,19 +38,19 @@ function Album() {
   }, [albums, id]);
 
   const handleToggleFavorite = async (type, itemId, e) => {
-    if (e) e.stopPropagation(); 
+    if (e) e.stopPropagation();
     if (!user) {
-        message.error(t('auth.login_required'));
-        return;
+      message.error(t('auth.login_required'));
+      return;
     }
 
     try {
       const response = await toggleFavorite({
         uid: user.uid,
-        type: type, 
+        type: type,
         itemId: itemId
       });
-      
+
       if (response.success) {
         setUser({
           ...user,
@@ -87,17 +87,17 @@ function Album() {
               <Text type="secondary" style={{ color: '#9CA3A1', marginBottom: "8px" }}>
                 {formatDate(currentAlbum.createdAt, 'YYYY')} • {albumSongs.length} {t('common.songs')}
               </Text>
-              
+
               <Space size="middle" className="mt-4">
                 <Button type="primary" shape="round" icon={<PlayCircleFilled />} size="large" className="btn-play-all" onClick={handlePlayAll}>
                   {t('common.play_all')}
                 </Button>
-                
-                <Button 
-                  ghost 
-                  shape="circle" 
-                  icon={user?.favorites?.albums?.includes(id) ? <HeartFilled /> : <HeartOutlined />} 
-                  size="large" 
+
+                <Button
+                  ghost
+                  shape="circle"
+                  icon={user?.favorites?.albums?.includes(id) ? <HeartFilled /> : <HeartOutlined />}
+                  size="large"
                   style={{
                     color: user?.favorites?.albums?.includes(id) ? '#FE2851' : '#fff',
                     borderColor: user?.favorites?.albums?.includes(id) ? '#FE2851' : '#fff'
@@ -117,7 +117,7 @@ function Album() {
                 <Col xs={6} sm={3} md={3} className="text-right"><ClockCircleOutlined style={{ color: '#9CA3A1' }} /></Col>
               </Row>
             </div>
-            
+
             <div className="track-list">
               {albumSongs.map((song, index) => (
                 <div className="track-item" key={song._id} onClick={() => handlePlaySong(song)}>
@@ -153,9 +153,9 @@ function Album() {
       )}
 
       <section className="album-list-section">
-        <AlbumSection 
-          albums={id ? otherAlbums : albums} 
-          title={id ? t('album.other_albums') : t('album.all_albums')} 
+        <AlbumSection
+          albums={id ? otherAlbums : albums}
+          title={id ? t('album.other_albums') : t('album.all_albums')}
           isSlider={!!id}
         />
       </section>

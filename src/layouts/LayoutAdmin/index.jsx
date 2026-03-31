@@ -6,18 +6,18 @@ import logo from "../../assets/images/logo.png";
 import { MenuFoldOutlined, MenuUnfoldOutlined, UserOutlined } from '@ant-design/icons'
 import { useContext, useState } from "react";
 import Notice from "../../components/Notice";
-import { NavLink, Outlet, useNavigate } from "react-router-dom";
+import { Outlet, useNavigate } from "react-router-dom";
 import MenuSiderAdmin from "../../components/MenuSider/MenuSiderAdmin";
 import { changeStatus } from "../../services/authService";
 import { signOut } from "firebase/auth";
 import { AuthContext } from "../../Context/AuthProvider";
 import { auth } from "../../firebase/config";
 
-function LayoutAdmin () {
+function LayoutAdmin() {
     const [collapse, setCollapse] = useState(false);
     const navigate = useNavigate();
 
-    const {user} = useContext(AuthContext);
+    const { user } = useContext(AuthContext);
 
     const handleLogout = async () => {
         if (user?.uid) {
@@ -34,7 +34,7 @@ function LayoutAdmin () {
     const login = [
         {
             key: "userinfo",
-            label: <NavLink to="user-info">Info User</NavLink>
+            label: <span onClick={() => navigate("/user-info")}>Info User</span>
         },
         {
             key: "logout",
@@ -48,7 +48,7 @@ function LayoutAdmin () {
                 <header className="header-admin">
                     <div className={"header-admin__logo " + (collapse && "header-admin__logo--collapse")}>
                         <div className="header-admin__logo__image">
-                            <Image src={logo} alt="Logo"/>  
+                            <Image src={logo} alt="Logo" />
                         </div>
                         {!collapse ? <h3>Muzia</h3> : null}
                     </div>
@@ -63,7 +63,7 @@ function LayoutAdmin () {
                                 <Notice />
                             </div>
                             <div className="header-admin__nav-right__auth">
-                                <Dropdown menu={{ items:login }} placement="bottom">
+                                <Dropdown menu={{ items: login }} placement="bottom">
                                     <Button>{user ? user.displayName : <UserOutlined />}</Button>
                                 </Dropdown>
                             </div>
@@ -75,7 +75,7 @@ function LayoutAdmin () {
                         <MenuSiderAdmin />
                     </Sider>
                     <Content className="content-admin">
-                        <Outlet/>
+                        <Outlet />
                     </Content>
                 </Layout>
                 {/* <Footer>Footer</Footer> */}

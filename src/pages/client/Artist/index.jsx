@@ -1,11 +1,11 @@
 import { Typography, Row, Col, Avatar, Flex, Button, Space, Divider, Spin, message } from 'antd';
 import { PlayCircleFilled, HeartOutlined, HeartFilled, CheckCircleFilled } from '@ant-design/icons';
 import { useParams, Link } from 'react-router-dom';
-import { useContext, useEffect, useMemo } from 'react';
+import { useContext, useMemo } from 'react';
 import { ArtistContext } from '../../../Context/ArtistContext';
 import { AlbumContext } from '../../../Context/AlbumContext';
 import { SongContext } from '../../../Context/SongContext';
-import { MusicContext } from '../../../Context/MusicContext'; 
+import { MusicContext } from '../../../Context/MusicContext';
 import { AuthContext } from '../../../Context/AuthProvider'; // Thêm AuthContext
 import AlbumSection from '../../../components/Album/AlbumSection';
 import ArtistSection from '../../../components/Artist/ArtistSection';
@@ -19,16 +19,16 @@ const { Title, Text } = Typography;
 function Artist() {
   const { id } = useParams();
   const { user, setUser } = useContext(AuthContext); // Lấy thông tin user
-  const { artists, loading: artistLoading, refreshArtists } = useContext(ArtistContext);
-  const { albums, refreshAlbums } = useContext(AlbumContext);
-  const { songs, refreshSongs } = useContext(SongContext);
+  const { artists, loading: artistLoading } = useContext(ArtistContext);
+  const { albums } = useContext(AlbumContext);
+  const { songs } = useContext(SongContext);
 
-  useEffect(() => {
-    refreshSongs();
-    refreshAlbums();
-    refreshArtists();
-  }, []);
-  
+  // useEffect(() => {
+  //   refreshSongs();
+  //   refreshAlbums();
+  //   refreshArtists();
+  // }, []);
+
   const { playSong, formatTime } = useContext(MusicContext);
 
   const { t } = useTranslation();
@@ -37,19 +37,19 @@ function Artist() {
 
   const currentArtist = useMemo(() => artists.find(a => a._id === id), [artists, id]);
 
-  const popularSongs = useMemo(() => 
-    songs.filter(s => s.artistId === id).slice(0, 5), 
-  [songs, id]);
+  const popularSongs = useMemo(() =>
+    songs.filter(s => s.artistId === id).slice(0, 5),
+    [songs, id]);
 
-  const artistAlbums = useMemo(() => 
-    albums.filter(al => al.artistId === id), 
-  [albums, id]);
+  const artistAlbums = useMemo(() =>
+    albums.filter(al => al.artistId === id),
+    [albums, id]);
 
   const handleToggleFavorite = async (type, itemId, e) => {
-    if (e) e.stopPropagation(); 
+    if (e) e.stopPropagation();
     if (!user) {
-        message.error(t('auth.login_required'));
-        return;
+      message.error(t('auth.login_required'));
+      return;
     }
 
     try {
@@ -58,7 +58,7 @@ function Artist() {
         type: type, // 'artists' hoặc 'songs'
         itemId: itemId
       });
-      
+
       if (response.success) {
         setUser({
           ...user,
@@ -97,7 +97,7 @@ function Artist() {
     if (popularSongs.length > 0) {
       const randomIndex = Math.floor(Math.random() * popularSongs.length);
       const selectedSong = popularSongs[randomIndex];
-      
+
       playSong(
         {
           ...selectedSong,
@@ -128,23 +128,23 @@ function Artist() {
                   {t('artist.listeners_count', { count: formatNumber(currentArtist.nb_fan || 0) })}
                 </Text>
                 <Space size="middle" style={{ marginTop: 25 }}>
-                  <Button 
-                    type="primary" 
-                    shape="round" 
-                    icon={<PlayCircleFilled />} 
-                    size="large" 
+                  <Button
+                    type="primary"
+                    shape="round"
+                    icon={<PlayCircleFilled />}
+                    size="large"
                     className="btn-play-artist"
-                    onClick={handleRandomPlay} 
+                    onClick={handleRandomPlay}
                   >
                     {t('artist.random_play')}
                   </Button>
 
                   {/* NÚT LIKE ARTIST: Đổi màu và viền khi đã like */}
-                  <Button 
-                    ghost 
-                    shape="circle" 
-                    icon={user?.favorites?.artists?.includes(id) ? <HeartFilled /> : <HeartOutlined />} 
-                    size="large" 
+                  <Button
+                    ghost
+                    shape="circle"
+                    icon={user?.favorites?.artists?.includes(id) ? <HeartFilled /> : <HeartOutlined />}
+                    size="large"
                     style={{
                       color: user?.favorites?.artists?.includes(id) ? '#FE2851' : '#fff',
                       borderColor: user?.favorites?.artists?.includes(id) ? '#FE2851' : '#fff'

@@ -2,10 +2,10 @@ import { Button, Avatar, Typography, Flex, Divider, Row, Col } from "antd";
 import { PlayCircleFilled } from "@ant-design/icons";
 import { Link, useNavigate } from "react-router-dom";
 import useTitle from "../../../hooks/useTitle";
-import "./Home.scss"; 
+import "./Home.scss";
 import AlbumSection from "../../../components/Album/AlbumSection";
 import PlaylistSection from "../../../components/Playlist/PlaylistSection";
-import { useContext, useEffect, useMemo } from "react";
+import { useContext, useMemo } from "react";
 import { AlbumContext } from "../../../Context/AlbumContext";
 import { PlaylistContext } from "../../../Context/PlaylistContext";
 import { SongContext } from "../../../Context/SongContext";
@@ -17,19 +17,19 @@ const { Title, Text } = Typography;
 
 function Home() {
     const { t } = useTranslation();
-    const { albums, refreshAlbums } = useContext(AlbumContext);
-    const { playlists, refreshPlaylists } = useContext(PlaylistContext);
-    const { songs, refreshSongs } = useContext(SongContext);
-    const { artists, refreshArtists } = useContext(ArtistContext);
+    const { albums } = useContext(AlbumContext);
+    const { playlists } = useContext(PlaylistContext);
+    const { songs } = useContext(SongContext);
+    const { artists } = useContext(ArtistContext);
     const { playSong } = useContext(MusicContext);
     const navigate = useNavigate();
-    
-    useEffect(() => {
-        refreshSongs();
-        refreshAlbums();
-        refreshArtists();
-        refreshPlaylists();
-    }, []);
+
+    // useEffect(() => {
+    //     refreshSongs();
+    //     refreshAlbums();
+    //     refreshArtists();
+    //     refreshPlaylists();
+    // }, []);
 
     useTitle("Muzia");
 
@@ -37,7 +37,7 @@ function Home() {
         if (!songs || songs.length === 0) return [];
         return [...songs]
             .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
-            .slice(0, 4); 
+            .slice(0, 4);
     }, [songs]);
 
     const topArtists = useMemo(() => {
@@ -63,20 +63,20 @@ function Home() {
                     {t('home.hero_subtitle')}
                 </Text>
                 <Flex gap={15} className="hero-buttons">
-                    <Button 
-                        type="primary" 
-                        size="large" 
-                        icon={<PlayCircleFilled />} 
-                        shape="round" 
+                    <Button
+                        type="primary"
+                        size="large"
+                        icon={<PlayCircleFilled />}
+                        shape="round"
                         className="btn-play"
                         onClick={() => newReleases.length > 0 && playSong(newReleases[0], songs, t('home.new_releases'))}
                     >
                         {t('home.btn_start')}
                     </Button>
-                    <Button 
-                        ghost 
-                        size="large" 
-                        shape="round" 
+                    <Button
+                        ghost
+                        size="large"
+                        shape="round"
                         className="btn-profile"
                         onClick={() => navigate("/artists")}
                     >
@@ -110,8 +110,8 @@ function Home() {
                     </Flex>
                     <div className="new-release-list">
                         {newReleases.map((song, index) => (
-                            <div 
-                                key={song._id} 
+                            <div
+                                key={song._id}
                                 className="new-release-item"
                                 onClick={() => playSong(song, newReleases, t('home.new_releases'))}
                                 style={{ cursor: 'pointer' }}
@@ -147,10 +147,10 @@ function Home() {
                     </Flex>
                     <Flex vertical gap={20}>
                         {topArtists.map((artist) => (
-                            <Flex 
-                                align="center" 
-                                gap={15} 
-                                key={artist._id} 
+                            <Flex
+                                align="center"
+                                gap={15}
+                                key={artist._id}
                                 className="artist-item"
                                 style={{ cursor: 'pointer' }}
                                 onClick={() => navigate(`/artists/${artist._id}`)}

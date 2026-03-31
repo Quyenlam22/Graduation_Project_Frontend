@@ -1,6 +1,6 @@
 import { useEffect, useState, useContext, useMemo } from 'react';
 import { useSearchParams, useNavigate } from 'react-router-dom';
-import { Tabs, Spin, Typography, Row, Col, Empty, Flex, Pagination, Card, message } from 'antd'; 
+import { Tabs, Spin, Typography, Row, Col, Empty, Flex, Pagination, Card, message } from 'antd';
 import { HeartOutlined, HeartFilled } from '@ant-design/icons'; // Thêm icon
 import { SongContext } from '../../../Context/SongContext';
 import { AlbumContext } from '../../../Context/AlbumContext';
@@ -11,7 +11,7 @@ import { AuthContext } from '../../../Context/AuthProvider'; // Thêm AuthContex
 import { searchDeezer } from '../../../services/dezzerService';
 import { toggleFavorite } from '../../../services/authService'; // Thêm service toggle
 import { useTranslation } from 'react-i18next';
-import { paginate } from '../../../utils/paginate'; 
+import { paginate } from '../../../utils/paginate';
 import './SearchResult.scss';
 
 const { Title, Text } = Typography;
@@ -20,22 +20,22 @@ function SearchResult() {
   const { t } = useTranslation();
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
-  const query = searchParams.get('q'); 
+  const query = searchParams.get('q');
 
   const { user, setUser } = useContext(AuthContext); // Lấy user từ Context
-  const { songs: dbSongs, refreshSongs } = useContext(SongContext);
-  const { albums: dbAlbums, refreshAlbums } = useContext(AlbumContext);
-  const { artists: dbArtists, refreshArtists } = useContext(ArtistContext);
-  const { playlists: dbPlaylists, refreshPlaylists } = useContext(PlaylistContext);
+  const { songs: dbSongs } = useContext(SongContext);
+  const { albums: dbAlbums } = useContext(AlbumContext);
+  const { artists: dbArtists } = useContext(ArtistContext);
+  const { playlists: dbPlaylists } = useContext(PlaylistContext);
   const { playSong } = useContext(MusicContext);
 
-  useEffect(() => {
-    refreshSongs();
-    refreshAlbums();
-    refreshArtists();
-    refreshPlaylists();
-  }, []);
-  
+  // useEffect(() => {
+  //   refreshSongs();
+  //   refreshAlbums();
+  //   refreshArtists();
+  //   refreshPlaylists();
+  // }, []);
+
   const [deezerSongs, setDeezerSongs] = useState([]);
   const [loading, setLoading] = useState(false);
 
@@ -43,14 +43,14 @@ function SearchResult() {
   const [albumPage, setAlbumPage] = useState(1);
   const [artistPage, setArtistPage] = useState(1);
   const [playlistPage, setPlaylistPage] = useState(1);
-  
+
   const limitItems = 10;
   const gridLimit = 12;
 
   // --- HÀM XỬ LÝ SỰ KIỆN TIM ---
   const handleToggleFavorite = async (e, song) => {
     e.stopPropagation(); // Ngăn sự kiện click lan ra div cha (tránh tự động phát nhạc)
-    
+
     if (!user) {
       message.error(t('auth.login_required'));
       return;
@@ -71,7 +71,7 @@ function SearchResult() {
             songs: response.updatedFavorites
           }
         });
-        
+
         const isAdded = response.updatedFavorites.includes(song._id);
         message.success(isAdded ? t('common.added_favorite') : t('common.removed_favorite'));
       }
@@ -80,8 +80,8 @@ function SearchResult() {
     }
   };
 
-  useEffect(() => { 
-    setSongPage(1); 
+  useEffect(() => {
+    setSongPage(1);
     setAlbumPage(1);
     setArtistPage(1);
     setPlaylistPage(1);
@@ -170,50 +170,50 @@ function SearchResult() {
       label: t('search.songs'),
       children: (
         loading ? <Flex justify="center" p={50}><Spin size="large" /></Flex> : (
-            <div className="song-grid">
-              <Row gutter={[16, 16]}>
-                {songPagination.currentItems.map((song, index) => {
-                  const isLiked = user?.favorites?.songs?.includes(song._id);
+          <div className="song-grid">
+            <Row gutter={[16, 16]}>
+              {songPagination.currentItems.map((song, index) => {
+                const isLiked = user?.favorites?.songs?.includes(song._id);
 
-                  return (
-                    <Col span={24} key={song._id}>
-                      <div className="search-song-item" onClick={() => playSong(song, mergedSongs, `${t('search.result_for')}: ${query}`)}>
-                        <Flex align="center" justify="space-between">
-                          <Flex align="center" gap={15}>
-                            <Text className="index">{(songPage - 1) * limitItems + index + 1}</Text>
-                            <img src={song.cover || song.avatar} alt={song.title} className="song-cover" />
-                            <div className="info">
-                              <Text strong className="title" style={{ color: '#fff' }}>{song.title}</Text><br />
-                              <Text className="artist" style={{ color: '#9CA3A1' }}>{song.artistName}</Text>
-                            </div>
-                          </Flex>
-                          
-                          <Flex align="center" gap={20}>
-                            {/* NÚT TIM */}
-                            <div 
-                              className="heart-icon-wrapper" 
-                              onClick={(e) => handleToggleFavorite(e, song)}
-                              style={{ cursor: 'pointer', fontSize: '18px' }}
-                            >
-                              {isLiked ? (
-                                <HeartFilled style={{ color: '#FE2851' }} />
-                              ) : (
-                                <HeartOutlined style={{ color: '#9CA3A1' }} className="heart-hover" />
-                              )}
-                            </div>
-
-                            <div className={`source-badge ${song.source}`}>
-                              {song.source === 'local' ? 'Muzia' : 'Deezer'}
-                            </div>
-                          </Flex>
+                return (
+                  <Col span={24} key={song._id}>
+                    <div className="search-song-item" onClick={() => playSong(song, mergedSongs, `${t('search.result_for')}: ${query}`)}>
+                      <Flex align="center" justify="space-between">
+                        <Flex align="center" gap={15}>
+                          <Text className="index">{(songPage - 1) * limitItems + index + 1}</Text>
+                          <img src={song.cover || song.avatar} alt={song.title} className="song-cover" />
+                          <div className="info">
+                            <Text strong className="title" style={{ color: '#fff' }}>{song.title}</Text><br />
+                            <Text className="artist" style={{ color: '#9CA3A1' }}>{song.artistName}</Text>
+                          </div>
                         </Flex>
-                      </div>
-                    </Col>
-                  );
-                })}
-              </Row>
-              <Pagination showSizeChanger={false} current={songPage} total={mergedSongs.length} pageSize={limitItems} onChange={setSongPage} className="custom-pagination" style={{ marginTop: 20, textAlign: 'center' }} />
-            </div>
+
+                        <Flex align="center" gap={20}>
+                          {/* NÚT TIM */}
+                          <div
+                            className="heart-icon-wrapper"
+                            onClick={(e) => handleToggleFavorite(e, song)}
+                            style={{ cursor: 'pointer', fontSize: '18px' }}
+                          >
+                            {isLiked ? (
+                              <HeartFilled style={{ color: '#FE2851' }} />
+                            ) : (
+                              <HeartOutlined style={{ color: '#9CA3A1' }} className="heart-hover" />
+                            )}
+                          </div>
+
+                          <div className={`source-badge ${song.source}`}>
+                            {song.source === 'local' ? 'Muzia' : 'Deezer'}
+                          </div>
+                        </Flex>
+                      </Flex>
+                    </div>
+                  </Col>
+                );
+              })}
+            </Row>
+            <Pagination showSizeChanger={false} current={songPage} total={mergedSongs.length} pageSize={limitItems} onChange={setSongPage} className="custom-pagination" style={{ marginTop: 20, textAlign: 'center' }} />
+          </div>
         )
       )
     },

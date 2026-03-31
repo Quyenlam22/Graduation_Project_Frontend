@@ -1,13 +1,13 @@
-import { useContext, useEffect, useMemo } from 'react';
+import { useContext, useMemo } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { Typography, Row, Col, Avatar, Flex, Button, Space, Spin, message } from 'antd';
-import { 
-  PlayCircleFilled, HeartOutlined, HeartFilled, 
-  MoreOutlined, ClockCircleOutlined 
+import {
+  PlayCircleFilled, HeartOutlined, HeartFilled,
+  MoreOutlined, ClockCircleOutlined
 } from '@ant-design/icons';
 import { PlaylistContext } from '../../../Context/PlaylistContext';
 import { SongContext } from '../../../Context/SongContext';
-import { MusicContext } from '../../../Context/MusicContext'; 
+import { MusicContext } from '../../../Context/MusicContext';
 import { AuthContext } from '../../../Context/AuthProvider';
 import PlaylistSection from '../../../components/Playlist/PlaylistSection';
 import './Playlist.scss';
@@ -21,14 +21,14 @@ function Playlist() {
   const { id } = useParams();
   const { t } = useTranslation();
   const { user, setUser } = useContext(AuthContext);
-  const { playlists, loading: playlistLoading, refreshPlaylists } = useContext(PlaylistContext);
-  const { loading: songLoading, refreshSongs } = useContext(SongContext);
+  const { playlists, loading: playlistLoading } = useContext(PlaylistContext);
+  const { loading: songLoading } = useContext(SongContext);
   const { playSong, formatTime } = useContext(MusicContext);
 
-  useEffect(() => {
-    refreshSongs();
-    refreshPlaylists();
-  }, []);
+  // useEffect(() => {
+  //   refreshSongs();
+  //   refreshPlaylists();
+  // }, []);
 
   useTitle(t('menu.playlists'));
 
@@ -54,10 +54,10 @@ function Playlist() {
   }, [playlistSongs, t]);
 
   const handleToggleFavorite = async (type, itemId, e) => {
-    if (e) e.stopPropagation(); 
+    if (e) e.stopPropagation();
     if (!user) {
-        message.error(t('auth.login_required'));
-        return;
+      message.error(t('auth.login_required'));
+      return;
     }
 
     try {
@@ -66,7 +66,7 @@ function Playlist() {
         type: type,
         itemId: itemId
       });
-      
+
       if (response.success) {
         setUser({
           ...user,
@@ -107,23 +107,23 @@ function Playlist() {
                 {currentPlaylist.description || t('playlist.no_description')}
               </Text>
               <Text style={{ color: '#fff' }}>
-                <Text strong style={{ color: '#FE2851' }}>{currentPlaylist.userId || "Muzia Flow"}</Text> 
+                <Text strong style={{ color: '#FE2851' }}>{currentPlaylist.userId || "Muzia Flow"}</Text>
                 {` • ${playlistSongs.length} ${t('common.songs')}, ${totalDuration}`}
               </Text>
-              
+
               <Space size="middle" style={{ marginTop: 25 }}>
-                <Button 
-                  type="primary" shape="round" icon={<PlayCircleFilled />} 
+                <Button
+                  type="primary" shape="round" icon={<PlayCircleFilled />}
                   size="large" className="btn-play-all" onClick={handlePlayAll}
                 >
                   {t('common.play_all')}
                 </Button>
 
                 {/* NÚT LIKE PLAYLIST: Ở cạnh Play All */}
-                <Button 
-                  ghost shape="circle" 
-                  icon={user?.favorites?.playlists?.includes(id) ? <HeartFilled /> : <HeartOutlined />} 
-                  size="large" 
+                <Button
+                  ghost shape="circle"
+                  icon={user?.favorites?.playlists?.includes(id) ? <HeartFilled /> : <HeartOutlined />}
+                  size="large"
                   style={{
                     color: user?.favorites?.playlists?.includes(id) ? '#FE2851' : '#fff',
                     borderColor: user?.favorites?.playlists?.includes(id) ? '#FE2851' : '#fff'
@@ -151,8 +151,8 @@ function Playlist() {
 
           <div className="track-list">
             {playlistSongs.map((song, index) => (
-              <div 
-                className="track-item" 
+              <div
+                className="track-item"
                 key={song._id}
                 onClick={() => handlePlaySong(song)}
                 style={{ cursor: 'pointer' }}
@@ -170,11 +170,11 @@ function Playlist() {
                   </Col>
                   <Col xs={0} sm={3} md={6}>
                     <div onClick={(e) => handleToggleFavorite('songs', song._id, e)}>
-                        {user?.favorites?.songs?.includes(song._id) ? (
-                            <HeartFilled style={{ color: '#FE2851', fontSize: '18px', cursor: 'pointer' }} />
-                        ) : (
-                            <HeartOutlined style={{ fontSize: '18px', cursor: 'pointer', color: '#9CA3A1' }} />
-                        )}
+                      {user?.favorites?.songs?.includes(song._id) ? (
+                        <HeartFilled style={{ color: '#FE2851', fontSize: '18px', cursor: 'pointer' }} />
+                      ) : (
+                        <HeartOutlined style={{ fontSize: '18px', cursor: 'pointer', color: '#9CA3A1' }} />
+                      )}
                     </div>
                   </Col>
                   <Col xs={6} sm={3} md={3} style={{ textAlign: 'right' }}>
