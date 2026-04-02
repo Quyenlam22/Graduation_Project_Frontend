@@ -1,4 +1,5 @@
 import { useState, useRef, useEffect, useContext } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Button, Input, Flex, Typography, Spin } from 'antd';
 import {
     RobotOutlined, SendOutlined, CloseOutlined,
@@ -13,6 +14,7 @@ const { Text } = Typography;
 
 function AIChat() {
     const { t, i18n } = useTranslation();
+    const navigate = useNavigate();
     const {
         isLoop, isShuffle, toggleLoop, toggleShuffle, toggleMute, isMuted,
         playSong, playQueue // Lấy thêm playSong để xử lý click phát nhạc
@@ -156,6 +158,11 @@ function AIChat() {
 
     const voiceCommands = {
         'vi-VN': {
+            goToHome: { keywords: ["trang chủ"], reply: "Đang đưa bạn về trang chủ." },
+            goToAlbums: { keywords: ["album", "bộ sưu tập"], reply: "Đang mở danh sách album cho bạn." },
+            goToPlaylists: { keywords: ["playlist", "danh sách phát"], reply: "Đang mở danh sách phát cho bạn." },
+            goToArtists: { keywords: ["nghệ sĩ", "ca sĩ"], reply: "Đang mở danh sách nghệ sĩ cho bạn." },
+
             unshuffle: { keywords: ["tắt phát ngẫu nhiên", "dừng phát ngẫu nhiên", "tắt trộn bài", "hủy trộn bài"], reply: "Đã tắt chế độ phát ngẫu nhiên." },
             unloop: { keywords: ["tắt lặp lại", "dừng lặp lại", "hủy lặp lại"], reply: "Đã tắt chế độ lặp lại bài hát." },
             shuffle: { keywords: ["phát ngẫu nhiên", "trộn bài"], reply: "Đã kích hoạt chế độ phát ngẫu nhiên." },
@@ -170,6 +177,11 @@ function AIChat() {
             switchToVi: { keywords: ["tiếng việt"], reply: "Bạn đang sử dụng Tiếng Việt." }
         },
         'en-US': {
+            goToHome: { keywords: ["home"], reply: "Taking you to the homepage." },
+            goToAlbums: { keywords: ["album"], reply: "Opening the albums list." },
+            goToPlaylists: { keywords: ["playlist"], reply: "Opening the playlists list." },
+            goToArtists: { keywords: ["artist"], reply: "Opening the artists list." },
+
             unshuffle: { keywords: ["turn off shuffle", "stop random", "disable shuffle", "cancel shuffle"], reply: "Shuffle mode disabled." },
             unloop: { keywords: ["turn off loop", "stop loop", "stop repeat", "disable repeat", "disable loop", "cancel loop", "cancel repeat"], reply: "Repeat mode disabled." },
             shuffle: { keywords: ["shuffle", "random play", "random"], reply: "Shuffle mode is now active." },
@@ -188,12 +200,24 @@ function AIChat() {
     const handleVoiceCommand = (transcript, currentLang) => {
         const text = transcript.toLowerCase();
         const currentLangData = voiceCommands[currentLang];
-        const priorityOrder = ['switchToEn', 'switchToVi', 'unshuffle', 'unloop', 'mute', 'unmute', 'shuffle', 'loop', 'next', 'prev', 'play', 'pause'];
+        const priorityOrder = ['goToHome', 'goToAlbums', 'goToPlaylists', 'goToArtists', 'switchToEn', 'switchToVi', 'unshuffle', 'unloop', 'mute', 'unmute', 'shuffle', 'loop', 'next', 'prev', 'play', 'pause'];
 
         for (let action of priorityOrder) {
             const item = currentLangData[action];
             if (item && item.keywords.some(key => text.includes(key))) {
-                if (action === 'switchToEn') {
+                if (action === 'goToHome') {
+                    navigate('/'); // Đường dẫn trang chủ của bạn
+                }
+                else if (action === 'goToAlbums') {
+                    navigate('/albums'); // Đường dẫn trang Album trên sider
+                }
+                else if (action === 'goToPlaylists') {
+                    navigate('/playlists'); // Đường dẫn trang Playlist trên sider
+                }
+                else if (action === 'goToArtists') {
+                    navigate('/artists'); // Đường dẫn trang Artist trên sider
+                }
+                else if (action === 'switchToEn') {
                     if (i18n.language !== 'en') {
                         i18n.changeLanguage('en');
                         localStorage.setItem('muzia_lang', 'en');
