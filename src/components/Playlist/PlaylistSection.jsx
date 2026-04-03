@@ -15,19 +15,19 @@ function PlaylistSection(props) {
   const { playlists, isSlider } = props;
   const { pathname } = useLocation();
   const navigate = useNavigate();
-  
+
   // 1. Quản lý phân trang
   const [currentPage, setCurrentPage] = useState(1);
   const pageSize = 12;
-  
+
   // 2. Sử dụng hàm paginate để lấy dữ liệu cho trang hiện tại
   const paginationData = useMemo(() => {
-      return paginate(playlists || [], currentPage, pageSize);
+    return paginate(playlists || [], currentPage, pageSize);
   }, [playlists, currentPage]);
-  
+
   // Logic hiển thị cột dựa trên đường dẫn
   let xlValue = pathname.includes("/playlists") ? 4 : 6;
-  
+
   // Tối ưu Breakpoints cho Swiper (Mobile hiện 2, Tablet 3-4, Desktop 4-6)
   const breakpoints = {
     320: { slidesPerView: 2, spaceBetween: 15 },
@@ -39,7 +39,7 @@ function PlaylistSection(props) {
     <Card
       hoverable
       className="playlist-card"
-      onClick={() => navigate(`/playlists/${playlist._id}`)} 
+      onClick={() => navigate(`/playlists/${playlist._id}`)}
       cover={
         <div className="playlist-img-container">
           <img alt={playlist.title} src={playlist.avatar} />
@@ -47,14 +47,16 @@ function PlaylistSection(props) {
         </div>
       }
     >
-      <Card.Meta
-        title={<Text style={{ color: '#fff' }}>{playlist.title}</Text>}
-        description={
-          <Text type="secondary" style={{ fontSize: '12px', color: '#9CA3A1' }}>
-            {playlist.userId || "Muzia Flow"}
-          </Text>
-        }
-      />
+      <div className="playlist-card-body">
+        <div className="title-wrapper">
+          <div className="playlist-title-marquee">
+            {playlist.title}
+          </div>
+        </div>
+        <div className="playlist-author">
+          {playlist.userId === 'system' ? 'System' : (playlist.userId?.displayName || "Muzia Flow")}
+        </div>
+      </div>
     </Card>
   );
 

@@ -71,7 +71,8 @@
       "history_cleared": "Chat history has been cleared.",
       "clear": "Clear",
       "placeholder": "Ask Muzia...",
-      "btn_send": "Send"
+      "btn_send": "Send",
+      "queue_from_ai": "Suggested by Chat Bot"
     },
     "error": {
       "oops": "Oops! Page not found",

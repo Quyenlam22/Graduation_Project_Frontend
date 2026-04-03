@@ -71,7 +71,8 @@
       "history_cleared": "Lịch sử trò chuyện đã được xóa.",
       "clear": "Xóa",
       "placeholder": "Hỏi Muzia...",
-      "btn_send": "Gửi"
+      "btn_send": "Gửi",
+      "queue_from_ai": "Gợi ý từ Chat Bot"
     },
     "error": {
       "oops": "Rất tiếc! Không tìm thấy trang",

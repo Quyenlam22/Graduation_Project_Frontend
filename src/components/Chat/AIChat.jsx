@@ -17,7 +17,7 @@ function AIChat() {
     const navigate = useNavigate();
     const {
         isLoop, isShuffle, toggleLoop, toggleShuffle, toggleMute, isMuted,
-        playSong, playQueue // Lấy thêm playSong để xử lý click phát nhạc
+        playSong, currentSong, togglePlay, handleNext, handlePrev
     } = useContext(MusicContext);
 
     const [isOpen, setIsOpen] = useState(false);
@@ -37,6 +37,35 @@ function AIChat() {
 
     const scrollRef = useRef(null);
     const recognitionRef = useRef(null);
+
+    useEffect(() => {
+        if (isOpen && scrollRef.current) {
+            // Sử dụng setTimeout để đảm bảo DOM đã render xong trước khi cuộn
+            // const timer = setTimeout(() => {
+            scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
+            // }, 100);
+            // return () => clearTimeout(timer);
+        }
+    }, [messages, isTyping, isOpen]);
+
+    useEffect(() => {
+        if ('mediaSession' in navigator && currentSong) {
+            navigator.mediaSession.metadata = new MediaMetadata({
+                title: currentSong.title,
+                artist: currentSong.artistName,
+                album: currentSong.albumName || 'Muzia Flow',
+                artwork: [
+                    { src: currentSong.cover, sizes: '512x512', type: 'image/png' }
+                ]
+            });
+
+            // Gán các hành động điều khiển hệ thống vào hàm của MusicContext
+            navigator.mediaSession.setActionHandler('play', togglePlay);
+            navigator.mediaSession.setActionHandler('pause', togglePlay);
+            navigator.mediaSession.setActionHandler('previoustrack', handlePrev);
+            navigator.mediaSession.setActionHandler('nexttrack', handleNext);
+        }
+    }, [currentSong, togglePlay, handleNext, handlePrev]);
 
     // Bước A: Hàm xử lý click để nạp toàn bộ danh sách gợi ý vào Queue
     const handleSongClick = (currentMetadata, allParts) => {

@@ -1,4 +1,4 @@
-@use "../../../layouts/LayoutClient/LayoutClient"as layout;
+@use "../../../layouts/LayoutClient/LayoutClient" as layout;
 
 .playlist-detail-container {
   max-width: 1400px;
@@ -96,6 +96,45 @@
         width: 100%;
         aspect-ratio: 1/1;
         object-fit: cover;
+      }
+    }
+
+    .playlist-card-body {
+      .title-wrapper {
+        width: 100%;
+        overflow: hidden;
+        white-space: nowrap;
+        position: relative;
+
+        .playlist-title-marquee {
+          display: inline-block;
+          color: #ffffff !important; // Ép màu trắng
+          font-weight: 600;
+          font-size: 14px;
+          // Hiệu ứng mặc định: cắt chữ
+          max-width: 100%;
+          // overflow: hidden;
+          // text-overflow: ellipsis;
+        }
+      }
+
+      .playlist-author {
+        display: block;
+        color: #9CA3A1 !important; // Ép màu xám
+        font-size: 12px;
+        margin-top: 4px;
+        text-transform: capitalize;
+      }
+    }
+
+    // HIỆU ỨNG CHẠY CHỮ KHI HOVER
+    &:hover {
+      .playlist-title-marquee {
+        max-width: none;
+        overflow: visible;
+        text-overflow: clip;
+        animation: marquee-scroll 3s linear infinite;
+        padding-left: 20px;
       }
     }
   }

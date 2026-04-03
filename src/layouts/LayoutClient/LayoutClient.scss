@@ -520,16 +520,6 @@
     }
 }
 
-@keyframes rotate {
-    from {
-        transform: rotate(0deg);
-    }
-
-    to {
-        transform: rotate(360deg);
-    }
-}
-
 .custom-pagination {
     display: flex;
     justify-content: center;
@@ -759,5 +749,26 @@ input {
 
     100% {
         box-shadow: 0 0 0 0 rgba(254, 40, 81, 0);
+    }
+}
+
+// Playlist Section
+@keyframes marquee-scroll {
+    0% {
+        transform: translateX(100%);
+    }
+
+    100% {
+        transform: translateX(-150%);
+    }
+}
+
+@keyframes rotate {
+    from {
+        transform: rotate(0deg);
+    }
+
+    to {
+        transform: rotate(360deg);
     }
 }

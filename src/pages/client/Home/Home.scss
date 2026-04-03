@@ -86,6 +86,44 @@
         object-fit: cover;
       }
     }
+
+    .playlist-card-body {
+      .title-wrapper {
+        width: 100%;
+        overflow: hidden;
+        white-space: nowrap;
+        position: relative;
+
+        .playlist-title-marquee {
+          display: inline-block;
+          color: #ffffff !important; // Ép màu trắng
+          font-weight: 600;
+          font-size: 14px;
+          // Hiệu ứng mặc định: cắt chữ
+          max-width: 100%;
+          // overflow: hidden;
+          // text-overflow: ellipsis;
+        }
+      }
+
+      .playlist-author {
+        display: block;
+        color: #9CA3A1 !important; // Ép màu xám
+        font-size: 12px;
+        margin-top: 4px;
+        text-transform: capitalize;
+      }
+    }
+
+    &:hover {
+      .playlist-title-marquee {
+        max-width: none;
+        overflow: visible;
+        text-overflow: clip;
+        animation: marquee-scroll 3s linear infinite;
+        padding-left: 20px;
+      }
+    }
   }
 
   .section-title-container {
@@ -219,7 +257,8 @@
       padding: 10px 12px;
 
       .track-number {
-        display: none; /* Ẩn số thứ tự cho gọn */
+        display: none;
+        /* Ẩn số thứ tự cho gọn */
       }
 
       .play-icon {
