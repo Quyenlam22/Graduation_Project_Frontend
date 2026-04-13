@@ -1,11 +1,11 @@
 import { useContext, useState, useMemo } from 'react';
-import { 
+import {
   Table, Avatar, Space, Button, Tooltip, Typography, Badge,
   Popconfirm, Empty
 } from 'antd';
-import { 
-  EditOutlined, DeleteOutlined, PlusOutlined, 
-  UserOutlined, HeartOutlined, TeamOutlined 
+import {
+  EditOutlined, DeleteOutlined, PlusOutlined,
+  UserOutlined, HeartOutlined, TeamOutlined
 } from '@ant-design/icons';
 import { AppContext } from '../../../Context/AppProvider';
 import { ArtistContext } from '../../../Context/ArtistContext'; // IMPORT CONTEXT MỚI
@@ -71,6 +71,13 @@ function ArtistManagement() {
     }
   };
 
+  const onSuccess = () => {
+    refreshArtists();
+    refreshAlbums();
+    refreshSongs();
+    refreshPlaylists();
+  }
+
   const columns = [
     {
       title: 'Artist',
@@ -83,7 +90,7 @@ function ArtistManagement() {
           <div style={{ display: 'flex', flexDirection: 'column' }}>
             <Text strong>{record.name}</Text>
             <Text type="secondary" style={{ fontSize: '12px' }}>
-                Deezer ID: {record.deezerId || 'N/A'}
+              Deezer ID: {record.deezerId || 'N/A'}
             </Text>
           </div>
         </Space>
@@ -105,9 +112,9 @@ function ArtistManagement() {
       dataIndex: 'status',
       key: 'status',
       render: (status) => (
-        <Badge 
-          status={status === 'active' ? 'success' : 'default'} 
-          text={status ? status.toUpperCase() : 'INACTIVE'} 
+        <Badge
+          status={status === 'active' ? 'success' : 'default'}
+          text={status ? status.toUpperCase() : 'INACTIVE'}
         />
       ),
     },
@@ -147,26 +154,26 @@ function ArtistManagement() {
       </div>
 
       <FilterBar onFilterChange={handleFilterChange} />
-      
-      <Table 
+
+      <Table
         loading={loading}
-        columns={columns} 
-        dataSource={currentDisplayData} 
+        columns={columns}
+        dataSource={currentDisplayData}
         bordered
         scroll={{ x: 1000 }}
         locale={{ emptyText: <Empty description="No artists found." /> }}
-        pagination={{ 
+        pagination={{
           current: currentPage,
           pageSize: pageSize,
-          total: filteredData.length, 
+          total: filteredData.length,
           onChange: (page, size) => { setCurrentPage(page); setPageSize(size); }
         }}
       />
 
-      <CreateArtist 
-        isModalOpen={isModalOpen} 
+      <CreateArtist
+        isModalOpen={isModalOpen}
         setIsModalOpen={setIsModalOpen}
-        onSuccess={refreshArtists}
+        onSuccess={onSuccess}
         data={editingArtist}
         onCancel={() => { setIsModalOpen(false); setEditingArtist(null); }}
       />

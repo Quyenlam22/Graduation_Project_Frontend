@@ -27,7 +27,7 @@
     }
 
     &__logo--collapse {
-        width: 80px!important;
+        width: 80px !important;
         transition: all 0.3s;
     }
 
@@ -85,5 +85,32 @@
 }
 
 .ant-form-item-row {
-    flex-direction: row!important;
+    flex-direction: row !important;
+}
+
+.social-icons {
+    display: flex;
+    justify-content: center;
+    list-style: none;
+    padding: 0;
+    gap: 15px;
+
+    li a {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        width: 40px;
+        height: 40px;
+        line-height: 40px;
+        color: #fff;
+        border: 1px solid #fff;
+        border-radius: 50%;
+        transition: 0.5s all;
+
+        &:hover {
+            color: #ff4c4c;
+            border-color: #ff4c4c;
+            transform: rotateY(360deg);
+        }
+    }
 }

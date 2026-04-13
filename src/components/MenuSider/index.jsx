@@ -9,7 +9,7 @@ import { useContext } from "react";
 import { AuthContext } from "../../Context/AuthProvider";
 import { useTranslation } from "react-i18next";
 
-function MenuSider () {
+function MenuSider() {
     const { t } = useTranslation();
     const { user } = useContext(AuthContext);
     const location = useLocation();
@@ -31,7 +31,7 @@ function MenuSider () {
             key: '/my-favorite',
             icon: <IoLibrary />,
             label: <Link to={"/my-library"}>{t('menu.library')}</Link>,
-            requiredAuth: true, 
+            requiredAuth: true,
         },
         {
             key: '/playlists',

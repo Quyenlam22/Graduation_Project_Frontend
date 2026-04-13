@@ -18,7 +18,7 @@ const UserInfo = () => {
 
   const [avatarFile, setAvatarFile] = useState(null);
   const [previewUrl, setPreviewUrl] = useState(null);
-  
+
   useEffect(() => {
     if (user) {
       formInfo.setFieldsValue(user);
@@ -30,14 +30,14 @@ const UserInfo = () => {
     setPreviewUrl(URL.createObjectURL(file));
     return false;
   };
-  
+
   const onUpdateInfo = async (values) => {
     setLoading(true);
     try {
       const formData = new FormData();
       formData.append("displayName", values.displayName);
       if (avatarFile) {
-        formData.append("photoURL", avatarFile); 
+        formData.append("photoURL", avatarFile);
       }
 
       const response = await updateProfile(formData);
@@ -87,21 +87,21 @@ const UserInfo = () => {
   return (
     <div className="user-info-container">
       <h2 className="page-title">{t('user.page_title')}</h2>
-      
+
       <Card className="info-card" title={t('user.personal_info')}>
         <div className="avatar-section">
-          <Avatar 
-            size={100} 
-            src={previewUrl || user.photoURL} 
-            icon={<UserOutlined />} 
+          <Avatar
+            size={100}
+            src={previewUrl || user.photoURL}
+            icon={<UserOutlined />}
           />
-          <Upload 
-            showUploadList={false} 
-            beforeUpload={handleUpload} 
+          <Upload
+            showUploadList={false}
+            beforeUpload={handleUpload}
             accept="image/*"
           >
             <Button icon={<CameraOutlined />} className="change-avatar-btn">
-                {t('user.change_avatar')}
+              {t('user.change_avatar')}
             </Button>
           </Upload>
         </div>
@@ -111,9 +111,9 @@ const UserInfo = () => {
           layout="vertical"
           onFinish={onUpdateInfo}
         >
-          <Form.Item 
-            label={t('auth.placeholder_name')} 
-            name="displayName" 
+          <Form.Item
+            label={t('auth.placeholder_name')}
+            name="displayName"
             rules={[{ required: true, message: t('user.error_name_required') }]}
           >
             <Input prefix={<UserOutlined style={{ color: 'rgba(0,0,0,.25)' }} />} placeholder={t('auth.placeholder_name')} />
@@ -127,47 +127,43 @@ const UserInfo = () => {
         </Form>
       </Card>
 
-      {user.provider === "email" && (
-        <>
-          <Divider className="form-divider" />
-          <Card className="info-card" title={t('user.security')} bordered={false}>
-            <Form
-              form={formPassword}
-              layout="vertical"
-              onFinish={onChangePassword}
-            >
-              <Form.Item 
-                label={t('user.new_password')} 
-                name="newPassword" 
-                rules={[{ required: true, min: 6, message: t('auth.error_weak_password') }]}
-              >
-                <Input.Password prefix={<LockOutlined />} placeholder={t('user.placeholder_new_pass')} />
-              </Form.Item>
-              <Form.Item 
-                label={t('user.confirm_password')} 
-                name="confirm" 
-                dependencies={['newPassword']}
-                rules={[
-                  { required: true, message: t('user.error_confirm_required') },
-                  ({ getFieldValue }) => ({
-                    validator(_, value) {
-                      if (!value || getFieldValue('newPassword') === value) {
-                        return Promise.resolve();
-                      }
-                      return Promise.reject(new Error(t('auth.error_password_match')));
-                    },
-                  }),
-                ]}
-              >
-                <Input.Password prefix={<LockOutlined />} placeholder={t('user.placeholder_confirm_pass')} />
-              </Form.Item>
-              <Button type="default" htmlType="submit" danger className="muzia-btn-outline">
-                {t('user.btn_update_pass')}
-              </Button>
-            </Form>
-          </Card>
-        </>
-      )}
+      <Divider className="form-divider" />
+      <Card className="info-card" title={t('user.security')} bordered={false}>
+        <Form
+          form={formPassword}
+          layout="vertical"
+          onFinish={onChangePassword}
+        >
+          <Form.Item
+            label={t('user.new_password')}
+            name="newPassword"
+            rules={[{ required: true, min: 6, message: t('auth.error_weak_password') }]}
+          >
+            <Input.Password prefix={<LockOutlined />} placeholder={t('user.placeholder_new_pass')} />
+          </Form.Item>
+          <Form.Item
+            label={t('user.confirm_password')}
+            name="confirm"
+            dependencies={['newPassword']}
+            rules={[
+              { required: true, message: t('user.error_confirm_required') },
+              ({ getFieldValue }) => ({
+                validator(_, value) {
+                  if (!value || getFieldValue('newPassword') === value) {
+                    return Promise.resolve();
+                  }
+                  return Promise.reject(new Error(t('auth.error_password_match')));
+                },
+              }),
+            ]}
+          >
+            <Input.Password prefix={<LockOutlined />} placeholder={t('user.placeholder_confirm_pass')} />
+          </Form.Item>
+          <Button type="default" htmlType="submit" danger className="muzia-btn-outline">
+            {t('user.btn_update_pass')}
+          </Button>
+        </Form>
+      </Card>
     </div>
   );
 };

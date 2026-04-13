@@ -1,10 +1,10 @@
 import { useContext, useState, useMemo } from 'react';
-import { 
+import {
   Table, Space, Button, Tooltip, Typography, Badge,
-  Popconfirm, Image, Empty 
+  Popconfirm, Image, Empty
 } from 'antd';
-import { 
-  EditOutlined, DeleteOutlined, PlusOutlined, HeartOutlined, AudioOutlined, UserOutlined 
+import {
+  EditOutlined, DeleteOutlined, PlusOutlined, HeartOutlined, AudioOutlined, UserOutlined
 } from '@ant-design/icons';
 import { AppContext } from '../../../Context/AppProvider';
 import { AlbumContext } from '../../../Context/AlbumContext'; // IMPORT CONTEXT MỚI
@@ -32,7 +32,7 @@ function AlbumManagement() {
   const filteredData = useMemo(() => {
     return albums.filter(album => {
       const kw = filters.keyword.toLowerCase();
-      const matchKeyword = !kw || 
+      const matchKeyword = !kw ||
         album.title?.toLowerCase().includes(kw) ||
         album.artistName?.toLowerCase().includes(kw);
       const matchStatus = !filters.status || album.status === filters.status;
@@ -66,6 +66,11 @@ function AlbumManagement() {
     }
   };
 
+  const onSuccess = () => {
+    refreshAlbums();
+    refreshSongs();
+  }
+
   const columns = [
     {
       title: 'Album Details',
@@ -73,10 +78,10 @@ function AlbumManagement() {
       fixed: 'left',
       render: (_, record) => (
         <Space>
-          <Image 
-            src={record.avatar} 
+          <Image
+            src={record.avatar}
             width={50} height={50}
-            style={{ borderRadius: 4, objectFit: 'cover' }} 
+            style={{ borderRadius: 4, objectFit: 'cover' }}
             fallback="https://via.placeholder.com/50"
           />
           <div style={{ display: 'flex', flexDirection: 'column' }}>
@@ -104,9 +109,9 @@ function AlbumManagement() {
       dataIndex: 'status',
       key: 'status',
       render: (status) => (
-        <Badge 
-          status={status === 'active' ? 'success' : 'error'} 
-          text={status ? status.toUpperCase() : 'INACTIVE'} 
+        <Badge
+          status={status === 'active' ? 'success' : 'error'}
+          text={status ? status.toUpperCase() : 'INACTIVE'}
         />
       ),
     },
@@ -146,15 +151,15 @@ function AlbumManagement() {
       </div>
 
       <FilterBar onFilterChange={handleFilterChange} />
-      
-      <Table 
+
+      <Table
         loading={loading}
-        columns={columns} 
-        dataSource={currentDisplayData} 
+        columns={columns}
+        dataSource={currentDisplayData}
         bordered
         scroll={{ x: 1000 }}
         locale={{ emptyText: <Empty description="No albums found." /> }}
-        pagination={{ 
+        pagination={{
           current: currentPage,
           pageSize: pageSize,
           total: filteredData.length,
@@ -162,10 +167,10 @@ function AlbumManagement() {
         }}
       />
 
-      <CreateAlbum 
-        isModalOpen={isModalOpen} 
+      <CreateAlbum
+        isModalOpen={isModalOpen}
         setIsModalOpen={setIsModalOpen}
-        onSuccess={refreshAlbums} // DÙNG REFRESH TỪ CONTEXT
+        onSuccess={onSuccess}
         data={editingAlbum}
         onCancel={() => { setIsModalOpen(false); setEditingAlbum(null); }}
       />

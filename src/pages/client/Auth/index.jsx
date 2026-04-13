@@ -1,8 +1,8 @@
 import { useState, useContext, useEffect } from 'react';
-import { Link, useNavigate } from 'react-router-dom'; 
-import { FaFacebookF, FaGoogle, FaGithub } from "react-icons/fa";
+import { Link, useNavigate } from 'react-router-dom';
+import { FaGoogle } from "react-icons/fa";
 import { signInWithPopup } from "firebase/auth";
-import { auth, fbProvider, googleProvider } from "../../../firebase/config";
+import { auth, googleProvider } from "../../../firebase/config";
 import { AuthContext } from "../../../Context/AuthProvider";
 import { authWithEmail } from "../../../utils/authWithEmail";
 import useTitle from "../../../hooks/useTitle";
@@ -16,17 +16,17 @@ const Auth = () => {
   const { messageApi } = useContext(AppContext);
 
   const [isLoginMode, setIsLoginMode] = useState(true);
-  const [formData, setFormData] = useState({ 
-    displayName: '', 
-    email: '', 
-    password: '', 
-    confirmPassword: '' 
+  const [formData, setFormData] = useState({
+    displayName: '',
+    email: '',
+    password: '',
+    confirmPassword: ''
   });
   const [loading, setLoading] = useState(false);
 
   const { user } = useContext(AuthContext);
   const navigate = useNavigate();
-  
+
   useTitle(isLoginMode ? t('auth.login_form') : t('auth.register_form'));
 
   const handleChange = (e) => {
@@ -46,7 +46,7 @@ const Auth = () => {
     try {
       const mode = isLoginMode ? "login" : "register";
       const data = await authWithEmail(email, password, mode, displayName);
-      
+
       messageApi.success(`${t('auth.hello')} ${data.displayName}`);
       navigate("/");
     } catch (error) {
@@ -108,29 +108,29 @@ const Auth = () => {
         <form onSubmit={handleSubmit}>
           {!isLoginMode && (
             <div className="form-control">
-              <input 
+              <input
                 type="text" name="displayName" placeholder={t('auth.placeholder_name')}
-                value={formData.displayName} onChange={handleChange} required 
+                value={formData.displayName} onChange={handleChange} required
               />
             </div>
           )}
           <div className="form-control">
-            <input 
+            <input
               type="email" name="email" placeholder={t('auth.placeholder_email')}
-              value={formData.email} onChange={handleChange} required 
+              value={formData.email} onChange={handleChange} required
             />
           </div>
           <div className="form-control">
-            <input 
+            <input
               type="password" name="password" placeholder={t('auth.placeholder_password')}
-              value={formData.password} onChange={handleChange} required 
+              value={formData.password} onChange={handleChange} required
             />
           </div>
           {!isLoginMode && (
             <div className="form-control">
-              <input 
+              <input
                 type="password" name="confirmPassword" placeholder={t('auth.placeholder_confirm')}
-                value={formData.confirmPassword} onChange={handleChange} required 
+                value={formData.confirmPassword} onChange={handleChange} required
               />
             </div>
           )}
@@ -141,18 +141,16 @@ const Auth = () => {
 
         <p className="social-text">{t('auth.social_login')}</p>
         <ul className="social-icons">
-          <li><a href="#!" onClick={() => handleSocialLogin(fbProvider)}><FaFacebookF /></a></li>
           <li><a href="#!" onClick={() => handleSocialLogin(googleProvider)}><FaGoogle /></a></li>
-          <li><a href="#!"><FaGithub /></a></li>
         </ul>
-        
+
         <p className="social-text">
-          {isLoginMode ? t('auth.no_account') : t('auth.have_account')} 
-          <Link 
-            className="text" 
+          {isLoginMode ? t('auth.no_account') : t('auth.have_account')}
+          <Link
+            className="text"
             onClick={() => {
-                setIsLoginMode(!isLoginMode);
-                setFormData({ displayName: '', email: '', password: '', confirmPassword: '' });
+              setIsLoginMode(!isLoginMode);
+              setFormData({ displayName: '', email: '', password: '', confirmPassword: '' });
             }}
           >
             {isLoginMode ? t('auth.register_now') : t('auth.login_now')}

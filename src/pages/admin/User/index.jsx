@@ -1,17 +1,17 @@
-import { useContext, useState, useMemo } from 'react';
-import { 
+import { useContext, useState, useMemo, useEffect } from 'react';
+import {
   Table, Tag, Avatar, Space, Button, Tooltip, Typography, Badge,
   Popconfirm, Empty
 } from 'antd';
-import { 
-  EditOutlined, DeleteOutlined, UserOutlined, 
-  GoogleOutlined, LockOutlined, PlusOutlined 
+import {
+  EditOutlined, DeleteOutlined, UserOutlined,
+  GoogleOutlined, LockOutlined, PlusOutlined
 } from '@ant-design/icons';
 import avatarDefault from "../../../assets/images/avatar.jpg";
 import CreateUser from '../../../components/User/CreateUser';
 import { deleteUser } from '../../../services/authService';
 import { AppContext } from '../../../Context/AppProvider';
-import { UserContext } from '../../../Context/UserContext'; 
+import { UserContext } from '../../../Context/UserContext';
 import { formatDate } from '../../../utils/formatTime';
 import { paginate } from '../../../utils/paginate';
 import FilterBar from '../../../components/Search/FilterBar';
@@ -33,11 +33,19 @@ function UserManagement() {
   const [currentPage, setCurrentPage] = useState(1);
   const [filters, setFilters] = useState({ keyword: '', status: undefined });
 
+  useEffect(() => {
+    const token = localStorage.getItem("accessToken");
+    // Nếu có token mà danh sách đang rỗng, chứng tỏ lần load đầu bị hụt, cần gọi lại
+    if (token && users.length === 0 && !loading) {
+      refreshUsers();
+    }
+  }, [users.length, loading, refreshUsers]);
+
   // LOGIC FILTERING
   const filteredData = useMemo(() => {
     return users.filter(user => {
       const kw = filters.keyword.toLowerCase();
-      const matchKeyword = !kw || 
+      const matchKeyword = !kw ||
         user.displayName?.toLowerCase().includes(kw) ||
         user.email?.toLowerCase().includes(kw);
 
@@ -70,7 +78,7 @@ function UserManagement() {
       const response = await deleteUser(uid);
       if (response && response.success) {
         messageApi.success(response.message || "User deleted successfully");
-        refreshUsers(); 
+        refreshUsers();
       }
     } catch (error) {
       messageApi.error("An error occurred while deleting the user.");
@@ -173,34 +181,34 @@ function UserManagement() {
         </Button>
       </div>
 
-      <FilterBar 
+      <FilterBar
         filterLabel="Role"
-        options={userRoles} 
+        options={userRoles}
         onFilterChange={handleFilterChange}
       />
-      
-      <Table 
+
+      <Table
         loading={loading}
-        columns={columns} 
-        dataSource={currentDisplayData} 
+        columns={columns}
+        dataSource={currentDisplayData}
         bordered
         scroll={{ x: 1000 }}
         locale={{ emptyText: <Empty description="No matching users found" /> }}
-        pagination={{ 
+        pagination={{
           current: currentPage,
           pageSize: pageSize,
-          total: filteredData.length, 
-          showSizeChanger: true, 
+          total: filteredData.length,
+          showSizeChanger: true,
           onShowSizeChange: (_, size) => { setPageSize(size); setCurrentPage(1); },
           onChange: (page) => setCurrentPage(page)
         }}
       />
 
-      <CreateUser 
-        isModalOpen={isModalOpen} 
+      <CreateUser
+        isModalOpen={isModalOpen}
         setIsModalOpen={setIsModalOpen}
-        onSuccess={refreshUsers} 
-        data={editingUser} 
+        onSuccess={refreshUsers}
+        data={editingUser}
         onCancel={() => { setIsModalOpen(false); setEditingUser(null); }}
       />
     </div>

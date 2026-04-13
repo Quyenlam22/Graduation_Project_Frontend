@@ -20,9 +20,16 @@ const getHeaders = (isFormData = false) => {
 const handleResponse = async (response) => {
   if (response.status === 401) {
     localStorage.removeItem("accessToken");
-    // window.location.href = "/auth"; 
-    return null;
+    // Thay vì return null, hãy return một object có cấu trúc lỗi rõ ràng
+    return { success: false, status: 401, message: "Unauthorized" };
   }
+
+  // Kiểm tra nếu response không ok (ví dụ 500, 404, 403)
+  if (!response.ok) {
+    const errorData = await response.json().catch(() => ({}));
+    return { success: false, ...errorData };
+  }
+
   return await response.json();
 };
 
@@ -37,7 +44,7 @@ export const get = async (path) => {
 
 export const post = async (options, path) => {
   const isFormData = options instanceof FormData;
-  
+
   const response = await fetch(`${API_DOMAIN}/${path}`, {
     method: "POST",
     headers: getHeaders(isFormData),
