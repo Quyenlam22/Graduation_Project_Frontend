@@ -1,9 +1,19 @@
-import { Select, Modal, Form, Input, Upload, InputNumber, Row, Col } from 'antd';
-import { useContext, useEffect, useState } from 'react';
-import { PlusOutlined } from '@ant-design/icons';
-import { AppContext } from '../../Context/AppProvider';
-import { ArtistContext } from '../../Context/ArtistContext'; // IMPORT ARTIST CONTEXT
-import { createAlbum, updateAlbum } from '../../services/albumService';
+import {
+  Select,
+  Modal,
+  Form,
+  Input,
+  Upload,
+  InputNumber,
+  Row,
+  Col,
+} from "antd";
+import { useContext, useEffect, useState } from "react";
+import { PlusOutlined } from "@ant-design/icons";
+import { AppContext } from "../../Context/AppProvider";
+import { ArtistContext } from "../../Context/ArtistContext"; // IMPORT ARTIST CONTEXT
+import { createAlbum, updateAlbum } from "../../services/albumService";
+import { useTranslation } from "react-i18next";
 
 const { TextArea } = Input;
 
@@ -12,6 +22,7 @@ function CreateAlbum(props) {
   const [form] = Form.useForm();
   const [loading, setLoading] = useState(false);
   const [fileList, setFileList] = useState([]);
+  const { t } = useTranslation();
 
   const { artists } = useContext(ArtistContext);
   const { messageApi } = useContext(AppContext);
@@ -28,7 +39,14 @@ function CreateAlbum(props) {
           description: data.description,
         });
         if (data.avatar) {
-          setFileList([{ uid: '-1', name: 'album_cover.png', status: 'done', url: data.avatar }]);
+          setFileList([
+            {
+              uid: "-1",
+              name: "album_cover.png",
+              status: "done",
+              url: data.avatar,
+            },
+          ]);
         }
       } else {
         form.resetFields();
@@ -42,29 +60,31 @@ function CreateAlbum(props) {
       const values = await form.validateFields();
       setLoading(true);
 
-      const selectedArtist = artists.find(a => a._id === values.artistId);
-      
+      const selectedArtist = artists.find((a) => a._id === values.artistId);
+
       const formData = new FormData();
-      formData.append('title', values.title);
-      formData.append('status', values.status);
-      formData.append('artistId', values.artistId);
-      formData.append('artistName', selectedArtist?.name || ''); 
-      formData.append('description', values.description || '');
-      if (values.deezerId) formData.append('deezerId', values.deezerId);
+      formData.append("title", values.title);
+      formData.append("status", values.status);
+      formData.append("artistId", values.artistId);
+      formData.append("artistName", selectedArtist?.name || "");
+      formData.append("description", values.description || "");
+      if (values.deezerId) formData.append("deezerId", values.deezerId);
 
       if (fileList.length > 0 && fileList[0].originFileObj) {
-        formData.append('avatar', fileList[0].originFileObj);
+        formData.append("avatar", fileList[0].originFileObj);
       }
 
-      let response = isEdit ? await updateAlbum(data._id, formData) : await createAlbum(formData);
+      let response = isEdit
+        ? await updateAlbum(data._id, formData)
+        : await createAlbum(formData);
 
       if (response && response.success) {
-        messageApi.success(response.message);
+        messageApi.success(t('common.operation_success'));
         handleCancel();
         if (onSuccess) onSuccess(); 
       }
     } catch (error) {
-      messageApi.error(error.response?.data?.message || "Operation failed!");
+      messageApi.error(t('common.operation_failed'));
     } finally {
       setLoading(false);
     }
@@ -79,26 +99,26 @@ function CreateAlbum(props) {
 
   return (
     <Modal 
-      title={isEdit ? "Edit Album" : "Create New Album"} 
+      title={isEdit ? t('album.edit_title') : t('album.create_title')} 
       open={isModalOpen} 
       onOk={handleOk} 
       onCancel={handleCancel}
       confirmLoading={loading}
       width={700}
-      okText={isEdit ? "Update" : "Create"}
+      okText={isEdit ? t('common.update') : t('common.create')}
     >
       <Form form={form} layout="vertical">
         <Row gutter={16}>
           <Col span={16}>
-            <Form.Item name="title" label="Album Title" rules={[{ required: true, message: 'Vui lòng nhập tên Album' }]}>
-              <Input placeholder="Ex: 22, Loi Choi..." />
+            <Form.Item name="title" label={t('album.form_title')} rules={[{ required: true, message: t('album.error_title') }]}>
+              <Input placeholder={t('album.placeholder_title')} />
             </Form.Item>
           </Col>
           <Col span={8}>
-            <Form.Item name="status" label="Status" initialValue="active">
+            <Form.Item name="status" label={t('common.status')} initialValue="active">
               <Select>
-                <Select.Option value="active">Active</Select.Option>
-                <Select.Option value="inactive">Inactive</Select.Option>
+                <Select.Option value="active">{t('common.active')}</Select.Option>
+                <Select.Option value="inactive">{t('common.inactive')}</Select.Option>
               </Select>
             </Form.Item>
           </Col>
@@ -106,13 +126,12 @@ function CreateAlbum(props) {
 
         <Row gutter={16}>
           <Col span={12}>
-            <Form.Item name="artistId" label="Artist Ownership" rules={[{ required: true, message: 'Vui lòng chọn nghệ sĩ' }]}>
+            <Form.Item name="artistId" label={t('album.form_artist')} rules={[{ required: true, message: t('album.error_artist') }]}>
               <Select 
-                placeholder="Choose Artist" 
+                placeholder={t('album.placeholder_artist')} 
                 showSearch 
                 filterOption={(input, option) => option.children.toLowerCase().includes(input.toLowerCase())}
               >
-                {/* DÙNG DỮ LIỆU TỪ CONTEXT ĐỂ RENDER */}
                 {artists.map(a => (
                   <Select.Option key={a._id} value={a._id}>{a.name}</Select.Option>
                 ))}
@@ -125,8 +144,12 @@ function CreateAlbum(props) {
             </Form.Item>
           </Col>
         </Row>
-        <Form.Item name="description" label="Description"><TextArea rows={3} /></Form.Item>
-        <Form.Item label="Album Cover"><Upload listType="picture-card" fileList={fileList} beforeUpload={() => false} onChange={({ fileList: newFileList }) => setFileList(newFileList)} maxCount={1}>{fileList.length >= 1 ? null : <div><PlusOutlined /><div style={{ marginTop: 8 }}>Upload</div></div>}</Upload></Form.Item>
+        <Form.Item name="description" label={t('album.form_description')}><TextArea rows={3} /></Form.Item>
+        <Form.Item label={t('album.form_cover')}>
+          <Upload listType="picture-card" fileList={fileList} beforeUpload={() => false} onChange={({ fileList: newFileList }) => setFileList(newFileList)} maxCount={1}>
+            {fileList.length >= 1 ? null : <div><PlusOutlined /><div style={{ marginTop: 8 }}>{t('common.loading')}</div></div>}
+          </Upload>
+        </Form.Item>
       </Form>
     </Modal>
   );

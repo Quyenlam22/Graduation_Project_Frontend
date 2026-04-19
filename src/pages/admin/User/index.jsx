@@ -15,15 +15,13 @@ import { UserContext } from '../../../Context/UserContext';
 import { formatDate } from '../../../utils/formatTime';
 import { paginate } from '../../../utils/paginate';
 import FilterBar from '../../../components/Search/FilterBar';
+import { useTranslation } from 'react-i18next'; // Thêm i18n
+import useTitle from '../../../hooks/useTitle';
 
 const { Text, Title } = Typography;
 
-const userRoles = [
-  { value: 'admin', label: 'Admin' },
-  { value: 'user', label: 'User' }
-];
-
 function UserManagement() {
+  const { t } = useTranslation();
   const { users, loading, refreshUsers } = useContext(UserContext);
   const { messageApi } = useContext(AppContext);
 
@@ -33,15 +31,20 @@ function UserManagement() {
   const [currentPage, setCurrentPage] = useState(1);
   const [filters, setFilters] = useState({ keyword: '', status: undefined });
 
+  useTitle(t('user.management'));
+
+  const userRoles = [
+    { value: 'admin', label: 'Admin' },
+    { value: 'user', label: 'User' }
+  ];
+
   useEffect(() => {
     const token = localStorage.getItem("accessToken");
-    // Nếu có token mà danh sách đang rỗng, chứng tỏ lần load đầu bị hụt, cần gọi lại
     if (token && users.length === 0 && !loading) {
       refreshUsers();
     }
   }, [users.length, loading, refreshUsers]);
 
-  // LOGIC FILTERING
   const filteredData = useMemo(() => {
     return users.filter(user => {
       const kw = filters.keyword.toLowerCase();
@@ -54,7 +57,6 @@ function UserManagement() {
     });
   }, [users, filters]);
 
-  // PAGINATION
   const paginationData = paginate(filteredData, currentPage, pageSize);
   const currentDisplayData = paginationData.currentItems;
 
@@ -77,17 +79,17 @@ function UserManagement() {
     try {
       const response = await deleteUser(uid);
       if (response && response.success) {
-        messageApi.success(response.message || "User deleted successfully");
+        messageApi.success(t('common.operation_success'));
         refreshUsers();
       }
     } catch (error) {
-      messageApi.error("An error occurred while deleting the user.");
+      messageApi.error(t('common.operation_failed'));
     }
   };
 
   const columns = [
     {
-      title: 'User',
+      title: t('common.artist'), // Dùng lại key "User/Artist"
       dataIndex: 'displayName',
       key: 'user',
       fixed: 'left',
@@ -112,7 +114,7 @@ function UserManagement() {
       sorter: (a, b) => a.email.localeCompare(b.email),
     },
     {
-      title: 'Provider',
+      title: t('user.provider'),
       dataIndex: 'provider',
       key: 'provider',
       width: 120,
@@ -123,7 +125,7 @@ function UserManagement() {
       ),
     },
     {
-      title: 'Permission',
+      title: t('user.form_role'),
       dataIndex: 'role',
       key: 'role',
       render: (role) => {
@@ -132,37 +134,40 @@ function UserManagement() {
       },
     },
     {
-      title: 'State',
+      title: t('common.status'),
       dataIndex: 'state',
       key: 'state',
       render: (state) => (
-        <Badge status={state === 'online' ? 'success' : 'default'} text={state?.toUpperCase() || 'OFFLINE'} />
+        <Badge 
+          status={state === 'online' ? 'success' : 'default'} 
+          text={state === 'online' ? t('user.state_online') : t('user.state_offline')} 
+        />
       ),
     },
     {
-      title: 'Created At',
+      title: t('common.created_at'),
       dataIndex: 'createdAt',
       key: 'createdAt',
       responsive: ['lg'],
       sorter: (a, b) => new Date(a.createdAt) - new Date(b.createdAt),
-      render: (date) => formatDate(date, 'MM/DD/YYYY'),
+      render: (date) => formatDate(date, 'DD/MM/YYYY'),
     },
     {
-      title: 'Action',
+      title: t('common.action'),
       key: 'action',
       fixed: 'right',
-      width: 100,
+      width: 120,
       render: (_, record) => (
         <Space size="middle">
-          <Tooltip title="Edit">
+          <Tooltip title={t('common.edit')}>
             <Button type="text" icon={<EditOutlined />} onClick={() => handleEdit(record)} />
           </Tooltip>
           <Popconfirm
-            title="Delete User"
-            description={`Are you sure you want to delete ${record.displayName}?`}
+            title={t('common.delete')}
+            description={t('user.delete_confirm', { name: record.displayName })}
             onConfirm={() => handleDelete(record.uid)}
-            okText="Yes"
-            cancelText="No"
+            okText={t('common.update') || "Yes"}
+            cancelText={t('common.cancel') || "No"}
             okButtonProps={{ danger: true }}
           >
             <Button type="text" danger icon={<DeleteOutlined />} />
@@ -175,14 +180,14 @@ function UserManagement() {
   return (
     <div className="user-management">
       <div style={{ marginBottom: 16, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-        <Title level={3} style={{ margin: 0 }}>User Management</Title>
+        <Title level={3} style={{ margin: 0 }}>{t('user.management')}</Title>
         <Button type="primary" icon={<PlusOutlined />} onClick={handleAddNew}>
-          Add New Admin
+          {t('user.add_new_admin')}
         </Button>
       </div>
 
       <FilterBar
-        filterLabel="Role"
+        filterLabel={t('user.form_role')}
         options={userRoles}
         onFilterChange={handleFilterChange}
       />
@@ -193,14 +198,14 @@ function UserManagement() {
         dataSource={currentDisplayData}
         bordered
         scroll={{ x: 1000 }}
-        locale={{ emptyText: <Empty description="No matching users found" /> }}
+        locale={{ emptyText: <Empty description={t('search.no_results')} /> }}
         pagination={{
           current: currentPage,
           pageSize: pageSize,
           total: filteredData.length,
           showSizeChanger: true,
-          onShowSizeChange: (_, size) => { setPageSize(size); setCurrentPage(1); },
-          onChange: (page) => setCurrentPage(page)
+          locale: { items_per_page: t('common.items_per_page') },
+          onChange: (page, size) => { setCurrentPage(page); setPageSize(size); }
         }}
       />
 

@@ -6,13 +6,15 @@ import { IoLibrary } from "react-icons/io5";
 import { IoMdHome } from "react-icons/io";
 import { PiPlaylistFill } from "react-icons/pi";
 import { GiLoveSong } from "react-icons/gi";
+import { useTranslation } from "react-i18next";
 
 function MenuSiderAdmin () {
+    const { t } = useTranslation();
     const location = useLocation();
     const path = location.pathname;
+
     const getSelectedKey = () => {
-        if (path === '/admin') return '/admin';
-        if (path.includes('favorite') || path.includes('library')) return '/my-favorite';
+        if (path === '/admin') return '/admin/';
         return path;
     };
     
@@ -25,34 +27,33 @@ function MenuSiderAdmin () {
         {
             key: '/admin/users',
             icon: <IoLibrary />,
-            label: <Link to={"/admin/users"}>User Management</Link>,
+            label: <Link to={"/admin/users"}>{t('user.management')}</Link>,
         },
         {
             key: '/admin/songs',
             icon: <GiLoveSong />,
-            label: <Link to={"/admin/songs"}>Song Management</Link>,
+            label: <Link to={"/admin/songs"}>{t('song.management')}</Link>,
         },
         {
             key: '/admin/playlists',
             icon: <PiPlaylistFill />,
-            label: <Link to={"/admin/playlists"}>Playlist Management</Link>,
+            label: <Link to={"/admin/playlists"}>{t('playlist.management')}</Link>,
         },
         {
             key: '/admin/artists',
             icon: <TbMoodSing />,
-            label: <Link to={"/admin/artists"}>Artist Management</Link>,
+            label: <Link to={"/admin/artists"}>{t('artist.management')}</Link>,
         },
         {
             key: '/admin/albums',
             icon: <BiSolidAlbum />,
-            label: <Link to={"/admin/albums"}>Album Management</Link>,
+            label: <Link to={"/admin/albums"}>{t('album.management')}</Link>,
         },
     ];
 
     return (
         <>
             <Menu
-                defaultSelectedKeys={[path]}
                 selectedKeys={[getSelectedKey()]}
                 mode="inline"
                 items={items}

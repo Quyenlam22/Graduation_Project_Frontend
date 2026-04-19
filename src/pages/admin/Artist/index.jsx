@@ -17,6 +17,8 @@ import FilterBar from '../../../components/Search/FilterBar';
 import { SongContext } from '../../../Context/SongContext';
 import { AlbumContext } from '../../../Context/AlbumContext';
 import { PlaylistContext } from '../../../Context/PlaylistContext';
+import { useTranslation } from 'react-i18next';
+import useTitle from '../../../hooks/useTitle';
 
 const { Text, Title } = Typography;
 
@@ -26,6 +28,7 @@ function ArtistManagement() {
   const { refreshAlbums } = useContext(AlbumContext);
   const { refreshPlaylists } = useContext(PlaylistContext);
   const { messageApi } = useContext(AppContext);
+  const { t } = useTranslation();
 
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingArtist, setEditingArtist] = useState(null);
@@ -42,6 +45,8 @@ function ArtistManagement() {
       return matchKeyword && matchStatus;
     });
   }, [artists, filters]);
+
+  useTitle(t('artist.management'));
 
   const paginationData = paginate(filteredData, currentPage, pageSize);
   const currentDisplayData = paginationData.currentItems;
@@ -60,14 +65,14 @@ function ArtistManagement() {
     try {
       const response = await deleteArtists(id);
       if (response.success) {
-        messageApi.success(response.message || "Artist removed!");
+        messageApi.success(t('common.operation_success'));
         refreshArtists();
         refreshAlbums();
         refreshSongs();
         refreshPlaylists();
       }
     } catch (error) {
-      messageApi.error("Error when deleting artist!");
+      messageApi.error(t('common.operation_failed'));
     }
   };
 
@@ -80,7 +85,7 @@ function ArtistManagement() {
 
   const columns = [
     {
-      title: 'Artist',
+      title: t('common.artist'),
       key: 'artist',
       fixed: 'left',
       sorter: (a, b) => a.name.localeCompare(b.name),
@@ -97,29 +102,29 @@ function ArtistManagement() {
       ),
     },
     {
-      title: 'Fans & Likes',
+      title: t('artist.info_title'),
       key: 'stats',
       sorter: (a, b) => (a.nb_fan || 0) - (b.nb_fan || 0),
       render: (_, record) => (
         <div style={{ fontSize: '12px' }}>
-          <div><TeamOutlined /> {(record.nb_fan || 0).toLocaleString()} Fans</div>
-          <div><HeartOutlined /> {(record.like?.length || 0)} Followers</div>
+          <div><TeamOutlined /> {(record.nb_fan || 0).toLocaleString()} {t('artist.fans')}</div>
+          <div><HeartOutlined /> {(record.like?.length || 0)} {t('artist.followers')}</div>
         </div>
       ),
     },
     {
-      title: 'Status',
+      title: t('common.status'),
       dataIndex: 'status',
       key: 'status',
       render: (status) => (
         <Badge
           status={status === 'active' ? 'success' : 'default'}
-          text={status ? status.toUpperCase() : 'INACTIVE'}
+          text={status === 'active' ? t('common.active') : t('common.inactive')}
         />
       ),
     },
     {
-      title: 'Created At',
+      title: t('common.created_at'),
       dataIndex: 'createdAt',
       key: 'createdAt',
       responsive: ['lg'],
@@ -127,16 +132,16 @@ function ArtistManagement() {
       render: (date) => formatDate(date, 'DD/MM/YYYY'),
     },
     {
-      title: 'Action',
+      title: t('common.action'),
       key: 'action',
       fixed: 'right',
       width: 120,
       render: (_, record) => (
         <Space size="middle">
-          <Tooltip title="Edit">
+          <Tooltip title={t('common.edit')}>
             <Button type="text" icon={<EditOutlined />} onClick={() => handleEdit(record)} />
           </Tooltip>
-          <Popconfirm title="Remove the artist?" onConfirm={() => handleDelete(record._id)} okButtonProps={{ danger: true }}>
+          <Popconfirm title={t('artist.delete_confirm')} onConfirm={() => handleDelete(record._id)} okButtonProps={{ danger: true }}>
             <Button type="text" danger icon={<DeleteOutlined />} />
           </Popconfirm>
         </Space>
@@ -147,9 +152,9 @@ function ArtistManagement() {
   return (
     <div className="artist-management">
       <div style={{ marginBottom: 16, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-        <Title level={3} style={{ margin: 0 }}>Artist Management</Title>
+        <Title level={3} style={{ margin: 0 }}>{t('artist.management')}</Title>
         <Button type="primary" icon={<PlusOutlined />} onClick={() => { setEditingArtist(null); setIsModalOpen(true); }}>
-          Add New Artist
+          {t('artist.add_new')}
         </Button>
       </div>
 
@@ -161,12 +166,14 @@ function ArtistManagement() {
         dataSource={currentDisplayData}
         bordered
         scroll={{ x: 1000 }}
-        locale={{ emptyText: <Empty description="No artists found." /> }}
+        locale={{ emptyText: <Empty description={t('library.empty_artists')} /> }}
         pagination={{
           current: currentPage,
           pageSize: pageSize,
           total: filteredData.length,
-          onChange: (page, size) => { setCurrentPage(page); setPageSize(size); }
+          onChange: (page, size) => { setCurrentPage(page); setPageSize(size); },
+          showSizeChanger: true,
+          locale: { items_per_page: t('common.items_per_page') }
         }}
       />
 

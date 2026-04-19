@@ -3,12 +3,15 @@ import { useContext, useEffect, useState } from 'react';
 import { PlusOutlined } from '@ant-design/icons';
 import { AppContext } from '../../Context/AppProvider';
 import { createArtist, updateArtist } from '../../services/artistService';
+import { useTranslation } from 'react-i18next';
 
 function CreateArtist(props) {
   const { isModalOpen, setIsModalOpen, onSuccess, data, onCancel } = props;
   const [form] = Form.useForm();
   const [loading, setLoading] = useState(false);
   const [fileList, setFileList] = useState([]);
+
+  const { t } = useTranslation();
   
   const { messageApi } = useContext(AppContext);
   const isEdit = !!data;
@@ -50,15 +53,12 @@ function CreateArtist(props) {
       let response = isEdit ? await updateArtist(data._id, formData) : await createArtist(formData);
 
       if (response && response.success) {
-        messageApi.success(response.message);
+        messageApi.success(t('common.operation_success'));
         handleCancelInternal();
         if (onSuccess) onSuccess();
       }
-      else {
-        messageApi.error(response.message);
-      }
     } catch (error) {
-      messageApi.error(error.response?.data?.message || "Operation failed!");
+      messageApi.error(t('common.operation_failed'));
     } finally {
       setLoading(false);
     }
@@ -73,36 +73,37 @@ function CreateArtist(props) {
 
   return (
     <Modal 
-      title={isEdit ? "Edit Artist" : "Add New Artist"} 
+      title={isEdit ? t('artist.edit_title') : t('artist.create_title')} 
       open={isModalOpen} 
       onOk={handleOk} 
       onCancel={handleCancelInternal}
       confirmLoading={loading}
-      okText={isEdit ? "Update" : "Create"}
+      okText={isEdit ? t('common.update') : t('common.create')}
+      cancelText={t('common.cancel') || "Cancel"}
     >
       <Form form={form} layout="vertical">
-        <Form.Item name="name" label="Artist Name" rules={[{ required: true, message: "Please enter name." }]}>
-          <Input placeholder="Sơn Tùng M-TP..." />
+        <Form.Item name="name" label={t('artist.form_name')} rules={[{ required: true, message: t('artist.error_name') }]}>
+          <Input placeholder={t('artist.placeholder_name')} />
         </Form.Item>
 
         <Row gutter={16}>
           <Col span={12}>
-            <Form.Item name="nb_fan" label="Number of Fans" initialValue={0}>
+            <Form.Item name="nb_fan" label={t('artist.form_fans')} initialValue={0}>
               <InputNumber style={{ width: '100%' }} min={0} />
             </Form.Item>
           </Col>
           <Col span={12}>
-            <Form.Item name="status" label="Status" initialValue="active">
+            <Form.Item name="status" label={t('common.status')} initialValue="active">
               <Select>
-                <Select.Option value="active">Active</Select.Option>
-                <Select.Option value="inactive">Inactive</Select.Option>
+                <Select.Option value="active">{t('common.active')}</Select.Option>
+                <Select.Option value="inactive">{t('common.inactive')}</Select.Option>
               </Select>
             </Form.Item>
           </Col>
         </Row>
         
-        <Form.Item name="deezerId" label="Deezer ID (Optional)">
-           <InputNumber style={{ width: '100%' }} />
+        <Form.Item name="deezerId" label={t('artist.form_deezer')}>
+            <InputNumber style={{ width: '100%' }} />
         </Form.Item>
 
         <Form.Item label="Avatar">
@@ -113,7 +114,7 @@ function CreateArtist(props) {
             onChange={({ fileList: newFileList }) => setFileList(newFileList)}
             maxCount={1}
           >
-            {fileList.length >= 1 ? null : <div><PlusOutlined /><div style={{ marginTop: 8 }}>Upload</div></div>}
+            {fileList.length >= 1 ? null : <div><PlusOutlined /><div style={{ marginTop: 8 }}>{t('common.loading')}</div></div>}
           </Upload>
         </Form.Item>
       </Form>

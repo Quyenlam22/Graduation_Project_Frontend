@@ -2,8 +2,9 @@ import { Select, Modal, Form, Input, Upload, Button, Image, InputNumber, Row, Co
 import { useContext, useEffect, useState } from 'react';
 import { PlusOutlined, LinkOutlined, UserOutlined, BookOutlined } from '@ant-design/icons';
 import { AppContext } from '../../Context/AppProvider';
-import { ArtistContext } from '../../Context/ArtistContext'; // IMPORT ARTIST CONTEXT
-import { AlbumContext } from '../../Context/AlbumContext';   // IMPORT ALBUM CONTEXT
+import { ArtistContext } from '../../Context/ArtistContext';
+import { AlbumContext } from '../../Context/AlbumContext';
+import { useTranslation } from 'react-i18next';
 
 import ReactQuill from 'react-quill-new'; 
 import 'react-quill-new/dist/quill.snow.css';
@@ -12,6 +13,7 @@ import { createSong, updateSongs } from '../../services/songService';
 const { Text } = Typography;
 
 function CreateSong(props) {
+  const { t } = useTranslation();
   const { isModalOpen, setIsModalOpen, onSuccess, data, onCancel } = props;
   const [form] = Form.useForm();
   const [loading, setLoading] = useState(false);
@@ -94,7 +96,7 @@ function CreateSong(props) {
         : await createSong(formData);
 
       if (response && response.success) {
-        messageApi.success(response.message);
+        messageApi.success(t('common.operation_success'));
         handleCancel();
         if (onSuccess) onSuccess(); 
       }
@@ -102,7 +104,7 @@ function CreateSong(props) {
         messageApi.error(response.message);
       }
     } catch (error) {
-      messageApi.error("Operation failed!");
+      messageApi.error(t('common.operation_failed'));
     } finally {
       setLoading(false);
     }
@@ -117,21 +119,36 @@ function CreateSong(props) {
 
   return (
     <>
-      <Modal title={isEdit ? "Edit Song" : "Add New Song"} open={isModalOpen} onOk={handleOk} onCancel={handleCancel} confirmLoading={loading} width={800} okText={isEdit ? "Update" : "Create"}>
+      <Modal 
+        title={isEdit ? t('song.edit_title') : t('song.create_title')} 
+        open={isModalOpen} 
+        onOk={handleOk} 
+        onCancel={handleCancel} 
+        confirmLoading={loading} 
+        width={800} 
+        okText={isEdit ? t('common.update') : t('common.create')}
+        cancelText={t('common.cancel') || 'Cancel'}
+      >
         <Form form={form} layout="vertical">
           <Row gutter={16}>
-            <Col span={16}><Form.Item name="title" label="Name" rules={[{ required: true }]}><Input /></Form.Item></Col>
+            <Col span={16}>
+                <Form.Item name="title" label={t('song.form_name')} rules={[{ required: true, message: t('song.error_name') }]}>
+                    <Input placeholder={t('song.placeholder_name')} />
+                </Form.Item>
+            </Col>
             <Col span={8}>
-              <Form.Item name="status" label="Status" initialValue="active">
-                <Select><Select.Option value="active">Active</Select.Option><Select.Option value="inactive">Inactive</Select.Option></Select>
+              <Form.Item name="status" label={t('common.status')} initialValue="active">
+                <Select>
+                    <Select.Option value="active">{t('common.active')}</Select.Option>
+                    <Select.Option value="inactive">{t('common.inactive')}</Select.Option>
+                </Select>
               </Form.Item>
             </Col>
           </Row>
           <Row gutter={16}>
             <Col span={12}>
-              <Form.Item name="artistId" label="Artist" rules={[{ required: true }]}>
-                <Select showSearch placeholder="Select Artist" optionFilterProp="label">
-                  {/* SỬ DỤNG DỮ LIỆU TỪ CONTEXT */}
+              <Form.Item name="artistId" label={t('common.artist')} rules={[{ required: true, message: t('album.error_artist') }]}>
+                <Select showSearch placeholder={t('album.placeholder_artist')} optionFilterProp="label">
                   {artists.map(artist => (
                     <Select.Option key={artist._id} value={artist._id} label={artist.name}>
                       <Space><Avatar size="small" src={artist.avatar} icon={<UserOutlined />} />{artist.name}</Space>
@@ -141,9 +158,8 @@ function CreateSong(props) {
               </Form.Item>
             </Col>
             <Col span={12}>
-              <Form.Item name="albumId" label="Album">
-                <Select showSearch allowClear placeholder="Select Album" optionFilterProp="label">
-                  {/* SỬ DỤNG DỮ LIỆU TỪ CONTEXT */}
+              <Form.Item name="albumId" label={t('menu.albums')}>
+                <Select showSearch allowClear placeholder={t('album.placeholder_title')} optionFilterProp="label">
                   {albums.map(album => (
                     <Select.Option key={album._id} value={album._id} label={album.title}>
                       <Space><BookOutlined />{album.title}</Space>
@@ -153,13 +169,13 @@ function CreateSong(props) {
               </Form.Item>
             </Col>
           </Row>
-          <Form.Item name="audio" label="Link Audio" rules={[{ required: true }]}><Input prefix={<LinkOutlined />} /></Form.Item>
-          <Form.Item name="lyrics" label="Lyric Song">
+          <Form.Item name="audio" label={t('song.form_audio')} rules={[{ required: true, message: t('song.error_audio') }]}><Input prefix={<LinkOutlined />} /></Form.Item>
+          <Form.Item name="lyrics" label={t('song.form_lyrics')}>
             <ReactQuill theme="snow" modules={modules} style={{ height: '200px', marginBottom: '50px' }} />
           </Form.Item>
-          <Form.Item label="Cover">
+          <Form.Item label={t('album.form_cover')}>
             <Upload listType="picture-card" fileList={fileList} onPreview={handlePreview} onChange={handleChange} beforeUpload={() => false} maxCount={1}>
-              {fileList.length >= 1 ? null : <div><PlusOutlined /><div style={{ marginTop: 8 }}>Upload</div></div>}
+              {fileList.length >= 1 ? null : <div><PlusOutlined /><div style={{ marginTop: 8 }}>{t('common.loading')}</div></div>}
             </Upload>
           </Form.Item>
         </Form>

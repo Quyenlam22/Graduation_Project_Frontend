@@ -1,10 +1,12 @@
-import { Select, Modal, Form, Input, Upload, Button, Image } from 'antd';
+import { Select, Modal, Form, Input, Upload, Image, Row, Col } from 'antd';
 import { useContext, useEffect, useState } from 'react';
 import { PlusOutlined } from '@ant-design/icons';
 import { createAdmin, updateUser } from '../../services/authService';
 import { AppContext } from '../../Context/AppProvider';
+import { useTranslation } from 'react-i18next'; // Thêm i18n
 
 function CreateUser(props) {
+  const { t } = useTranslation();
   const { isModalOpen, setIsModalOpen, onSuccess, data, onCancel } = props;
   const [form] = Form.useForm();
   const [loading, setLoading] = useState(false);
@@ -73,13 +75,12 @@ function CreateUser(props) {
       let response = isEdit ? await updateUser(data.uid, formData) : await createAdmin(values);
 
       if (response && response.success) {
-        messageApi.success(response.message || "Operation successful");
+        messageApi.success(t('common.operation_success'));
         handleClose();
         if (onSuccess) onSuccess(); 
       }
     } catch (error) {
-      const errorMsg = error.response?.data?.message || "Operation failed!";
-      messageApi.error(errorMsg);
+      messageApi.error(t('common.operation_failed'));
     } finally {
       setLoading(false);
     }
@@ -95,19 +96,19 @@ function CreateUser(props) {
   return (
     <>
       <Modal 
-        title={isEdit ? "Edit User Information" : "Create New Admin"} 
+        title={isEdit ? t('user.edit_title') : t('user.create_title')} 
         open={isModalOpen} 
         onOk={handleOk} 
         onCancel={handleClose}
         confirmLoading={loading}
-        okText={isEdit ? "Update" : "Create"}
-        cancelText="Cancel"
+        okText={isEdit ? t('common.update') : t('common.create')}
+        cancelText={t('common.cancel') || "Cancel"}
       >
         <Form form={form} layout="vertical">
           <Form.Item 
             name="displayName" 
-            label="Full Name" 
-            rules={[{ required: true, message: 'Please input full name!' }]}
+            label={t('user.form_fullname')} 
+            rules={[{ required: true, message: t('user.error_fullname') }]}
           >
             <Input placeholder="John Doe" />
           </Form.Item>
@@ -115,23 +116,23 @@ function CreateUser(props) {
           <Form.Item 
             name="email" 
             label="Email Address" 
-            rules={[{ required: true, type: 'email', message: 'Please input a valid email!' }]}
+            rules={[{ required: true, type: 'email', message: t('user.error_email_valid') }]}
           >
-            <Input disabled={isEdit} placeholder="johndoe@example.com" />
+            <Input disabled={isEdit} placeholder={t('auth.placeholder_email')} />
           </Form.Item>
 
           {!isEdit && (
             <Form.Item 
               name="password" 
-              label="Password" 
-              rules={[{ required: true, min: 6, message: 'Password must be at least 6 characters!' }]}
+              label={t('auth.placeholder_password')} 
+              rules={[{ required: true, min: 6, message: t('auth.error_weak_password') }]}
             >
               <Input.Password placeholder="******" />
             </Form.Item>
           )}
 
           {isEdit && (
-            <Form.Item label="Profile Picture">
+            <Form.Item label={t('user.change_avatar')}>
               <Upload
                 listType="picture-card"
                 fileList={fileList}
@@ -143,14 +144,14 @@ function CreateUser(props) {
                 {fileList.length >= 1 ? null : (
                   <div>
                     <PlusOutlined />
-                    <div style={{ marginTop: 8 }}>Upload</div>
+                    <div style={{ marginTop: 8 }}>{t('common.loading')}</div>
                   </div>
                 )}
               </Upload>
             </Form.Item>
           )}
 
-          <Form.Item name="role" label="Permission Role" initialValue="admin">
+          <Form.Item name="role" label={t('user.form_role')} initialValue="admin">
             <Select>
               <Select.Option value="admin">ADMIN</Select.Option>
               {isEdit && <Select.Option value="user">USER</Select.Option>}

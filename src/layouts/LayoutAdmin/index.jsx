@@ -1,4 +1,4 @@
-import { Button, Dropdown, Image, Layout } from "antd";
+import { Button, Dropdown, Image, Layout, Space } from "antd";
 import { Content } from "antd/es/layout/layout";
 import Sider from "antd/es/layout/Sider";
 import './LayoutAdmin.scss';
@@ -12,12 +12,18 @@ import { changeStatus } from "../../services/authService";
 import { signOut } from "firebase/auth";
 import { AuthContext } from "../../Context/AuthProvider";
 import { auth } from "../../firebase/config";
+import { useTranslation } from "react-i18next";
 
 function LayoutAdmin() {
     const [collapse, setCollapse] = useState(false);
     const navigate = useNavigate();
-
+    const { t, i18n } = useTranslation();
     const { user } = useContext(AuthContext);
+
+    const changeLanguage = (lng) => {
+        i18n.changeLanguage(lng);
+        localStorage.setItem("muzia_lang", lng);
+    };
 
     const handleLogout = async () => {
         if (user?.uid) {
@@ -34,11 +40,11 @@ function LayoutAdmin() {
     const login = [
         {
             key: "userinfo",
-            label: <span onClick={() => navigate("/user-info")}>Info User</span>
+            label: <span onClick={() => navigate("/user-info")}>{t('admin.info_user')}</span>
         },
         {
             key: "logout",
-            label: <span onClick={handleLogout}>Logout</span>
+            label: <span onClick={handleLogout}>{t('auth.logout')}</span>
         }
     ]
 
@@ -48,7 +54,7 @@ function LayoutAdmin() {
                 <header className="header-admin">
                     <div className={"header-admin__logo " + (collapse && "header-admin__logo--collapse")}>
                         <div className="header-admin__logo__image">
-                            <Image src={logo} alt="Logo" />
+                            <Image src={logo} alt="Logo" preview={false} />
                         </div>
                         {!collapse ? <h3>Muzia</h3> : null}
                     </div>
@@ -59,6 +65,35 @@ function LayoutAdmin() {
                             </div>
                         </div>
                         <div className="header-admin__nav-right">
+                            {/* 4. Thêm bộ chuyển đổi ngôn ngữ vào Header Admin */}
+                            <Space size={2} className="header-admin__lang-switch" style={{ marginRight: '20px' }}>
+                                <Button
+                                    type="text"
+                                    size="small"
+                                    style={{
+                                        color: i18n.language === 'vi' ? '#FE2851' : '#9CA3A1',
+                                        fontWeight: i18n.language === 'vi' ? 'bold' : 'normal',
+                                        padding: '0 4px'
+                                    }}
+                                    onClick={() => changeLanguage('vi')}
+                                >
+                                    VI
+                                </Button>
+                                <span style={{ color: '#393243' }}>|</span>
+                                <Button
+                                    type="text"
+                                    size="small"
+                                    style={{
+                                        color: i18n.language === 'en' ? '#FE2851' : '#9CA3A1',
+                                        fontWeight: i18n.language === 'en' ? 'bold' : 'normal',
+                                        padding: '0 4px'
+                                    }}
+                                    onClick={() => changeLanguage('en')}
+                                >
+                                    EN
+                                </Button>
+                            </Space>
+
                             <div className="header-admin__nav-right__notify">
                                 <Notice />
                             </div>
@@ -78,7 +113,6 @@ function LayoutAdmin() {
                         <Outlet />
                     </Content>
                 </Layout>
-                {/* <Footer>Footer</Footer> */}
             </Layout>
         </>
     )

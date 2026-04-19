@@ -3,7 +3,23 @@
     "album": {
       "title_prefix": "Album",
       "all_albums": "Tất cả Album",
-      "other_albums": "Các Album khác"
+      "other_albums": "Các Album khác",
+      "management": "Quản lý Album",
+      "add_new": "Thêm Album mới",
+      "details": "Chi tiết Album",
+      "stats": "Thống kê",
+      "tracks": "Bài hát",
+      "delete_confirm": "Xác nhận xóa album này?",
+      "edit_title": "Chỉnh sửa Album",
+      "create_title": "Tạo Album mới",
+      "form_title": "Tên Album",
+      "form_artist": "Nghệ sĩ sở hữu",
+      "form_description": "Mô tả",
+      "form_cover": "Ảnh bìa Album",
+      "placeholder_title": "Ví dụ: 99%, Đánh Đổi...",
+      "placeholder_artist": "Chọn nghệ sĩ",
+      "error_title": "Vui lòng nhập tên Album",
+      "error_artist": "Vui lòng chọn nghệ sĩ"
     },
     "artist": {
       "verified": "Nghệ sĩ đã xác minh",
@@ -17,7 +33,38 @@
       "discography": "Danh sách đĩa nhạc",
       "all_artists": "Tất cả nghệ sĩ",
       "another_artists": "Nghệ sĩ khác",
-      "no_description": "Thông tin về {{name}} đang được cập nhật..."
+      "no_description": "Thông tin về {{name}} đang được cập nhật...",
+      "management": "Quản lý Nghệ sĩ",
+      "add_new": "Thêm Nghệ sĩ mới",
+      "edit_title": "Chỉnh sửa Nghệ sĩ",
+      "create_title": "Thêm Nghệ sĩ mới",
+      "form_name": "Tên Nghệ sĩ",
+      "form_fans": "Số lượng Fan",
+      "form_deezer": "Deezer ID (Không bắt buộc)",
+      "placeholder_name": "Sơn Tùng M-TP...",
+      "error_name": "Vui lòng nhập tên nghệ sĩ",
+      "delete_confirm": "Xác nhận xóa nghệ sĩ này?",
+      "followers": "Người theo dõi"
+    },
+    "admin": {
+      "login_title": "Đăng nhập Admin",
+      "btn_login_email": "ĐĂNG NHẬP VỚI EMAIL",
+      "welcome_admin": "Chào mừng Quản trị viên!",
+      "error_login": "Tài khoản hoặc mật khẩu không chính xác!",
+      "error_google": "Đăng nhập Google thất bại!",
+      "info_user": "Thông tin cá nhân",
+      "dashboard_title": "Số liệu Muzia",
+      "refresh_data": "Làm mới dữ liệu",
+      "updating": "Đang cập nhật số liệu...",
+      "total_users": "Tổng người dùng",
+      "total_songs": "Tổng bài hát",
+      "total_albums": "Tổng Album",
+      "total_artists": "Tổng nghệ sĩ",
+      "content_dist": "Phân bổ nội dung",
+      "user_growth": "Tăng trưởng người dùng",
+      "top_liked": "Top 5 bài hát yêu thích",
+      "month": "Tháng",
+      "rank": "HẠNG"
     },
     "auth": {
       "login_form": "Đăng nhập",
@@ -45,7 +92,8 @@
       "login_required": "Vui lòng đăng nhập để tiếp tục!",
       "logout_success": "Đăng xuất thành công!",
       "logout": "Đăng xuất",
-      "sign_in": "Đăng nhập"
+      "sign_in": "Đăng nhập",
+      "permission_denied": "Truy cập bị từ chối: Bạn không phải là quản trị viên!"
     },
     "common": {
       "play_all": "Phát tất cả",
@@ -64,7 +112,23 @@
       "discover_now": "KHÁM PHÁ NGAY",
       "single": "Đĩa đơn",
       "artist": "Nghệ sĩ",
-      "source": "Nguồn"
+      "cancel": "Hủy",
+      "items_per_page": "/ trang",
+      "source": "Nguồn",
+      "action": "Hành động",
+      "edit": "Chỉnh sửa",
+      "delete": "Xóa",
+      "status": "Trạng thái",
+      "active": "Hoạt động",
+      "inactive": "Ngừng hoạt động",
+      "update": "Cập nhật",
+      "create": "Tạo mới",
+      "created_at": "Ngày tạo",
+      "operation_success": "Thực hiện thành công!",
+      "operation_failed": "Thao tác thất bại!",
+      "search": "Tìm kiếm",
+      "refresh": "Làm mới",
+      "all_status": "Tất cả trạng thái"
     },
     "chat": {
       "welcome_msg": "Muzia AI Assistant sẵn sàng phục vụ!",
@@ -115,7 +179,22 @@
       "no_description": "Không có mô tả cho danh sách này",
       "no_songs": "Chưa có bài hát nào trong danh sách phát này.",
       "all_playlists": "Tất cả danh sách phát",
-      "suggested_playlists": "Danh sách phát gợi ý"
+      "suggested_playlists": "Danh sách phát gợi ý",
+      "management": "Quản lý Playlist",
+      "details": "Chi tiết Danh sách phát",
+      "add_new": "Thêm Danh sách mới",
+      "edit_title": "Chỉnh sửa Danh sách phát",
+      "create_title": "Tạo Danh sách phát mới",
+      "delete_confirm": "Xác nhận xóa danh sách này?",
+      "owner": "Người sở hữu",
+      "system": "HỆ THỐNG",
+      "user": "NGƯỜI DÙNG",
+      "system_default": "(Mặc định hệ thống)",
+      "form_title": "Tiêu đề danh sách",
+      "form_songs": "Chọn bài hát",
+      "placeholder_songs": "Thêm bài hát...",
+      "error_title": "Vui lòng nhập tiêu đề danh sách",
+      "error_owner": "Vui lòng chọn người sở hữu"
     },
     "sidebar": {
       "songs": "Bài hát",
@@ -139,7 +218,24 @@
       "result_for": "Kết quả cho",
       "found_count": "Tìm thấy {{count}} kết quả",
       "no_results": "Không tìm thấy kết quả nào phù hợp",
-      "search_result": "Kết quả tìm kiếm"
+      "search_result": "Kết quả tìm kiếm",
+      "management": "Quản lý người dùng"
+    },
+    "song": {
+      "management": "Quản lý Bài hát",
+      "details": "Chi tiết Bài hát",
+      "add_new": "Thêm Bài hát mới",
+      "edit_title": "Chỉnh sửa Bài hát",
+      "create_title": "Thêm Bài hát mới",
+      "delete_confirm": "Xác nhận xóa bài hát này?",
+      "form_name": "Tên bài hát",
+      "form_audio": "Liên kết âm thanh",
+      "form_lyrics": "Lời bài hát",
+      "form_duration": "Thời lượng (giây)",
+      "placeholder_name": "VD: Em Của Ngày Hôm Qua, Đừng Làm Trái Tim Anh Đau...",
+      "error_name": "Vui lòng nhập tên bài hát",
+      "error_audio": "Vui lòng cung cấp liên kết âm thanh",
+      "duration": "Thời lượng"
     },
     "user": {
       "page_title": "Thiết lập cá nhân",
@@ -157,7 +253,19 @@
       "password_success": "Đổi mật khẩu thành công!",
       "error_relogin": "Vui lòng đăng nhập lại để thực hiện thao tác này!",
       "error_name_required": "Vui lòng nhập tên hiển thị!",
-      "error_confirm_required": "Vui lòng xác nhận mật khẩu mới!"
+      "error_confirm_required": "Vui lòng xác nhận mật khẩu mới!",
+      "management": "Quản lý Người dùng",
+      "add_new_admin": "Thêm Quản trị viên",
+      "edit_title": "Chỉnh sửa Thông tin",
+      "create_title": "Tạo Quản trị viên mới",
+      "delete_confirm": "Bạn có chắc chắn muốn xóa {{name}}?",
+      "form_fullname": "Họ và Tên",
+      "form_role": "Quyền truy cập",
+      "error_fullname": "Vui lòng nhập họ tên!",
+      "error_email_valid": "Vui lòng nhập email hợp lệ!",
+      "state_online": "TRỰC TUYẾN",
+      "state_offline": "NGOẠI TUYẾN",
+      "provider": "Phương thức"
     }
   }
 }

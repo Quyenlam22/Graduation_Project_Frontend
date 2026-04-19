@@ -8,7 +8,7 @@ import {
   PlayCircleOutlined, CustomerServiceOutlined, HeartOutlined 
 } from '@ant-design/icons';
 import { AppContext } from '../../../Context/AppProvider';
-import { SongContext } from '../../../Context/SongContext'; // IMPORT SONG CONTEXT
+import { SongContext } from '../../../Context/SongContext';
 import { formatDate } from '../../../utils/formatTime';
 import CreateSong from '../../../components/Song/CreateSong';
 import { deleteSongs } from '../../../services/songService';
@@ -16,10 +16,13 @@ import { paginate } from '../../../utils/paginate';
 import FilterBar from '../../../components/Search/FilterBar';
 import { AlbumContext } from '../../../Context/AlbumContext';
 import { PlaylistContext } from '../../../Context/PlaylistContext';
+import { useTranslation } from 'react-i18next';
+import useTitle from '../../../hooks/useTitle';
 
 const { Text, Title } = Typography;
 
 function SongManagement() {
+  const { t } = useTranslation();
   const { songs, loading, refreshSongs } = useContext(SongContext);
   const { refreshAlbums } = useContext(AlbumContext);
   const { refreshPlaylists } = useContext(PlaylistContext);
@@ -31,7 +34,8 @@ function SongManagement() {
   const [editingSong, setEditingSong] = useState(null);
   const [filters, setFilters] = useState({ keyword: '', status: undefined });
 
-  // --- LOGIC FILTER ---
+  useTitle(t('song.management'));
+
   const filteredData = useMemo(() => {
     return songs.filter(song => {
       const kw = filters.keyword.toLowerCase();
@@ -68,11 +72,11 @@ function SongManagement() {
     try {
       const response = await deleteSongs(uid);
       if (response && response.success) {
-        messageApi.success(response.message);
+        messageApi.success(t('common.operation_success'));
         onSuccess(); 
       }
     } catch (error) {
-      messageApi.error("An error occurred while deleting.");
+      messageApi.error(t('common.operation_failed'));
     }
   };
 
@@ -85,7 +89,7 @@ function SongManagement() {
 
   const columns = [
     {
-      title: 'Song Details',
+      title: t('song.details'),
       key: 'song',
       fixed: 'left',
       width: 250,
@@ -101,7 +105,7 @@ function SongManagement() {
       ),
     },
     {
-      title: 'Album',
+      title: t('menu.albums'),
       dataIndex: 'albumName',
       key: 'album',
       responsive: ['md'],
@@ -109,19 +113,19 @@ function SongManagement() {
       render: (text) => <Text type="secondary">{text || 'N/A'}</Text>
     },
     {
-      title: 'Stats',
+      title: t('album.stats'),
       key: 'stats',
       width: 150,
       sorter: (a, b) => (a.listen || 0) - (b.listen || 0),
       render: (_, record) => (
         <div style={{ fontSize: '12px' }}>
           <div><PlayCircleOutlined /> {record.listen?.toLocaleString() || 0}</div>
-          <div><HeartOutlined /> {record.like?.length || 0} Likes</div>
+          <div><HeartOutlined /> {record.like?.length || 0} {t('artist.likes')}</div>
         </div>
       ),
     },
     {
-      title: 'Duration',
+      title: t('song.duration'),
       dataIndex: 'duration',
       key: 'duration',
       width: 120,
@@ -129,15 +133,15 @@ function SongManagement() {
       render: (val) => formatDuration(val)
     },
     {
-      title: 'Status',
+      title: t('common.status'),
       dataIndex: 'status',
       key: 'status',
       render: (status) => (
-        <Badge status={status === 'active' ? 'success' : 'error'} text={status?.toUpperCase()} />
+        <Badge status={status === 'active' ? 'success' : 'error'} text={status === 'active' ? t('common.active') : t('common.inactive')} />
       ),
     },
     {
-      title: 'Created At',
+      title: t('common.created_at'),
       dataIndex: 'createdAt',
       key: 'createdAt',
       responsive: ['lg'],
@@ -145,14 +149,14 @@ function SongManagement() {
       render: (date) => formatDate(date, 'DD/MM/YYYY'),
     },
     {
-      title: 'Action',
+      title: t('common.action'),
       key: 'action',
       fixed: 'right',
       width: 120,
       render: (_, record) => (
         <Space size="middle">
-          <Tooltip title="Edit"><Button type="text" icon={<EditOutlined />} onClick={() => handleEdit(record)} /></Tooltip>
-          <Popconfirm title="Delete Song?" onConfirm={() => handleDelete(record._id)} okButtonProps={{ danger: true }}>
+          <Tooltip title={t('common.edit')}><Button type="text" icon={<EditOutlined />} onClick={() => handleEdit(record)} /></Tooltip>
+          <Popconfirm title={t('song.delete_confirm')} onConfirm={() => handleDelete(record._id)} okButtonProps={{ danger: true }}>
             <Button type="text" danger icon={<DeleteOutlined />} />
           </Popconfirm>
         </Space>
@@ -163,8 +167,10 @@ function SongManagement() {
   return (
     <div className="song-management">
       <div style={{ marginBottom: 16, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-        <Title level={3} style={{ margin: 0 }}>Song Management</Title>
-        <Button type="primary" icon={<PlusOutlined />} onClick={() => { setEditingSong(null); setIsModalOpen(true); }}>Add New Song</Button>
+        <Title level={3} style={{ margin: 0 }}>{t('song.management')}</Title>
+        <Button type="primary" icon={<PlusOutlined />} onClick={() => { setEditingSong(null); setIsModalOpen(true); }}>
+          {t('song.add_new')}
+        </Button>
       </div>
 
       <FilterBar onFilterChange={handleFilterChange} />
@@ -176,19 +182,21 @@ function SongManagement() {
         dataSource={currentDisplayData} 
         bordered
         scroll={{ x: 1000 }}
-        locale={{ emptyText: <Empty description="No songs found." /> }}
+        locale={{ emptyText: <Empty description={t('search.no_result_db')} /> }}
         pagination={{ 
           current: currentPage,
           pageSize: pageSize,
           total: filteredData.length,
-          onChange: (page, size) => { setCurrentPage(page); setPageSize(size); }
+          onChange: (page, size) => { setCurrentPage(page); setPageSize(size); },
+          showSizeChanger: true,
+          locale: { items_per_page: t('common.items_per_page') }
         }}
       />
 
       <CreateSong 
         isModalOpen={isModalOpen} 
         setIsModalOpen={setIsModalOpen}
-        onSuccess={onSuccess} // TRUYỀN HÀM REFRESH TỪ CONTEXT
+        onSuccess={onSuccess} 
         data={editingSong} 
         onCancel={() => { setIsModalOpen(false); setEditingSong(null); }}
       />

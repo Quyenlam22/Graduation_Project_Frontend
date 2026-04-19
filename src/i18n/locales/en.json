@@ -3,7 +3,23 @@
     "album": {
       "title_prefix": "Album",
       "all_albums": "All Albums",
-      "other_albums": "Other Albums"
+      "other_albums": "Other Albums",
+      "management": "Album Management",
+      "add_new": "Add New Album",
+      "details": "Album Details",
+      "stats": "Stats",
+      "tracks": "Tracks",
+      "delete_confirm": "Delete this album?",
+      "edit_title": "Edit Album",
+      "create_title": "Create New Album",
+      "form_title": "Album Title",
+      "form_artist": "Artist Ownership",
+      "form_description": "Description",
+      "form_cover": "Album Cover",
+      "placeholder_title": "Ex: 22, Loi Choi...",
+      "placeholder_artist": "Choose Artist",
+      "error_title": "Please enter album title",
+      "error_artist": "Please select an artist"
     },
     "artist": {
       "verified": "Verified Artist",
@@ -17,7 +33,38 @@
       "discography": "Discography",
       "all_artists": "All Artists",
       "another_artists": "Another Artists",
-      "no_description": "Information about {{name}} is being updated..."
+      "no_description": "Information about {{name}} is being updated...",
+      "management": "Artist Management",
+      "add_new": "Add New Artist",
+      "edit_title": "Edit Artist",
+      "create_title": "Add New Artist",
+      "form_name": "Artist Name",
+      "form_fans": "Number of Fans",
+      "form_deezer": "Deezer ID (Optional)",
+      "placeholder_name": "Sơn Tùng M-TP...",
+      "error_name": "Please enter artist name",
+      "delete_confirm": "Remove this artist?",
+      "followers": "Followers"
+    },
+    "admin": {
+      "login_title": "Administrator Login",
+      "btn_login_email": "LOGIN WITH EMAIL",
+      "welcome_admin": "Welcome Admin!",
+      "error_login": "Incorrect account or password!",
+      "error_google": "Google login failed!",
+      "info_user": "Personal information",
+      "dashboard_title": "Muzia Insights",
+      "refresh_data": "Refresh Data",
+      "updating": "Updating statistics...",
+      "total_users": "Total Users",
+      "total_songs": "Total Songs",
+      "total_albums": "Total Albums",
+      "total_artists": "Total Artists",
+      "content_dist": "Content Distribution",
+      "user_growth": "User Registration Growth",
+      "top_liked": "Top 5 Most Liked Songs",
+      "month": "Month",
+      "rank": "RANK"
     },
     "auth": {
       "login_form": "Login",
@@ -45,7 +92,8 @@
       "login_required": "Please log in to continue!",
       "logout_success": "Logout successfully!",
       "logout": "Logout",
-      "sign_in": "Sign In"
+      "sign_in": "Sign In",
+      "permission_denied": "Access Denied: You are not an Admin!"
     },
     "common": {
       "play_all": "Play All",
@@ -64,7 +112,23 @@
       "discover_now": "DISCOVER NOW",
       "single": "Single",
       "artist": "Artist",
-      "source": "Source"
+      "cancel": "Cancel",
+      "items_per_page": "/ page",
+      "source": "Source",
+      "action": "Action",
+      "edit": "Edit",
+      "delete": "Delete",
+      "status": "Status",
+      "active": "Active",
+      "inactive": "Inactive",
+      "update": "Update",
+      "create": "Create",
+      "created_at": "Created At",
+      "operation_success": "Operation successful!",
+      "operation_failed": "Operation failed!",
+      "search": "Search",
+      "refresh": "Refresh",
+      "all_status": "All Status"
     },
     "chat": {
       "welcome_msg": "Muzia AI Assistant is ready to help!",
@@ -112,10 +176,25 @@
     "playlist": {
       "label": "Playlist",
       "label_upper": "MY PLAYLIST",
-      "no_description": "No description available",
       "no_songs": "No songs available in this playlist.",
       "all_playlists": "All Playlists",
-      "suggested_playlists": "Suggested Playlists"
+      "suggested_playlists": "Suggested Playlists",
+      "management": "Playlist Management",
+      "details": "Playlist Details",
+      "add_new": "Add New Playlist",
+      "edit_title": "Edit Playlist",
+      "create_title": "Create New Playlist",
+      "delete_confirm": "Delete Playlist?",
+      "owner": "Owner",
+      "system": "SYSTEM",
+      "user": "USER",
+      "system_default": "(System Default)",
+      "form_title": "Playlist Title",
+      "form_songs": "Songs Selection",
+      "placeholder_songs": "Add songs...",
+      "no_description": "No description available",
+      "error_title": "Please enter playlist title",
+      "error_owner": "Please select an owner"
     },
     "sidebar": {
       "songs": "Songs",
@@ -141,6 +220,22 @@
       "no_results": "No matching results found",
       "search_result": "Search results"
     },
+    "song": {
+      "management": "Song Management",
+      "details": "Song Details",
+      "add_new": "Add New Song",
+      "edit_title": "Edit Song",
+      "create_title": "Add New Song",
+      "delete_confirm": "Delete this song?",
+      "form_name": "Song Name",
+      "form_audio": "Audio Link",
+      "form_lyrics": "Lyrics",
+      "form_duration": "Duration (sec)",
+      "placeholder_name": "Ex: Seven, Die With A Smile...",
+      "error_name": "Please enter song title",
+      "error_audio": "Please provide audio link",
+      "duration": "Duration"
+    },
     "user": {
       "page_title": "Profile Settings",
       "personal_info": "Personal Information",
@@ -157,7 +252,19 @@
       "password_success": "Password changed successfully!",
       "error_relogin": "Please log in again to perform this action!",
       "error_name_required": "Please enter your display name!",
-      "error_confirm_required": "Please confirm your new password!"
+      "error_confirm_required": "Please confirm your new password!",
+      "management": "User Management",
+      "add_new_admin": "Add New Admin",
+      "edit_title": "Edit User Information",
+      "create_title": "Create New Admin",
+      "delete_confirm": "Are you sure you want to delete {{name}}?",
+      "form_fullname": "Full Name",
+      "form_role": "Permission Role",
+      "error_fullname": "Please input full name!",
+      "error_email_valid": "Please input a valid email!",
+      "state_online": "ONLINE",
+      "state_offline": "OFFLINE",
+      "provider": "Provider"
     }
   }
 }
