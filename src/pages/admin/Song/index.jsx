@@ -156,7 +156,13 @@ function SongManagement() {
       render: (_, record) => (
         <Space size="middle">
           <Tooltip title={t('common.edit')}><Button type="text" icon={<EditOutlined />} onClick={() => handleEdit(record)} /></Tooltip>
-          <Popconfirm title={t('song.delete_confirm')} onConfirm={() => handleDelete(record._id)} okButtonProps={{ danger: true }}>
+          <Popconfirm 
+            title={t('song.delete_confirm')} 
+            onConfirm={() => handleDelete(record._id)} 
+            okButtonProps={{ danger: true }}
+            okText={t('common.delete') || "Yes"}
+            cancelText={t('common.cancel') || "No"}
+          >
             <Button type="text" danger icon={<DeleteOutlined />} />
           </Popconfirm>
         </Space>

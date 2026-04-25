@@ -106,6 +106,7 @@ function CreateAlbum(props) {
       confirmLoading={loading}
       width={700}
       okText={isEdit ? t('common.update') : t('common.create')}
+      cancelText={t('common.cancel') || "No"}
     >
       <Form form={form} layout="vertical">
         <Row gutter={16}>

@@ -164,6 +164,8 @@ function AlbumManagement() {
             title={t("album.delete_confirm")}
             onConfirm={() => handleDelete(record._id)}
             okButtonProps={{ danger: true }}
+            okText={t('common.delete') || "Yes"}
+            cancelText={t('common.cancel') || "No"}
           >
             <Button type="text" danger icon={<DeleteOutlined />} />
           </Popconfirm>

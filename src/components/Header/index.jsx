@@ -17,11 +17,13 @@ function HeaderClient(props) {
     const { user } = useContext(AuthContext);
     const navigate = useNavigate();
     const { messageApi } = useContext(AppContext);
-    const { t, i18n } = useTranslation(); // Khai báo t và i18n
+    const { t, i18n } = useTranslation();
+    const [hideText, setHideText] = useState(window.innerWidth < 992);
     const [isMobile, setIsMobile] = useState(window.innerWidth < 560);
 
     useEffect(() => {
         const handleResize = () => {
+            setHideText(window.innerWidth < 992);
             setIsMobile(window.innerWidth < 560);
         };
 
@@ -58,9 +60,11 @@ function HeaderClient(props) {
                 </div>
                 <div className="header-client__nav">
                     <div className="header-client__nav-left">
-                        <div className="header-client__collapse" onClick={() => setCollapse(!collapse)}>
-                            {collapse ? <MenuUnfoldOutlined /> : <MenuFoldOutlined />}
-                        </div>
+                        {!isMobile && (
+                            <div className="header-client__collapse" onClick={() => setCollapse(!collapse)}>
+                                {collapse ? <MenuUnfoldOutlined /> : <MenuFoldOutlined />}
+                            </div>
+                        )}
                     </div>
                     <div className="header-client__nav-between">
                         <div className="header-client__search">
@@ -100,7 +104,7 @@ function HeaderClient(props) {
                         {user ? (
                             <>
                                 <div className="header-client__nav-right__notify">
-                                    <Notice />
+                                    {!hideText && <Notice />}
                                 </div>
                                 <div className="header-client__nav-right__auth">
                                     {
@@ -117,7 +121,7 @@ function HeaderClient(props) {
                                                 onClick={() => { navigate("/user-info") }}
                                             />
                                     }
-                                    <Button icon={<LogoutOutlined />} danger onClick={handleLogout}>{!isMobile && t('auth.logout')}</Button>
+                                    <Button icon={<LogoutOutlined />} danger onClick={handleLogout}>{!hideText && t('auth.logout')}</Button>
                                 </div>
                             </>
                         ) : (

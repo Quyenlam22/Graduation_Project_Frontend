@@ -13,6 +13,7 @@ import { toggleFavorite } from '../../../services/authService'; // Thêm service
 import { useTranslation } from 'react-i18next';
 import { paginate } from '../../../utils/paginate';
 import './SearchResult.scss';
+import useTitle from '../../../hooks/useTitle';
 
 const { Title, Text } = Typography;
 
@@ -28,6 +29,8 @@ function SearchResult() {
   const { artists: dbArtists } = useContext(ArtistContext);
   const { playlists: dbPlaylists } = useContext(PlaylistContext);
   const { playSong } = useContext(MusicContext);
+
+  useTitle(t('search.search_result'));
 
   // useEffect(() => {
   //   refreshSongs();

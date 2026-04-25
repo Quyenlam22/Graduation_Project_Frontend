@@ -194,7 +194,8 @@
       "form_songs": "Chọn bài hát",
       "placeholder_songs": "Thêm bài hát...",
       "error_title": "Vui lòng nhập tiêu đề danh sách",
-      "error_owner": "Vui lòng chọn người sở hữu"
+      "error_owner": "Vui lòng chọn người sở hữu",
+      "form_cover": "Ảnh bìa Playlist"
     },
     "sidebar": {
       "songs": "Bài hát",
@@ -265,7 +266,8 @@
       "error_email_valid": "Vui lòng nhập email hợp lệ!",
       "state_online": "TRỰC TUYẾN",
       "state_offline": "NGOẠI TUYẾN",
-      "provider": "Phương thức"
+      "provider": "Phương thức",
+      "display_name": "Tên hiển thị"
     }
   }
 }

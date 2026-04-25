@@ -115,7 +115,7 @@ function CreateUser(props) {
 
           <Form.Item 
             name="email" 
-            label="Email Address" 
+            label={t('auth.placeholder_email')}
             rules={[{ required: true, type: 'email', message: t('user.error_email_valid') }]}
           >
             <Input disabled={isEdit} placeholder={t('auth.placeholder_email')} />

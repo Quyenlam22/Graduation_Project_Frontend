@@ -8,6 +8,7 @@ import { updateProfile } from '../../../services/authService';
 import { AuthContext } from '../../../Context/AuthProvider';
 import { updateProfile as updateFirebaseProfile } from "firebase/auth";
 import { useTranslation } from "react-i18next";
+import useTitle from '../../../hooks/useTitle';
 
 const UserInfo = () => {
   const { t } = useTranslation();
@@ -18,6 +19,8 @@ const UserInfo = () => {
 
   const [avatarFile, setAvatarFile] = useState(null);
   const [previewUrl, setPreviewUrl] = useState(null);
+
+  useTitle(t('admin.info_user'));
 
   useEffect(() => {
     if (user) {

@@ -89,7 +89,7 @@ function UserManagement() {
 
   const columns = [
     {
-      title: t('common.artist'), // Dùng lại key "User/Artist"
+      title: t('user.display_name'), // Dùng lại key "User/Artist"
       dataIndex: 'displayName',
       key: 'user',
       fixed: 'left',
@@ -166,7 +166,7 @@ function UserManagement() {
             title={t('common.delete')}
             description={t('user.delete_confirm', { name: record.displayName })}
             onConfirm={() => handleDelete(record.uid)}
-            okText={t('common.update') || "Yes"}
+            okText={t('common.delete') || "Yes"}
             cancelText={t('common.cancel') || "No"}
             okButtonProps={{ danger: true }}
           >

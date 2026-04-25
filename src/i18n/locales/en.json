@@ -194,7 +194,8 @@
       "placeholder_songs": "Add songs...",
       "no_description": "No description available",
       "error_title": "Please enter playlist title",
-      "error_owner": "Please select an owner"
+      "error_owner": "Please select an owner",
+      "form_cover": "Playlist Cover"
     },
     "sidebar": {
       "songs": "Songs",
@@ -264,7 +265,8 @@
       "error_email_valid": "Please input a valid email!",
       "state_online": "ONLINE",
       "state_offline": "OFFLINE",
-      "provider": "Provider"
+      "provider": "Provider",
+      "display_name": "Display Name"
     }
   }
 }
