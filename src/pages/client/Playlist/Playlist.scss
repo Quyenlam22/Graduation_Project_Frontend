@@ -25,7 +25,7 @@
       .playlist-avatar {
         width: 250px;
         height: 250px;
-        border-radius: 50%; // Playlist dùng ảnh tròn
+        border-radius: 50%;
         box-shadow: 0 15px 50px rgba(0, 0, 0, 0.5);
         object-fit: cover;
 
@@ -92,7 +92,7 @@
       }
 
       img {
-        border-radius: 50%; // Playlist có thể để ảnh tròn hoặc bo góc khác biệt
+        border-radius: 50%;
         width: 100%;
         aspect-ratio: 1/1;
         object-fit: cover;
@@ -108,26 +108,22 @@
 
         .playlist-title-marquee {
           display: inline-block;
-          color: #ffffff !important; // Ép màu trắng
+          color: #ffffff !important;
           font-weight: 600;
           font-size: 14px;
-          // Hiệu ứng mặc định: cắt chữ
           max-width: 100%;
-          // overflow: hidden;
-          // text-overflow: ellipsis;
         }
       }
 
       .playlist-author {
         display: block;
-        color: #9CA3A1 !important; // Ép màu xám
+        color: #9CA3A1 !important;
         font-size: 12px;
         margin-top: 4px;
         text-transform: capitalize;
       }
     }
 
-    // HIỆU ỨNG CHẠY CHỮ KHI HOVER
     &:hover {
       .playlist-title-marquee {
         max-width: none;
@@ -196,7 +192,7 @@
 
       .delete-icon {
         color: #9CA3A1;
-        opacity: 0; // Chỉ hiện khi hover bài hát
+        opacity: 0;
         transition: opacity 0.2s;
 
         &:hover {

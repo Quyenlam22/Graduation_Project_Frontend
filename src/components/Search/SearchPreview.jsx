@@ -8,7 +8,6 @@ import { ArtistContext } from "../../Context/ArtistContext";
 import { PlaylistContext } from "../../Context/PlaylistContext";
 import { SongContext } from "../../Context/SongContext";
 import { MusicContext } from "../../Context/MusicContext";
-// import { useEffect } from "react";
 
 const { Text } = Typography;
 
@@ -23,13 +22,6 @@ function SearchPreview({ visible, keyword }) {
   const { artists } = useContext(ArtistContext);
   const { playlists } = useContext(PlaylistContext);
   const { playSong } = useContext(MusicContext);
-
-  // useEffect(() => {
-  //   refreshSongs();
-  //   refreshAlbums();
-  //   refreshArtists();
-  //   refreshPlaylists();
-  // }, []);
 
   const filteredData = useMemo(() => {
     if (!keyword) return { results: [], label: "", type: "" };
@@ -49,7 +41,6 @@ function SearchPreview({ visible, keyword }) {
       return { results: res, label: t('search.result_playlist'), type: 'playlist', isCircle: true };
     }
 
-    // Mặc định tìm kiếm bài hát
     const res = songs.filter(s => s.title.toLowerCase().includes(lowKeyword)).slice(0, 5);
     return { results: res, label: t('search.result_songs'), type: 'song', isCircle: false };
   }, [keyword, path, songs, albums, artists, playlists, t]);

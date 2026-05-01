@@ -189,13 +189,11 @@
             display: flex;
             width: 100%;
 
-            // Căn phải cho User
             &.user {
                 justify-content: flex-end;
                 text-align: left;
             }
 
-            // Căn trái cho AI (model)
             &.model {
                 justify-content: flex-start;
                 text-align: left;
@@ -206,17 +204,16 @@
             padding: 10px 15px;
             border-radius: 15px;
             max-width: 80%;
-            word-wrap: break-word; // Đảm bảo text không bị tràn
+            word-wrap: break-word;
 
             &.model {
-                background: #231B2E; // Màu tối cho AI
+                background: #231B2E;
                 color: #fff;
                 border-bottom-left-radius: 2px;
             }
 
             &.user {
-                // padding-left: 0;
-                background: #FE2851; // Màu hồng đặc trưng Muzia cho User
+                background: #FE2851;
                 color: #fff;
                 border-bottom-right-radius: 2px;
             }
@@ -418,11 +415,6 @@
                 left: 0;
                 padding: 0 10px;
 
-                // .time-text {
-                //     display: none;
-                // }
-
-                // Ẩn số giây trên mobile
                 .ant-slider {
                     margin: 0;
                 }
@@ -440,7 +432,7 @@
         min-width: 150px;
 
         @media (max-width: 768px) {
-            display: none !important; // Ẩn volume/extra controls trên mobile
+            display: none !important;
         }
 
         .volume-slider {
@@ -485,7 +477,7 @@
         }
 
         .play-btn-main {
-            font-size: 40px; // To hơn để nổi bật
+            font-size: 40px;
             color: #fff;
 
             @media (max-width: 768px) {
@@ -611,7 +603,6 @@
 
 input {
     background-color: transparent !important;
-    // color: #fff !important;
 
     &::placeholder {
         color: rgba(255, 255, 255, 0.4) !important;
@@ -752,7 +743,6 @@ input {
     }
 }
 
-// Playlist Section
 @keyframes marquee-scroll {
     0% {
         transform: translateX(100%);

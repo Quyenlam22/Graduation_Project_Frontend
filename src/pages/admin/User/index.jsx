@@ -15,7 +15,7 @@ import { UserContext } from '../../../Context/UserContext';
 import { formatDate } from '../../../utils/formatTime';
 import { paginate } from '../../../utils/paginate';
 import FilterBar from '../../../components/Search/FilterBar';
-import { useTranslation } from 'react-i18next'; // Thêm i18n
+import { useTranslation } from 'react-i18next';
 import useTitle from '../../../hooks/useTitle';
 
 const { Text, Title } = Typography;
@@ -89,7 +89,7 @@ function UserManagement() {
 
   const columns = [
     {
-      title: t('user.display_name'), // Dùng lại key "User/Artist"
+      title: t('user.display_name'),
       dataIndex: 'displayName',
       key: 'user',
       fixed: 'left',
@@ -138,9 +138,9 @@ function UserManagement() {
       dataIndex: 'state',
       key: 'state',
       render: (state) => (
-        <Badge 
-          status={state === 'online' ? 'success' : 'default'} 
-          text={state === 'online' ? t('user.state_online') : t('user.state_offline')} 
+        <Badge
+          status={state === 'online' ? 'success' : 'default'}
+          text={state === 'online' ? t('user.state_online') : t('user.state_offline')}
         />
       ),
     },

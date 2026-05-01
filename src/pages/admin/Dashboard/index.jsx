@@ -9,18 +9,18 @@ import { useNavigate } from "react-router-dom";
 import { AppContext } from "../../../Context/AppProvider";
 import { Column, Line } from "@ant-design/plots";
 import useTitle from '../../../hooks/useTitle';
-import { useTranslation } from "react-i18next"; // 1. Import i18n
+import { useTranslation } from "react-i18next";
 
 const { Title, Text } = Typography;
 
 function Dashboard() {
-  const { t } = useTranslation(); // 2. Khai báo hook dịch
+  const { t } = useTranslation();
   const { stats, loading, refreshStats, isFetched } = useContext(DashboardContext);
   const navigate = useNavigate();
   const { messageApi } = useContext(AppContext);
 
   useTitle("Dashboard");
-  
+
   useEffect(() => {
     const token = localStorage.getItem("accessToken");
     if (token && !isFetched && !loading) {
@@ -32,12 +32,11 @@ function Dashboard() {
     refreshStats(true);
     messageApi.open({
       type: 'loading',
-      content: t('admin.updating'), // Dùng t()
+      content: t('admin.updating'),
       duration: 1,
     });
   };
 
-  // Cấu hình Biểu đồ Cột
   const columnConfig = {
     data: [
       { type: t('sidebar.songs'), value: stats?.counts?.totalSongs || 0 },
@@ -55,10 +54,9 @@ function Dashboard() {
     },
   };
 
-  // Cấu hình Biểu đồ Đường
   const lineConfig = {
     data: stats?.userGrowth?.map(item => ({
-      month: `${t('admin.month')} ${item._id}`, // Dùng t()
+      month: `${t('admin.month')} ${item._id}`,
       count: item.count
     })) || [],
     xField: 'month',

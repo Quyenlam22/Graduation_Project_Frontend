@@ -11,7 +11,7 @@ import {
 import { useContext, useEffect, useState } from "react";
 import { PlusOutlined } from "@ant-design/icons";
 import { AppContext } from "../../Context/AppProvider";
-import { ArtistContext } from "../../Context/ArtistContext"; // IMPORT ARTIST CONTEXT
+import { ArtistContext } from "../../Context/ArtistContext";
 import { createAlbum, updateAlbum } from "../../services/albumService";
 import { useTranslation } from "react-i18next";
 
@@ -81,7 +81,7 @@ function CreateAlbum(props) {
       if (response && response.success) {
         messageApi.success(t('common.operation_success'));
         handleCancel();
-        if (onSuccess) onSuccess(); 
+        if (onSuccess) onSuccess();
       }
     } catch (error) {
       messageApi.error(t('common.operation_failed'));
@@ -98,10 +98,10 @@ function CreateAlbum(props) {
   };
 
   return (
-    <Modal 
-      title={isEdit ? t('album.edit_title') : t('album.create_title')} 
-      open={isModalOpen} 
-      onOk={handleOk} 
+    <Modal
+      title={isEdit ? t('album.edit_title') : t('album.create_title')}
+      open={isModalOpen}
+      onOk={handleOk}
       onCancel={handleCancel}
       confirmLoading={loading}
       width={700}
@@ -128,9 +128,9 @@ function CreateAlbum(props) {
         <Row gutter={16}>
           <Col span={12}>
             <Form.Item name="artistId" label={t('album.form_artist')} rules={[{ required: true, message: t('album.error_artist') }]}>
-              <Select 
-                placeholder={t('album.placeholder_artist')} 
-                showSearch 
+              <Select
+                placeholder={t('album.placeholder_artist')}
+                showSearch
                 filterOption={(input, option) => option.children.toLowerCase().includes(input.toLowerCase())}
               >
                 {artists.map(a => (

@@ -28,7 +28,6 @@ function LayoutAdmin() {
     const handleLogout = async () => {
         if (user?.uid) {
             try {
-                // const token = await auth.currentUser.getIdToken();
                 await changeStatus({ uid: user.uid, state: "offline" });
             } catch (e) { console.error(e); }
         }
@@ -65,7 +64,6 @@ function LayoutAdmin() {
                             </div>
                         </div>
                         <div className="header-admin__nav-right">
-                            {/* 4. Thêm bộ chuyển đổi ngôn ngữ vào Header Admin */}
                             <Space size={2} className="header-admin__lang-switch" style={{ marginRight: '20px' }}>
                                 <Button
                                     type="text"

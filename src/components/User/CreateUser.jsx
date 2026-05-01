@@ -3,7 +3,7 @@ import { useContext, useEffect, useState } from 'react';
 import { PlusOutlined } from '@ant-design/icons';
 import { createAdmin, updateUser } from '../../services/authService';
 import { AppContext } from '../../Context/AppProvider';
-import { useTranslation } from 'react-i18next'; // Thêm i18n
+import { useTranslation } from 'react-i18next';
 
 function CreateUser(props) {
   const { t } = useTranslation();
@@ -13,7 +13,7 @@ function CreateUser(props) {
   const [fileList, setFileList] = useState([]);
   const [previewImage, setPreviewImage] = useState('');
   const [previewOpen, setPreviewOpen] = useState(false);
-  
+
   const { messageApi } = useContext(AppContext);
   const isEdit = !!data;
 
@@ -62,7 +62,7 @@ function CreateUser(props) {
       const formData = new FormData();
       formData.append('displayName', values.displayName);
       formData.append('role', values.role);
-      
+
       if (!isEdit) {
         formData.append('email', values.email);
         formData.append('password', values.password);
@@ -77,7 +77,7 @@ function CreateUser(props) {
       if (response && response.success) {
         messageApi.success(t('common.operation_success'));
         handleClose();
-        if (onSuccess) onSuccess(); 
+        if (onSuccess) onSuccess();
       }
     } catch (error) {
       messageApi.error(t('common.operation_failed'));
@@ -95,26 +95,26 @@ function CreateUser(props) {
 
   return (
     <>
-      <Modal 
-        title={isEdit ? t('user.edit_title') : t('user.create_title')} 
-        open={isModalOpen} 
-        onOk={handleOk} 
+      <Modal
+        title={isEdit ? t('user.edit_title') : t('user.create_title')}
+        open={isModalOpen}
+        onOk={handleOk}
         onCancel={handleClose}
         confirmLoading={loading}
         okText={isEdit ? t('common.update') : t('common.create')}
         cancelText={t('common.cancel') || "Cancel"}
       >
         <Form form={form} layout="vertical">
-          <Form.Item 
-            name="displayName" 
-            label={t('user.form_fullname')} 
+          <Form.Item
+            name="displayName"
+            label={t('user.form_fullname')}
             rules={[{ required: true, message: t('user.error_fullname') }]}
           >
             <Input placeholder="John Doe" />
           </Form.Item>
 
-          <Form.Item 
-            name="email" 
+          <Form.Item
+            name="email"
             label={t('auth.placeholder_email')}
             rules={[{ required: true, type: 'email', message: t('user.error_email_valid') }]}
           >
@@ -122,9 +122,9 @@ function CreateUser(props) {
           </Form.Item>
 
           {!isEdit && (
-            <Form.Item 
-              name="password" 
-              label={t('auth.placeholder_password')} 
+            <Form.Item
+              name="password"
+              label={t('auth.placeholder_password')}
               rules={[{ required: true, min: 6, message: t('auth.error_weak_password') }]}
             >
               <Input.Password placeholder="******" />
@@ -160,10 +160,10 @@ function CreateUser(props) {
         </Form>
       </Modal>
 
-      <Modal 
-        open={previewOpen} 
-        title="Image Preview" 
-        footer={null} 
+      <Modal
+        open={previewOpen}
+        title="Image Preview"
+        footer={null}
         onCancel={() => setPreviewOpen(false)}
       >
         <img alt="preview" style={{ width: '100%' }} src={previewImage} />

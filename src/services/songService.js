@@ -25,7 +25,6 @@ export const deleteSongs = async (id) => {
     return result;
 }
 
-
 export const getSongsBySource = async (endpoint) => {
     const result = await get(`${endpoint}`);
     return result;

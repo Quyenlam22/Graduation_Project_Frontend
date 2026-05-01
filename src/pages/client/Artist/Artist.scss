@@ -1,7 +1,7 @@
-@use "../../../layouts/LayoutClient/LayoutClient"as layout;
+@use "../../../layouts/LayoutClient/LayoutClient" as layout;
 
 .artist-detail-container {
-  padding: 0 0 120px 0; // Padding bottom cho Music Player
+  padding: 0 0 120px 0;
 
   .artist-hero {
     height: 400px;

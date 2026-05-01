@@ -8,7 +8,7 @@ import {
   UserOutlined, HeartOutlined, TeamOutlined
 } from '@ant-design/icons';
 import { AppContext } from '../../../Context/AppProvider';
-import { ArtistContext } from '../../../Context/ArtistContext'; // IMPORT CONTEXT MỚI
+import { ArtistContext } from '../../../Context/ArtistContext';
 import { formatDate } from '../../../utils/formatTime';
 import CreateArtist from '../../../components/Artist/CreateArtist';
 import { deleteArtists } from '../../../services/artistService';
@@ -36,7 +36,6 @@ function ArtistManagement() {
   const [currentPage, setCurrentPage] = useState(1);
   const [filters, setFilters] = useState({ keyword: '', status: undefined });
 
-  // --- LOGIC FILTER NGHỆ SĨ ---
   const filteredData = useMemo(() => {
     return artists.filter(artist => {
       const kw = filters.keyword.toLowerCase();
@@ -141,9 +140,9 @@ function ArtistManagement() {
           <Tooltip title={t('common.edit')}>
             <Button type="text" icon={<EditOutlined />} onClick={() => handleEdit(record)} />
           </Tooltip>
-          <Popconfirm 
-            title={t('artist.delete_confirm')} 
-            onConfirm={() => handleDelete(record._id)} 
+          <Popconfirm
+            title={t('artist.delete_confirm')}
+            onConfirm={() => handleDelete(record._id)}
             okButtonProps={{ danger: true }}
             okText={t('common.delete') || "Yes"}
             cancelText={t('common.cancel') || "No"}

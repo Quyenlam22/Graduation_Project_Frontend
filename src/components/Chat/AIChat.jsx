@@ -40,11 +40,7 @@ function AIChat() {
 
     useEffect(() => {
         if (isOpen && scrollRef.current) {
-            // Sử dụng setTimeout để đảm bảo DOM đã render xong trước khi cuộn
-            // const timer = setTimeout(() => {
             scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
-            // }, 100);
-            // return () => clearTimeout(timer);
         }
     }, [messages, isTyping, isOpen]);
 
@@ -59,7 +55,6 @@ function AIChat() {
                 ]
             });
 
-            // Gán các hành động điều khiển hệ thống vào hàm của MusicContext
             navigator.mediaSession.setActionHandler('play', togglePlay);
             navigator.mediaSession.setActionHandler('pause', togglePlay);
             navigator.mediaSession.setActionHandler('previoustrack', handlePrev);
@@ -67,9 +62,7 @@ function AIChat() {
         }
     }, [currentSong, togglePlay, handleNext, handlePrev]);
 
-    // Bước A: Hàm xử lý click để nạp toàn bộ danh sách gợi ý vào Queue
     const handleSongClick = (currentMetadata, allParts) => {
-        // 1. Trích xuất toàn bộ bài hát gợi ý từ tin nhắn này để làm Playlist mới
         const aiSuggestedPlaylist = allParts
             .map(p => {
                 try { return JSON.parse(p); } catch { return null; }
@@ -84,16 +77,13 @@ function AIChat() {
                 source: m.deezerId ? 'deezer' : 'local'
             }));
 
-        // 2. Tìm bài hát cụ thể mà người dùng vừa click
         const selectedSong = aiSuggestedPlaylist.find(s => s._id === currentMetadata._id);
 
         if (selectedSong) {
-            // PHÁT BÀI ĐÓ VÀ NẠP CẢ PLAYLIST GỢI Ý VÀO HÀNG CHỜ
             playSong(selectedSong, aiSuggestedPlaylist, t('chat.queue_from_ai'));
         }
     };
 
-    // Bước B: Hàm render nội dung tin nhắn
     const renderMessageContent = (text) => {
         if (!text) return null;
 
@@ -109,16 +99,14 @@ function AIChat() {
                             return (
                                 <Flex
                                     key={index}
-                                    align="flex-start" // Giúp số thứ tự và khung bài hát thẳng hàng trên đầu
+                                    align="flex-start"
                                     gap={8}
                                     style={{ margin: '12px 0' }}
                                 >
-                                    {/* Số thứ tự lấy từ Metadata */}
                                     <Text style={{ color: '#9CA3A1', marginTop: '12px', fontWeight: '500' }}>
                                         {metadata.index}.
                                     </Text>
 
-                                    {/* Card bài hát */}
                                     <Flex
                                         align="center"
                                         gap={10}
@@ -235,16 +223,16 @@ function AIChat() {
             const item = currentLangData[action];
             if (item && item.keywords.some(key => text.includes(key))) {
                 if (action === 'goToHome') {
-                    navigate('/'); // Đường dẫn trang chủ của bạn
+                    navigate('/');
                 }
                 else if (action === 'goToAlbums') {
-                    navigate('/albums'); // Đường dẫn trang Album trên sider
+                    navigate('/albums');
                 }
                 else if (action === 'goToPlaylists') {
-                    navigate('/playlists'); // Đường dẫn trang Playlist trên sider
+                    navigate('/playlists');
                 }
                 else if (action === 'goToArtists') {
-                    navigate('/artists'); // Đường dẫn trang Artist trên sider
+                    navigate('/artists');
                 }
                 else if (action === 'switchToEn') {
                     if (i18n.language !== 'en') {

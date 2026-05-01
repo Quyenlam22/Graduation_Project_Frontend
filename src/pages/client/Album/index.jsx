@@ -23,11 +23,6 @@ function Album() {
   const { songs, loading: songLoading } = useContext(SongContext);
   const { playSong, formatTime } = useContext(MusicContext);
 
-  // useEffect(() => {
-  //   refreshSongs();
-  //   refreshAlbums();
-  // }, []);
-
   const currentAlbum = useMemo(() => albums.find(item => item._id === id), [albums, id]);
   const albumSongs = useMemo(() => songs.filter(song => song.albumId === id), [songs, id]);
 

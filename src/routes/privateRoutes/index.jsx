@@ -1,13 +1,11 @@
 import { lazy } from "react";
 import withSuspense from "../../utils/withSuspense";
 
-// Layouts & Guards
 import LayoutAdmin from "../../layouts/LayoutAdmin";
 import LayoutClient from "../../layouts/LayoutClient";
 import PrivateRouteClient from "../../components/PrivateRoute/client";
 import PrivateRouteAdmin from "../../components/PrivateRoute/admin";
 
-// Client Pages
 const Home = lazy(() => import("../../pages/client/Home"));
 const Album = lazy(() => import("../../pages/client/Album"));
 const Playlist = lazy(() => import("../../pages/client/Playlist"));
@@ -16,7 +14,6 @@ const MyFavorite = lazy(() => import("../../pages/client/MyFavorite"));
 const UserInfo = lazy(() => import("../../pages/client/UserInfo"));
 const SearchResult = lazy(() => import("../../pages/client/SearchResult"));
 
-// Admin Pages
 const Dashboard = lazy(() => import("../../pages/admin/Dashboard"));
 const AlbumManagement = lazy(() => import("../../pages/admin/Album"));
 const PlaylistManagement = lazy(() => import("../../pages/admin/Playlist"));
@@ -24,7 +21,6 @@ const ArtistManagement = lazy(() => import("../../pages/admin/Artist"));
 const SongManagement = lazy(() => import("../../pages/admin/Song"));
 const UserManagement = lazy(() => import("../../pages/admin/User"));
 
-// Common
 const Error404 = lazy(() => import("../../pages/Error404"));
 
 export const privateRoutes = [
@@ -66,7 +62,7 @@ export const privateRoutes = [
                     { path: "users", element: withSuspense(UserManagement) },
                     { path: "*", element: withSuspense(Error404) },
                 ]
-            }   
+            }
         ]
     },
 ];

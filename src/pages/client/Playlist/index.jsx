@@ -25,11 +25,6 @@ function Playlist() {
   const { loading: songLoading } = useContext(SongContext);
   const { playSong, formatTime } = useContext(MusicContext);
 
-  // useEffect(() => {
-  //   refreshSongs();
-  //   refreshPlaylists();
-  // }, []);
-
   useTitle(t('menu.playlists'));
 
   const currentPlaylist = useMemo(() => {

@@ -19,7 +19,7 @@ import {
   UserOutlined,
 } from "@ant-design/icons";
 import { AppContext } from "../../../Context/AppProvider";
-import { AlbumContext } from "../../../Context/AlbumContext"; // IMPORT CONTEXT MỚI
+import { AlbumContext } from "../../../Context/AlbumContext";
 import { formatDate } from "../../../utils/formatTime";
 import CreateAlbum from "../../../components/Album/CreateAlbum";
 import { deleteAlbums } from "../../../services/albumService";
@@ -45,7 +45,6 @@ function AlbumManagement() {
 
   useTitle(t("album.management"));
 
-  // --- LOGIC FILTER ---
   const filteredData = useMemo(() => {
     return albums.filter((album) => {
       const kw = filters.keyword.toLowerCase();
@@ -75,7 +74,7 @@ function AlbumManagement() {
     try {
       const response = await deleteAlbums(id);
       if (response.success) {
-        messageApi.success(t("common.operation_success")); // Dùng key chung
+        messageApi.success(t("common.operation_success"));
         refreshAlbums();
         refreshSongs();
       }
@@ -91,7 +90,7 @@ function AlbumManagement() {
 
   const columns = [
     {
-      title: t("album.details"), // "Chi tiết Album"
+      title: t("album.details"),
       key: "album",
       fixed: "left",
       render: (_, record) => (
@@ -113,7 +112,7 @@ function AlbumManagement() {
       ),
     },
     {
-      title: t("album.stats"), // "Thống kê"
+      title: t("album.stats"),
       key: "stats",
       sorter: (a, b) => (a.nb_tracks || 0) - (b.nb_tracks || 0),
       render: (_, record) => (

@@ -80,7 +80,7 @@
       }
 
       img {
-        border-radius: 50%; // Playlist có thể để ảnh tròn hoặc bo góc khác biệt
+        border-radius: 50%;
         width: 100%;
         aspect-ratio: 1/1;
         object-fit: cover;
@@ -96,19 +96,16 @@
 
         .playlist-title-marquee {
           display: inline-block;
-          color: #ffffff !important; // Ép màu trắng
+          color: #ffffff !important;
           font-weight: 600;
           font-size: 14px;
-          // Hiệu ứng mặc định: cắt chữ
           max-width: 100%;
-          // overflow: hidden;
-          // text-overflow: ellipsis;
         }
       }
 
       .playlist-author {
         display: block;
-        color: #9CA3A1 !important; // Ép màu xám
+        color: #9CA3A1 !important;
         font-size: 12px;
         margin-top: 4px;
         text-transform: capitalize;

@@ -2,7 +2,7 @@ import { useContext, useEffect } from "react";
 import { Flex, Avatar, Slider, message } from "antd";
 import {
   StepBackwardOutlined, StepForwardOutlined, RetweetOutlined,
-  HeartOutlined, HeartFilled, ExpandOutlined, UnorderedListOutlined,
+  HeartOutlined, HeartFilled, UnorderedListOutlined,
   SoundOutlined, MutedOutlined, PlayCircleFilled, PauseCircleFilled,
   LoadingOutlined
 } from "@ant-design/icons";
@@ -22,7 +22,6 @@ function MusicPlayer() {
     toggleShuffle, formatTime, handleNext, handlePrev
   } = useContext(MusicContext);
 
-  // --- LOGIC YÊU THÍCH ---
   const handleToggleFavorite = async (e) => {
     if (e) e.stopPropagation();
     if (!user) {
@@ -53,7 +52,6 @@ function MusicPlayer() {
     }
   };
 
-  // --- LẮNG NGHE LỆNH TỪ AI CHATBOT (Giữ nguyên logic điều khiển) ---
   useEffect(() => {
     const onVoiceControl = (e) => {
       const action = e.detail;

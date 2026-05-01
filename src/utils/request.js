@@ -7,8 +7,6 @@ const getHeaders = (isFormData = false) => {
     ...(token ? { "Authorization": `Bearer ${token}` } : {}),
   };
 
-  // Nếu KHÔNG PHẢI FormData thì mới thêm Content-Type JSON
-  // Nếu LÀ FormData, để trình duyệt tự định nghĩa boundary
   if (!isFormData) {
     headers["Content-Type"] = "application/json";
   }
@@ -16,15 +14,12 @@ const getHeaders = (isFormData = false) => {
   return headers;
 };
 
-// 2. Hàm xử lý Response chung
 const handleResponse = async (response) => {
   if (response.status === 401) {
     localStorage.removeItem("accessToken");
-    // Thay vì return null, hãy return một object có cấu trúc lỗi rõ ràng
     return { success: false, status: 401, message: "Unauthorized" };
   }
 
-  // Kiểm tra nếu response không ok (ví dụ 500, 404, 403)
   if (!response.ok) {
     const errorData = await response.json().catch(() => ({}));
     return { success: false, ...errorData };
@@ -33,7 +28,6 @@ const handleResponse = async (response) => {
   return await response.json();
 };
 
-// 3. Các hàm Method chính
 export const get = async (path) => {
   const response = await fetch(`${API_DOMAIN}/${path}`, {
     method: "GET",

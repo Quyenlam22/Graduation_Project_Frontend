@@ -1,15 +1,15 @@
 import { useEffect, useState, useContext, useMemo } from 'react';
 import { useSearchParams, useNavigate } from 'react-router-dom';
 import { Tabs, Spin, Typography, Row, Col, Empty, Flex, Pagination, Card, message } from 'antd';
-import { HeartOutlined, HeartFilled } from '@ant-design/icons'; // Thêm icon
+import { HeartOutlined, HeartFilled } from '@ant-design/icons';
 import { SongContext } from '../../../Context/SongContext';
 import { AlbumContext } from '../../../Context/AlbumContext';
 import { ArtistContext } from '../../../Context/ArtistContext';
 import { PlaylistContext } from '../../../Context/PlaylistContext';
 import { MusicContext } from '../../../Context/MusicContext';
-import { AuthContext } from '../../../Context/AuthProvider'; // Thêm AuthContext
+import { AuthContext } from '../../../Context/AuthProvider';
 import { searchDeezer } from '../../../services/dezzerService';
-import { toggleFavorite } from '../../../services/authService'; // Thêm service toggle
+import { toggleFavorite } from '../../../services/authService';
 import { useTranslation } from 'react-i18next';
 import { paginate } from '../../../utils/paginate';
 import './SearchResult.scss';
@@ -23,7 +23,7 @@ function SearchResult() {
   const [searchParams] = useSearchParams();
   const query = searchParams.get('q');
 
-  const { user, setUser } = useContext(AuthContext); // Lấy user từ Context
+  const { user, setUser } = useContext(AuthContext);
   const { songs: dbSongs } = useContext(SongContext);
   const { albums: dbAlbums } = useContext(AlbumContext);
   const { artists: dbArtists } = useContext(ArtistContext);
@@ -31,13 +31,6 @@ function SearchResult() {
   const { playSong } = useContext(MusicContext);
 
   useTitle(t('search.search_result'));
-
-  // useEffect(() => {
-  //   refreshSongs();
-  //   refreshAlbums();
-  //   refreshArtists();
-  //   refreshPlaylists();
-  // }, []);
 
   const [deezerSongs, setDeezerSongs] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -50,9 +43,8 @@ function SearchResult() {
   const limitItems = 10;
   const gridLimit = 12;
 
-  // --- HÀM XỬ LÝ SỰ KIỆN TIM ---
   const handleToggleFavorite = async (e, song) => {
-    e.stopPropagation(); // Ngăn sự kiện click lan ra div cha (tránh tự động phát nhạc)
+    e.stopPropagation();
 
     if (!user) {
       message.error(t('auth.login_required'));

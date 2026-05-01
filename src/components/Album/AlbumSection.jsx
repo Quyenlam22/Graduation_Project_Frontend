@@ -21,20 +21,19 @@ function AlbumSection(props) {
 
   if (!albums || albums.length === 0) return null;
 
-  // --- TRƯỜNG HỢP 1: HIỂN THỊ DẠNG SLIDE (Dùng cho trang Home) ---
   if (isSlider) {
     return (
       <div className="section-slider">
         {title && <Title level={3} style={{ color: "#fff" }}>{title}</Title>}
         <Swiper
-          modules={[Navigation, FreeMode, Autoplay]} // Thêm Autoplay vào đây
+          modules={[Navigation, FreeMode, Autoplay]}
           spaceBetween={24}
           slidesPerView={2}
           freeMode={true}
           navigation={true}
           loop={true}
           autoplay={{
-            delay: 2000, 
+            delay: 2000,
             disableOnInteraction: false,
           }}
           breakpoints={{
@@ -53,7 +52,7 @@ function AlbumSection(props) {
                 cover={<div className="album-img-container"><img alt={album.title} src={album.avatar} /></div>}
                 styles={{ body: { padding: "0 12px 12px 12px" } }}
               >
-                <Card.Meta 
+                <Card.Meta
                   title={<Title level={5} style={{ color: "#fff", margin: 0, fontSize: '14px' }}>{album.title}</Title>}
                   description={<Text type="secondary" style={{ fontSize: "12px", color: '#9CA3A1', overflow: "hidden", textWrap: "nowrap" }}>{album.artistName}</Text>}
                 />
@@ -65,7 +64,6 @@ function AlbumSection(props) {
     );
   }
 
-  // --- TRƯỜNG HỢP 2: HIỂN THỊ DẠNG LƯỚI + PHÂN TRANG (Dùng cho trang /albums) ---
   return (
     <div className="album-section-grid">
       {title && <Title level={2} style={{ color: "#fff" }}>{title}</Title>}
@@ -79,7 +77,7 @@ function AlbumSection(props) {
               cover={<div className="album-img-container"><img alt={album.title} src={album.avatar} /></div>}
               styles={{ body: { padding: "0 12px 12px 12px" } }}
             >
-              <Card.Meta 
+              <Card.Meta
                 title={<Title level={5} style={{ color: "#fff", margin: 0, fontSize: '14px' }}>{album.title}</Title>}
                 description={<Text type="secondary" style={{ fontSize: "12px", color: '#9CA3A1' }}>{album.artistName}</Text>}
               />

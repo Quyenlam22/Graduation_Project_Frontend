@@ -9,17 +9,14 @@ const DashboardProvider = ({ children }) => {
   const [isFetched, setIsFetched] = useState(false);
 
   const refreshStats = async (force = false) => {
-    // Nếu đã lấy dữ liệu rồi và không phải ép buộc (force) thì thôi
     if (isFetched && !force) return;
 
-    // CHẶN: Nếu không có token thì không gọi API tránh lỗi 401
     const token = localStorage.getItem("accessToken");
     if (!token) return;
 
     setLoading(true);
     try {
       const res = await overview();
-      // KIỂM TRA: res phải tồn tại (không null) và success là true
       if (res && res.success) {
         setStats(res.data);
         setIsFetched(true);

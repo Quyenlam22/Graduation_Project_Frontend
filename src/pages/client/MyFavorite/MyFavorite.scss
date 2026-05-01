@@ -80,7 +80,6 @@
     }
   }
 
-  // Tracklist Styling
   .playlist-tracks {
     .header-text {
       color: rgba(255, 255, 255, 0.5);
@@ -142,7 +141,7 @@
 
           &:hover {
             transform: scale(1.2);
-            color: #ff4d6d; // Sáng hơn khi hover để biết là có thể bấm
+            color: #ff4d6d;
           }
         }
 
@@ -209,8 +208,6 @@
       &.circle {
         border-radius: 50%;
       }
-
-      // Style riêng cho Nghệ sĩ
 
       img {
         width: 100%;

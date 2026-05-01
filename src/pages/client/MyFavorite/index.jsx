@@ -1,5 +1,5 @@
 import { useContext, useEffect, useState, useRef, useMemo } from "react";
-import { Typography, Tabs, Row, Col, Avatar, Flex, Button, Spin, message, Tag } from 'antd'; // Thêm Tag nếu muốn dùng Tag của Antd
+import { Typography, Tabs, Row, Col, Avatar, Flex, Button, Spin, message, Tag } from 'antd';
 import { PlayCircleFilled, HeartFilled, ClockCircleOutlined } from '@ant-design/icons';
 import { useNavigate } from 'react-router-dom';
 import './MyFavorite.scss';
@@ -32,7 +32,7 @@ function MyFavorite() {
   const navigate = useNavigate();
   const { user, setUser } = useContext(AuthContext);
   const { playSong, currentSong, formatTime } = useContext(MusicContext);
-  
+
   const [data, setData] = useState({ songs: [], albums: [], playlists: [], artists: [] });
   const [loading, setLoading] = useState(false);
   const isFirstLoad = useRef(true);
@@ -68,9 +68,9 @@ function MyFavorite() {
 
     fetchAllFavorites();
   }, [
-    user?.favorites?.songs?.length, 
-    user?.favorites?.albums?.length, 
-    user?.favorites?.playlists?.length, 
+    user?.favorites?.songs?.length,
+    user?.favorites?.albums?.length,
+    user?.favorites?.playlists?.length,
     user?.favorites?.artists?.length
   ]);
 
@@ -82,12 +82,11 @@ function MyFavorite() {
         setUser({ ...user, favorites: { ...user.favorites, [type]: response.updatedFavorites } });
         message.success(t('common.removed_favorite'));
       }
-    } catch (error) { 
-        message.error(t('common.error_occurred')); 
+    } catch (error) {
+      message.error(t('common.error_occurred'));
     }
   };
 
-  // Cập nhật useMemo render List để thêm cột Source
   const songListContent = useMemo(() => (
     <div className="playlist-tracks">
       <div className="tracklist-header">
@@ -101,9 +100,9 @@ function MyFavorite() {
       </div>
       <div className="track-list">
         {data.songs.map((song, index) => (
-          <div 
-            className={`track-item ${currentSong?._id === song._id ? 'active' : ''}`} 
-            key={`${song._id}-${index}`} 
+          <div
+            className={`track-item ${currentSong?._id === song._id ? 'active' : ''}`}
+            key={`${song._id}-${index}`}
             onClick={() => playSong(song, data.songs, t('sidebar.library'))}
           >
             <Row align="middle" style={{ width: '100%' }}>
@@ -118,7 +117,7 @@ function MyFavorite() {
                 </Flex>
               </Col>
               <Col span={6}><Text className="album-text">{song.albumName || t('common.single')}</Text></Col>
-              
+
               {/* CỘT HIỂN THỊ NGUỒN NHẠC */}
               <Col span={2} style={{ textAlign: 'center' }}>
                 <div className={`source-badge ${song.source || 'local'}`}>
@@ -171,8 +170,8 @@ function MyFavorite() {
     <div className="favorite">
       <div className="favorite__header">
         <h2 className="favorite__title">
-            {t('sidebar.library')} 
-            {data.songs.length > 0 && <PlayCircleFilled className="favorite__play-icon" onClick={() => playSong(data.songs[0], data.songs, t('sidebar.library'))} />}
+          {t('sidebar.library')}
+          {data.songs.length > 0 && <PlayCircleFilled className="favorite__play-icon" onClick={() => playSong(data.songs[0], data.songs, t('sidebar.library'))} />}
         </h2>
       </div>
       {loading ? (

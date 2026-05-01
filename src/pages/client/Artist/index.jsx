@@ -6,11 +6,11 @@ import { ArtistContext } from '../../../Context/ArtistContext';
 import { AlbumContext } from '../../../Context/AlbumContext';
 import { SongContext } from '../../../Context/SongContext';
 import { MusicContext } from '../../../Context/MusicContext';
-import { AuthContext } from '../../../Context/AuthProvider'; // Thêm AuthContext
+import { AuthContext } from '../../../Context/AuthProvider';
 import AlbumSection from '../../../components/Album/AlbumSection';
 import ArtistSection from '../../../components/Artist/ArtistSection';
 import './Artist.scss';
-import { toggleFavorite } from '../../../services/authService'; // Thêm service
+import { toggleFavorite } from '../../../services/authService';
 import { useTranslation } from 'react-i18next';
 import useTitle from '../../../hooks/useTitle';
 
@@ -18,16 +18,10 @@ const { Title, Text } = Typography;
 
 function Artist() {
   const { id } = useParams();
-  const { user, setUser } = useContext(AuthContext); // Lấy thông tin user
+  const { user, setUser } = useContext(AuthContext);
   const { artists, loading: artistLoading } = useContext(ArtistContext);
   const { albums } = useContext(AlbumContext);
   const { songs } = useContext(SongContext);
-
-  // useEffect(() => {
-  //   refreshSongs();
-  //   refreshAlbums();
-  //   refreshArtists();
-  // }, []);
 
   const { playSong, formatTime } = useContext(MusicContext);
 
@@ -55,7 +49,7 @@ function Artist() {
     try {
       const response = await toggleFavorite({
         uid: user.uid,
-        type: type, // 'artists' hoặc 'songs'
+        type: type,
         itemId: itemId
       });
 

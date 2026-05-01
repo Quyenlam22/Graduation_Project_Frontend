@@ -5,7 +5,7 @@ import { AppContext } from '../../Context/AppProvider';
 import { SongContext } from '../../Context/SongContext';
 import { createPlaylist, updatePlaylist } from '../../services/playlistService';
 import { getAllUsers } from '../../services/authService';
-import { useTranslation } from 'react-i18next'; // Thêm i18n
+import { useTranslation } from 'react-i18next';
 
 const { TextArea } = Input;
 const { Option } = Select;
@@ -38,7 +38,7 @@ function CreatePlaylist(props) {
       if (data) {
         form.setFieldsValue({
           ...data,
-          songs: data.songs?.map(s => s._id || s) 
+          songs: data.songs?.map(s => s._id || s)
         });
         if (data.avatar) {
           setFileList([{ uid: '-1', name: 'playlist.png', status: 'done', url: data.avatar }]);
@@ -66,8 +66,8 @@ function CreatePlaylist(props) {
         formData.append('avatar', fileList[0].originFileObj);
       }
 
-      let response = isEdit 
-        ? await updatePlaylist(data._id, formData) 
+      let response = isEdit
+        ? await updatePlaylist(data._id, formData)
         : await createPlaylist(formData);
 
       if (response.success) {
@@ -76,9 +76,9 @@ function CreatePlaylist(props) {
         onSuccess();
       }
     } catch (error) {
-       messageApi.error(t('common.operation_failed'));
+      messageApi.error(t('common.operation_failed'));
     } finally {
-       setLoading(false);
+      setLoading(false);
     }
   };
 
@@ -90,28 +90,28 @@ function CreatePlaylist(props) {
   };
 
   return (
-    <Modal 
-        title={isEdit ? t('playlist.edit_title') : t('playlist.create_title')} 
-        open={isModalOpen} 
-        onOk={handleOk} 
-        onCancel={handleCancel} 
-        confirmLoading={loading} 
-        width={700}
-        okText={isEdit ? t('common.update') : t('common.create')}
-        cancelText={t('common.cancel') || "Cancel"}
+    <Modal
+      title={isEdit ? t('playlist.edit_title') : t('playlist.create_title')}
+      open={isModalOpen}
+      onOk={handleOk}
+      onCancel={handleCancel}
+      confirmLoading={loading}
+      width={700}
+      okText={isEdit ? t('common.update') : t('common.create')}
+      cancelText={t('common.cancel') || "Cancel"}
     >
       <Form form={form} layout="vertical">
         <Row gutter={16}>
           <Col span={16}>
             <Form.Item name="title" label={t('playlist.form_title')} rules={[{ required: true, message: t('playlist.error_title') }]}>
-                <Input />
+              <Input />
             </Form.Item>
           </Col>
           <Col span={8}>
             <Form.Item name="status" label={t('common.status')} initialValue="active">
               <Select>
-                  <Option value="active">{t('common.active')}</Option>
-                  <Option value="inactive">{t('common.inactive')}</Option>
+                <Option value="active">{t('common.active')}</Option>
+                <Option value="inactive">{t('common.inactive')}</Option>
               </Select>
             </Form.Item>
           </Col>
@@ -119,7 +119,7 @@ function CreatePlaylist(props) {
         <Form.Item name="userId" label={t('playlist.owner')} initialValue="system" rules={[{ required: true, message: t('playlist.error_owner') }]}>
           <Select showSearch placeholder={t('playlist.owner')} filterOption={(input, option) => (option?.label ?? '').toLowerCase().includes(input.toLowerCase())}>
             <Option value="system" label="System Default">
-                <Space><SettingOutlined /><Text strong>{t('playlist.system_default')}</Text></Space>
+              <Space><SettingOutlined /><Text strong>{t('playlist.system_default')}</Text></Space>
             </Option>
             {users.map(user => (
               <Option key={user.uid} value={user.uid} label={user.displayName}>
@@ -139,9 +139,9 @@ function CreatePlaylist(props) {
         </Form.Item>
         <Form.Item name="description" label={t('album.form_description')}><TextArea rows={3} /></Form.Item>
         <Form.Item label={t('playlist.form_cover')}>
-            <Upload listType="picture-card" fileList={fileList} beforeUpload={() => false} onChange={({ fileList }) => setFileList(fileList)} maxCount={1}>
-                {fileList.length >= 1 ? null : <div><PlusOutlined /><div style={{ marginTop: 8 }}>{t('common.loading')}</div></div>}
-            </Upload>
+          <Upload listType="picture-card" fileList={fileList} beforeUpload={() => false} onChange={({ fileList }) => setFileList(fileList)} maxCount={1}>
+            {fileList.length >= 1 ? null : <div><PlusOutlined /><div style={{ marginTop: 8 }}>{t('common.loading')}</div></div>}
+          </Upload>
         </Form.Item>
       </Form>
     </Modal>

@@ -24,13 +24,6 @@ function Home() {
     const { playSong } = useContext(MusicContext);
     const navigate = useNavigate();
 
-    // useEffect(() => {
-    //     refreshSongs();
-    //     refreshAlbums();
-    //     refreshArtists();
-    //     refreshPlaylists();
-    // }, []);
-
     useTitle("Muzia");
 
     const newReleases = useMemo(() => {

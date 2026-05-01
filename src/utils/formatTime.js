@@ -1,5 +1,5 @@
 import moment from 'moment';
-import 'moment/locale/vi'; 
+import 'moment/locale/vi';
 
 moment.locale('vi');
 
@@ -19,7 +19,6 @@ export const formatDate = (date, formatStr = 'DD/MM/YYYY') => {
  */
 export const fromNow = (date) => {
     if (!date) return '';
-    // .clone() là cực kỳ quan trọng trong Moment để tránh làm thay đổi dữ liệu gốc
     return moment(date).clone().fromNow();
 };
 

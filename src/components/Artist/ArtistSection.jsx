@@ -21,23 +21,22 @@ function ArtistSection(props) {
   }, [artists, currentPage]);
 
   const renderArtistItem = (artist) => (
-    <Flex 
-      vertical 
-      align="center" 
-      className="artist-card-item" 
+    <Flex
+      vertical
+      align="center"
+      className="artist-card-item"
       style={{ cursor: 'pointer' }}
       onClick={() => navigate(`/artists/${artist._id}`)}
     >
-      <Avatar 
-        size={140} 
-        src={artist.avatar} 
+      <Avatar
+        size={140}
+        src={artist.avatar}
         style={{ border: '2px solid rgba(255,255,255,0.1)', marginBottom: '12px' }}
       />
       <Text strong style={{ color: '#fff', textAlign: 'center', display: 'block', fontSize: '16px' }}>
         {artist.name}
       </Text>
       <Text type="secondary" style={{ fontSize: '12px', color: '#9CA3A1' }}>
-        {/* Ưu tiên hiển thị nb_fan, nếu không có thì đếm độ dài mảng like */}
         {artist.nb_fan ? formatNumber(artist.nb_fan) : formatNumber(artist.like?.length)} Listeners
       </Text>
     </Flex>

@@ -1,4 +1,4 @@
-import { Button, Image, Space } from "antd"; // Thêm Space
+import { Button, Image, Space } from "antd";
 import { useEffect, useState, useContext } from 'react';
 import Notice from "../../components/Notice";
 import { LogoutOutlined, MenuFoldOutlined, MenuUnfoldOutlined, UserOutlined } from '@ant-design/icons'
@@ -10,7 +10,7 @@ import { signOut } from "firebase/auth";
 import { useNavigate } from "react-router";
 import { auth } from "../../firebase/config";
 import Search from "../Search";
-import { useTranslation } from "react-i18next"; // Import i18n
+import { useTranslation } from "react-i18next";
 
 function HeaderClient(props) {
     const { setCollapse, collapse } = props;
@@ -31,7 +31,6 @@ function HeaderClient(props) {
         return () => window.removeEventListener("resize", handleResize);
     }, []);
 
-    // Hàm thay đổi ngôn ngữ
     const changeLanguage = (lng) => {
         i18n.changeLanguage(lng);
         localStorage.setItem("muzia_lang", lng);
@@ -45,7 +44,7 @@ function HeaderClient(props) {
         }
         localStorage.removeItem("accessToken");
         await signOut(auth);
-        messageApi.success(t('auth.logout_success')) // Dùng đa ngôn ngữ
+        messageApi.success(t('auth.logout_success'));
         navigate("/");
     };
 

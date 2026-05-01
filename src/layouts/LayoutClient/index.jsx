@@ -2,7 +2,6 @@ import { Layout } from "antd";
 import { Content } from "antd/es/layout/layout";
 import Sider from "antd/es/layout/Sider";
 import './LayoutClient.scss';
-// import logo from  "../../images/logo.png";
 import { useEffect, useState } from "react";
 import MenuSider from "../../components/MenuSider";
 import { Outlet } from "react-router-dom";
@@ -16,16 +15,14 @@ function LayoutClient() {
   useEffect(() => {
     const handleResize = () => {
       if (window.innerWidth < 768) {
-        setCollapse(true); // Đóng lại nếu màn hình nhỏ
+        setCollapse(true);
       } else {
-        setCollapse(false); // Mở ra nếu màn hình lớn
+        setCollapse(false);
       }
     };
 
-    // Chạy lần đầu khi load trang
     handleResize();
 
-    // Lắng nghe sự kiện thay đổi kích thước màn hình
     window.addEventListener('resize', handleResize);
     return () => window.removeEventListener('resize', handleResize);
   }, []);

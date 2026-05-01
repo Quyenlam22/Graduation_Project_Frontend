@@ -5,14 +5,12 @@ import { getPreview } from "../services/songService";
 export const MusicContext = createContext();
 
 export const MusicProvider = ({ children }) => {
-  // --- 1. LẤY DỮ LIỆU TỪ LOCAL STORAGE ---
   const savedSong = JSON.parse(localStorage.getItem('muzia_current_song'));
   const savedQueue = JSON.parse(localStorage.getItem('muzia_play_queue')) || [];
   const savedIndex = parseInt(localStorage.getItem('muzia_current_index')) || -1;
   const savedTime = parseFloat(localStorage.getItem('muzia_current_time')) || 0;
   const savedVolume = parseFloat(localStorage.getItem('muzia_volume')) || 0.7;
 
-  // --- 2. KHỞI TẠO STATE ---
   const [queueTitle, setQueueTitle] = useState(localStorage.getItem('muzia_queue_title') || "");
   const [currentSong, setCurrentSong] = useState(savedSong);
   const [isPlaying, setIsPlaying] = useState(false);
@@ -31,7 +29,6 @@ export const MusicProvider = ({ children }) => {
   const playerRef = useRef(null);
   const timerRef = useRef(null);
 
-  // --- 3. DÙNG REFS ĐỂ ĐẢM BẢO DỮ LIỆU LUÔN MỚI TRONG CALLBACK ---
   const isLoopRef = useRef(isLoop);
   const isShuffleRef = useRef(isShuffle);
   const playQueueRef = useRef(playQueue);
@@ -55,7 +52,6 @@ export const MusicProvider = ({ children }) => {
   }, [volume]);
   useEffect(() => { isMutedRef.current = isMuted; }, [isMuted]);
 
-  // --- 4. CÁC HÀM TIỆN ÍCH ---
   const formatTime = (seconds) => {
     if (!seconds || isNaN(seconds)) return "0:00";
     const mins = Math.floor(seconds / 60);
@@ -76,7 +72,6 @@ export const MusicProvider = ({ children }) => {
     }, 1000);
   };
 
-  // --- 5. ĐIỀU KHIỂN NHẠC ---
   const playSong = async (song, list = [], title = "") => {
     if (title) {
       setQueueTitle(title);
@@ -184,7 +179,6 @@ export const MusicProvider = ({ children }) => {
     }
   };
 
-  // --- 6. CÁC HÀM BỔ SUNG (FIX LỖI REFERENCE ERROR) ---
   const handleSeek = (value) => {
     if (!playerRef.current) return;
     const time = (value / 100) * playerRef.current.duration();
@@ -215,7 +209,6 @@ export const MusicProvider = ({ children }) => {
   const toggleLoop = () => setIsLoop(prev => !prev);
   const toggleShuffle = () => setIsShuffle(prev => !prev);
 
-  // --- 7. EFFECTS ---
   useEffect(() => {
     const refreshInitialSong = async () => {
       if (savedSong && !playerRef.current) {

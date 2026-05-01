@@ -14,28 +14,26 @@ function AuthProvider({ children }) {
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (firebaseUser) => {
-      // Xác định loại route hiện tại
       const isAdminRoute = location.pathname.startsWith("/admin");
       const isAuthRoute = location.pathname === "/auth";
       const isAdminLoginRoute = location.pathname === "/admin/login";
 
       if (firebaseUser) {
-        await firebaseUser.reload(); 
-        const idToken = await firebaseUser.getIdToken(true); // Lấy token mới nhất
+        await firebaseUser.reload();
+        const idToken = await firebaseUser.getIdToken(true);
         localStorage.setItem("accessToken", idToken);
 
         try {
           const response = await infoUser(firebaseUser.uid);
-          
-          if (response) {
-            setUser(response); // response đã có role từ MongoDB
 
-            // LOGIC ĐIỀU HƯỚNG KHI ĐÃ ĐĂNG NHẬP
+          if (response) {
+            setUser(response);
+
             if (isAuthRoute) {
-              navigate("/"); // User thường vào trang auth -> về home
+              navigate("/");
             }
             if (isAdminLoginRoute && response.role === 'admin') {
-              navigate("/admin/dashboard"); // Admin vào login admin -> về dashboard
+              navigate("/admin/dashboard");
             }
           } else {
             setUser({
@@ -49,7 +47,6 @@ function AuthProvider({ children }) {
           console.error("Fetch MongoDB User Error:", error);
         }
       } else {
-        // TRƯỜNG HỢP CHƯA ĐĂNG NHẬP (firebaseUser === null)
         setUser(null);
         localStorage.removeItem("accessToken");
       }

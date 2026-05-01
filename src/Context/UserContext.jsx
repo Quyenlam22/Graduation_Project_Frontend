@@ -8,14 +8,12 @@ export default function UserProvider({ children }) {
   const [loading, setLoading] = useState(false);
 
   const refreshUsers = async () => {
-    // CHẶN: Nếu không có token thì không gọi API tốn tài nguyên và gây lỗi 401
     const token = localStorage.getItem("accessToken");
     if (!token) return;
 
     setLoading(true);
     try {
       const res = await getAllUsers();
-      // res bây giờ sẽ không bao giờ là null nhờ Bước 1
       if (res && res.success) {
         setUsers(res.data.map(item => ({ ...item, key: item._id })));
       }
