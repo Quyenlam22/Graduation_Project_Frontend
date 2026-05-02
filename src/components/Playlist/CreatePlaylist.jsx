@@ -71,7 +71,7 @@ function CreatePlaylist(props) {
         : await createPlaylist(formData);
 
       if (response.success) {
-        messageApi.success(t('common.operation_success'));
+        isEdit ? messageApi.success(t('common.update_success', { title: "playlist" })) : messageApi.success(t('common.create_success', { title: "playlist" }));
         handleCancel();
         onSuccess();
       }

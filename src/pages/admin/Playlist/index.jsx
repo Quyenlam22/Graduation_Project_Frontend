@@ -1,11 +1,11 @@
 import { useContext, useState, useMemo } from 'react';
-import { 
+import {
   Table, Space, Button, Tooltip, Typography, Badge,
   Popconfirm, Image, Tag, Empty
 } from 'antd';
-import { 
-  EditOutlined, DeleteOutlined, PlusOutlined, 
-  CustomerServiceOutlined, 
+import {
+  EditOutlined, DeleteOutlined, PlusOutlined,
+  CustomerServiceOutlined,
 } from '@ant-design/icons';
 import { AppContext } from '../../../Context/AppProvider';
 import { PlaylistContext } from '../../../Context/PlaylistContext';
@@ -35,7 +35,7 @@ function PlaylistManagement() {
   const filteredData = useMemo(() => {
     return playlists.filter(playlist => {
       const kw = filters.keyword.toLowerCase();
-      const matchKeyword = !kw || 
+      const matchKeyword = !kw ||
         playlist.title?.toLowerCase().includes(kw) ||
         playlist.description?.toLowerCase().includes(kw);
       const matchStatus = !filters.status || playlist.status === filters.status;
@@ -60,7 +60,7 @@ function PlaylistManagement() {
     try {
       const response = await deletePlaylists(id);
       if (response.success) {
-        messageApi.success(t('common.operation_success'));
+        messageApi.success(t('common.delete_success', { title: "playlist" }));
         refreshPlaylists();
       }
     } catch (error) {
@@ -131,9 +131,9 @@ function PlaylistManagement() {
       render: (_, record) => (
         <Space size="middle">
           <Tooltip title={t('common.edit')}><Button type="text" icon={<EditOutlined />} onClick={() => handleEdit(record)} /></Tooltip>
-          <Popconfirm 
-            title={t('playlist.delete_confirm')} 
-            onConfirm={() => handleDelete(record._id)} 
+          <Popconfirm
+            title={t('playlist.delete_confirm')}
+            onConfirm={() => handleDelete(record._id)}
             okButtonProps={{ danger: true }}
             okText={t('common.delete') || "Yes"}
             cancelText={t('common.cancel') || "No"}
@@ -155,26 +155,26 @@ function PlaylistManagement() {
       </div>
 
       <FilterBar onFilterChange={handleFilterChange} />
-      
-      <Table 
+
+      <Table
         loading={loading}
-        columns={columns} 
-        dataSource={currentDisplayData} 
+        columns={columns}
+        dataSource={currentDisplayData}
         bordered
         scroll={{ x: 1000 }}
         locale={{ emptyText: <Empty description={t('library.empty_playlists')} /> }}
-        pagination={{ 
+        pagination={{
           current: currentPage,
           pageSize: pageSize,
-          total: filteredData.length, 
+          total: filteredData.length,
           onChange: (page, size) => { setCurrentPage(page); setPageSize(size); },
           showSizeChanger: true,
           locale: { items_per_page: t('common.items_per_page') }
         }}
       />
 
-      <CreatePlaylist 
-        isModalOpen={isModalOpen} 
+      <CreatePlaylist
+        isModalOpen={isModalOpen}
         setIsModalOpen={setIsModalOpen}
         onSuccess={refreshPlaylists}
         data={editingPlaylist}

@@ -64,7 +64,7 @@ function ArtistManagement() {
     try {
       const response = await deleteArtists(id);
       if (response.success) {
-        messageApi.success(t('common.operation_success'));
+        messageApi.success(t('common.delete_success', { title: t('artist.title') }));
         refreshArtists();
         refreshAlbums();
         refreshSongs();

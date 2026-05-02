@@ -74,7 +74,7 @@ function AlbumManagement() {
     try {
       const response = await deleteAlbums(id);
       if (response.success) {
-        messageApi.success(t("common.operation_success"));
+        messageApi.success(t("common.delete_success", { title: "album" }));
         refreshAlbums();
         refreshSongs();
       }

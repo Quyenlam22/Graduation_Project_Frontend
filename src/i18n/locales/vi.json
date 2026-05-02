@@ -44,7 +44,9 @@
       "placeholder_name": "Sơn Tùng M-TP...",
       "error_name": "Vui lòng nhập tên nghệ sĩ",
       "delete_confirm": "Xác nhận xóa nghệ sĩ này?",
-      "followers": "Người theo dõi"
+      "followers": "Người theo dõi",
+      "name_exist": "Nghệ sĩ này đã tồn tại trên hệ thống!",
+      "title": "nghệ sĩ"
     },
     "admin": {
       "login_title": "Đăng nhập Admin",
@@ -124,7 +126,9 @@
       "update": "Cập nhật",
       "create": "Tạo mới",
       "created_at": "Ngày tạo",
-      "operation_success": "Thực hiện thành công!",
+      "create_success": "Thêm mới {{title}} thành công!",
+      "update_success": "Cập nhật {{title}} thành công!",
+      "delete_success": "Xóa {{title}} thành công!",
       "operation_failed": "Thao tác thất bại!",
       "search": "Tìm kiếm",
       "refresh": "Làm mới",
@@ -236,7 +240,9 @@
       "placeholder_name": "VD: Em Của Ngày Hôm Qua, Đừng Làm Trái Tim Anh Đau...",
       "error_name": "Vui lòng nhập tên bài hát",
       "error_audio": "Vui lòng cung cấp liên kết âm thanh",
-      "duration": "Thời lượng"
+      "duration": "Thời lượng",
+      "name_exist": "Tên bài hát đã tồn tại trên hệ thống!",
+      "title": "bài hát"
     },
     "user": {
       "page_title": "Thiết lập cá nhân",
@@ -267,7 +273,9 @@
       "state_online": "TRỰC TUYẾN",
       "state_offline": "NGOẠI TUYẾN",
       "provider": "Phương thức",
-      "display_name": "Tên hiển thị"
+      "display_name": "Tên hiển thị",
+      "email_exists": "Địa chỉ email này đã tồn tại trong hệ thống!",
+      "title": "người dùng"
     }
   }
 }

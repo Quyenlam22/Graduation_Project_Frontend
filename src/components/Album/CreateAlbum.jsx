@@ -79,7 +79,7 @@ function CreateAlbum(props) {
         : await createAlbum(formData);
 
       if (response && response.success) {
-        messageApi.success(t('common.operation_success'));
+        isEdit ? messageApi.success(t('common.update_success', { title: 'album' })) : messageApi.success(t('common.create_success', { title: 'album' }));
         handleCancel();
         if (onSuccess) onSuccess();
       }

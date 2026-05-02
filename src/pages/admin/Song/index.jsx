@@ -1,11 +1,11 @@
 import { useContext, useState, useMemo } from 'react';
-import { 
+import {
   Table, Space, Button, Tooltip, Typography, Badge,
-  Popconfirm, Image, Empty 
+  Popconfirm, Image, Empty
 } from 'antd';
-import { 
-  EditOutlined, DeleteOutlined, PlusOutlined, 
-  PlayCircleOutlined, CustomerServiceOutlined, HeartOutlined 
+import {
+  EditOutlined, DeleteOutlined, PlusOutlined,
+  PlayCircleOutlined, CustomerServiceOutlined, HeartOutlined
 } from '@ant-design/icons';
 import { AppContext } from '../../../Context/AppProvider';
 import { SongContext } from '../../../Context/SongContext';
@@ -39,7 +39,7 @@ function SongManagement() {
   const filteredData = useMemo(() => {
     return songs.filter(song => {
       const kw = filters.keyword.toLowerCase();
-      const matchKeyword = !kw || 
+      const matchKeyword = !kw ||
         song.title?.toLowerCase().includes(kw) ||
         song.artistName?.toLowerCase().includes(kw) ||
         song.albumName?.toLowerCase().includes(kw);
@@ -72,8 +72,8 @@ function SongManagement() {
     try {
       const response = await deleteSongs(uid);
       if (response && response.success) {
-        messageApi.success(t('common.operation_success'));
-        onSuccess(); 
+        messageApi.success(t('common.delete_success', { title: t('song.title') }));
+        onSuccess();
       }
     } catch (error) {
       messageApi.error(t('common.operation_failed'));
@@ -156,9 +156,9 @@ function SongManagement() {
       render: (_, record) => (
         <Space size="middle">
           <Tooltip title={t('common.edit')}><Button type="text" icon={<EditOutlined />} onClick={() => handleEdit(record)} /></Tooltip>
-          <Popconfirm 
-            title={t('song.delete_confirm')} 
-            onConfirm={() => handleDelete(record._id)} 
+          <Popconfirm
+            title={t('song.delete_confirm')}
+            onConfirm={() => handleDelete(record._id)}
             okButtonProps={{ danger: true }}
             okText={t('common.delete') || "Yes"}
             cancelText={t('common.cancel') || "No"}
@@ -180,16 +180,16 @@ function SongManagement() {
       </div>
 
       <FilterBar onFilterChange={handleFilterChange} />
-      
-      <Table 
+
+      <Table
         rowKey="_id"
         loading={loading}
-        columns={columns} 
-        dataSource={currentDisplayData} 
+        columns={columns}
+        dataSource={currentDisplayData}
         bordered
         scroll={{ x: 1000 }}
         locale={{ emptyText: <Empty description={t('search.no_result_db')} /> }}
-        pagination={{ 
+        pagination={{
           current: currentPage,
           pageSize: pageSize,
           total: filteredData.length,
@@ -199,11 +199,11 @@ function SongManagement() {
         }}
       />
 
-      <CreateSong 
-        isModalOpen={isModalOpen} 
+      <CreateSong
+        isModalOpen={isModalOpen}
         setIsModalOpen={setIsModalOpen}
-        onSuccess={onSuccess} 
-        data={editingSong} 
+        onSuccess={onSuccess}
+        data={editingSong}
         onCancel={() => { setIsModalOpen(false); setEditingSong(null); }}
       />
     </div>

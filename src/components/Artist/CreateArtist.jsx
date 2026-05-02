@@ -12,7 +12,7 @@ function CreateArtist(props) {
   const [fileList, setFileList] = useState([]);
 
   const { t } = useTranslation();
-  
+
   const { messageApi } = useContext(AppContext);
   const isEdit = !!data;
 
@@ -20,10 +20,10 @@ function CreateArtist(props) {
     if (isModalOpen) {
       if (data) {
         form.setFieldsValue({
-            name: data.name,
-            nb_fan: data.nb_fan,
-            status: data.status,
-            deezerId: data.deezerId
+          name: data.name,
+          nb_fan: data.nb_fan,
+          status: data.status,
+          deezerId: data.deezerId
         });
         if (data.avatar) {
           setFileList([{ uid: '-1', name: 'avatar.png', status: 'done', url: data.avatar }]);
@@ -39,7 +39,7 @@ function CreateArtist(props) {
     try {
       const values = await form.validateFields();
       setLoading(true);
-      
+
       const formData = new FormData();
       formData.append('name', values.name);
       formData.append('nb_fan', values.nb_fan || 0);
@@ -53,9 +53,12 @@ function CreateArtist(props) {
       let response = isEdit ? await updateArtist(data._id, formData) : await createArtist(formData);
 
       if (response && response.success) {
-        messageApi.success(t('common.operation_success'));
+        isEdit ? messageApi.success(t('common.update_success', { title: t('artist.title') })) : messageApi.success(t('common.create_success', { title: t('artist.title') }));
         handleCancelInternal();
-        if (onSuccess) onSuccess();
+        onSuccess();
+      }
+      else {
+        messageApi.error(t('artist.name_exist'));
       }
     } catch (error) {
       messageApi.error(t('common.operation_failed'));
@@ -72,10 +75,10 @@ function CreateArtist(props) {
   };
 
   return (
-    <Modal 
-      title={isEdit ? t('artist.edit_title') : t('artist.create_title')} 
-      open={isModalOpen} 
-      onOk={handleOk} 
+    <Modal
+      title={isEdit ? t('artist.edit_title') : t('artist.create_title')}
+      open={isModalOpen}
+      onOk={handleOk}
       onCancel={handleCancelInternal}
       confirmLoading={loading}
       okText={isEdit ? t('common.update') : t('common.create')}
@@ -101,9 +104,9 @@ function CreateArtist(props) {
             </Form.Item>
           </Col>
         </Row>
-        
+
         <Form.Item name="deezerId" label={t('artist.form_deezer')}>
-            <InputNumber style={{ width: '100%' }} />
+          <InputNumber style={{ width: '100%' }} />
         </Form.Item>
 
         <Form.Item label="Avatar">

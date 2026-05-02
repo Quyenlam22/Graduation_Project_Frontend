@@ -6,7 +6,7 @@ import { ArtistContext } from '../../Context/ArtistContext';
 import { AlbumContext } from '../../Context/AlbumContext';
 import { useTranslation } from 'react-i18next';
 
-import ReactQuill from 'react-quill-new'; 
+import ReactQuill from 'react-quill-new';
 import 'react-quill-new/dist/quill.snow.css';
 import { createSong, updateSongs } from '../../services/songService';
 
@@ -41,7 +41,7 @@ function CreateSong(props) {
       if (data) {
         form.setFieldsValue({
           ...data,
-          artistId: data.artistId?._id || data.artistId, 
+          artistId: data.artistId?._id || data.artistId,
           albumId: data.albumId?._id || data.albumId,
         });
         if (data.cover) {
@@ -91,17 +91,17 @@ function CreateSong(props) {
         formData.append('cover', fileList[0].originFileObj);
       }
 
-      let response = isEdit 
-        ? await updateSongs(data._id, formData) 
+      let response = isEdit
+        ? await updateSongs(data._id, formData)
         : await createSong(formData);
 
       if (response && response.success) {
-        messageApi.success(t('common.operation_success'));
+        isEdit ? messageApi.success(t('common.update_success', { title: t('song.title') })) : messageApi.success(t('common.create_success', { title: t('song.title') }));
         handleCancel();
-        if (onSuccess) onSuccess(); 
+        if (onSuccess) onSuccess();
       }
       else {
-        messageApi.error(response.message);
+        messageApi.error(t('song.name_exist'));
       }
     } catch (error) {
       messageApi.error(t('common.operation_failed'));
@@ -119,28 +119,28 @@ function CreateSong(props) {
 
   return (
     <>
-      <Modal 
-        title={isEdit ? t('song.edit_title') : t('song.create_title')} 
-        open={isModalOpen} 
-        onOk={handleOk} 
-        onCancel={handleCancel} 
-        confirmLoading={loading} 
-        width={800} 
+      <Modal
+        title={isEdit ? t('song.edit_title') : t('song.create_title')}
+        open={isModalOpen}
+        onOk={handleOk}
+        onCancel={handleCancel}
+        confirmLoading={loading}
+        width={800}
         okText={isEdit ? t('common.update') : t('common.create')}
         cancelText={t('common.cancel') || 'Cancel'}
       >
         <Form form={form} layout="vertical">
           <Row gutter={16}>
             <Col span={16}>
-                <Form.Item name="title" label={t('song.form_name')} rules={[{ required: true, message: t('song.error_name') }]}>
-                    <Input placeholder={t('song.placeholder_name')} />
-                </Form.Item>
+              <Form.Item name="title" label={t('song.form_name')} rules={[{ required: true, message: t('song.error_name') }]}>
+                <Input placeholder={t('song.placeholder_name')} />
+              </Form.Item>
             </Col>
             <Col span={8}>
               <Form.Item name="status" label={t('common.status')} initialValue="active">
                 <Select>
-                    <Select.Option value="active">{t('common.active')}</Select.Option>
-                    <Select.Option value="inactive">{t('common.inactive')}</Select.Option>
+                  <Select.Option value="active">{t('common.active')}</Select.Option>
+                  <Select.Option value="inactive">{t('common.inactive')}</Select.Option>
                 </Select>
               </Form.Item>
             </Col>

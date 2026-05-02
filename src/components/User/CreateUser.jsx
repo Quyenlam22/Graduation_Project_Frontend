@@ -75,9 +75,12 @@ function CreateUser(props) {
       let response = isEdit ? await updateUser(data.uid, formData) : await createAdmin(values);
 
       if (response && response.success) {
-        messageApi.success(t('common.operation_success'));
+        isEdit ? messageApi.success(t('common.update_success', { title: t('user.title') })) : messageApi.success(t('common.create_success', { title: t('user.title') }));
         handleClose();
         if (onSuccess) onSuccess();
+      }
+      else {
+        messageApi.error(t('user.email_exists'));
       }
     } catch (error) {
       messageApi.error(t('common.operation_failed'));

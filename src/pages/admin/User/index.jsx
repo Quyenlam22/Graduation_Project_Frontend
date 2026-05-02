@@ -79,7 +79,7 @@ function UserManagement() {
     try {
       const response = await deleteUser(uid);
       if (response && response.success) {
-        messageApi.success(t('common.operation_success'));
+        messageApi.success(t('common.delete_success', { title: t('user.title') }));
         refreshUsers();
       }
     } catch (error) {

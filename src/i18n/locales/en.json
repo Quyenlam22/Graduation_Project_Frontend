@@ -44,7 +44,9 @@
       "placeholder_name": "Sơn Tùng M-TP...",
       "error_name": "Please enter artist name",
       "delete_confirm": "Remove this artist?",
-      "followers": "Followers"
+      "followers": "Followers",
+      "name_exist": "This artist is already in the system!",
+      "title": "artist"
     },
     "admin": {
       "login_title": "Administrator Login",
@@ -124,7 +126,9 @@
       "update": "Update",
       "create": "Create",
       "created_at": "Created At",
-      "operation_success": "Operation successful!",
+      "create_success": "Create {{title}} successful!",
+      "update_success": "Update {{title}} successful!",
+      "delete_success": "Delete {{title}} successful!",
       "operation_failed": "Operation failed!",
       "search": "Search",
       "refresh": "Refresh",
@@ -235,7 +239,9 @@
       "placeholder_name": "Ex: Seven, Die With A Smile...",
       "error_name": "Please enter song title",
       "error_audio": "Please provide audio link",
-      "duration": "Duration"
+      "duration": "Duration",
+      "name_exist": "The song title already exists in the system!",
+      "title": "song"
     },
     "user": {
       "page_title": "Profile Settings",
@@ -266,7 +272,9 @@
       "state_online": "ONLINE",
       "state_offline": "OFFLINE",
       "provider": "Provider",
-      "display_name": "Display Name"
+      "display_name": "Display Name",
+      "email_exists": "This email address already exists in the system!",
+      "title": "user"
     }
   }
 }
